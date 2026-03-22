@@ -531,6 +531,15 @@
       outline-offset: 2px;
     }
 
+    /* Imagem comum (vipLocked false): só no grid, sem tela cheia */
+    .card--preview-open.card:not([data-vip-type]) {
+      cursor: default;
+    }
+
+    .card--preview-open.card:not([data-vip-type]):focus-visible {
+      outline: none;
+    }
+
     /* VIP bloqueado no admin: sem lightbox, blur mais forte */
     .card--vip-locked {
       cursor: default;
@@ -898,8 +907,8 @@
     • Exporte JPG ~80–90% de qualidade ou WebP para carregar rápido no celular.
     • No hover o card levanta e o blur diminui levemente — bom para dar sensação de "quase ver" (teaser).
     • Ajuste texto/métricas por card copiando o bloco <article class="card"> e mudando números ou @.
-    • No admin: "Bloquear como VIP" = borrado + selo + sem lightbox (vipLocked true). Desmarcado = nítido + clique abre lightbox.
-    • Imagem comum: data-vip-type="image" + data-vip-src. Vídeo: data-vip-type="video" + data-vip-video + poster.
+    • No admin: "Bloquear como VIP" = borrado + selo + sem lightbox (vipLocked true). Desmarcado = nítido no grid; só vídeo comum abre lightbox.
+    • Vídeo comum: data-vip-type="video" + data-vip-video + poster. Imagem comum: sem data-vip-type (fica só no feed).
   -->
   <div class="feed" id="feedRoot" role="list"></div>
 
@@ -974,24 +983,24 @@
               ? "Conteúdo VIP bloqueado"
               : isVid
                 ? "Reproduzir vídeo em tela cheia"
-                : "Ver foto em tela cheia";
+                : "Foto no feed";
             var play = isVid
               ? '<div class="card__play-wrap" aria-hidden="true"><span class="card__play">▶</span></div>'
               : "";
             var attrs = ' role="listitem" aria-label="' + esc(label) + '"';
             if (locked) {
               attrs += ' tabindex="-1" data-vip-locked="1"';
-            } else {
+            } else if (isVid) {
               attrs +=
-                ' tabindex="0" data-vip-type="' +
-                (isVid ? "video" : "image") +
+                ' tabindex="0" data-vip-type="video" data-vip-video="' +
+                esc(it.video || "") +
+                '" data-vip-poster="' +
+                esc(it.poster || it.thumb || "") +
+                '" data-vip-alt="' +
+                esc(it.alt || "") +
                 '"';
-              if (isVid) {
-                attrs += ' data-vip-video="' + esc(it.video || "") + '" data-vip-poster="' + esc(it.poster || it.thumb || "") + '"';
-                attrs += ' data-vip-alt="' + esc(it.alt || "") + '"';
-              } else {
-                attrs += ' data-vip-src="' + esc(it.full || it.thumb || "") + '" data-vip-alt="' + esc(it.alt || "") + '"';
-              }
+            } else {
+              attrs += ' tabindex="-1"';
             }
             var m = it.metrics || {};
             var handle = esc(it.handle || "@carolzinha");
@@ -1175,24 +1184,15 @@
 
       function openVipLightbox(card) {
         if (!card || card.getAttribute("data-vip-locked") === "1") return;
-        var type = card.getAttribute("data-vip-type");
+        if (card.getAttribute("data-vip-type") !== "video") return;
+        var vidSrc = (card.getAttribute("data-vip-video") || "").trim();
+        if (!vidSrc) return;
         vipLbImg.hidden = true;
         vipLbVideo.hidden = true;
-
-        if (type === "image") {
-          var imgSrc = card.getAttribute("data-vip-src");
-          var imgAlt = card.getAttribute("data-vip-alt") || "Imagem";
-          vipLbImg.removeAttribute("src");
-          vipLbImg.src = imgSrc || "";
-          vipLbImg.alt = imgAlt;
-          vipLbImg.hidden = false;
-        } else if (type === "video") {
-          var vidSrc = card.getAttribute("data-vip-video");
-          var vidPoster = card.getAttribute("data-vip-poster") || "";
-          vipLbVideo.poster = vidPoster;
-          vipLbVideo.src = vidSrc;
-          vipLbVideo.hidden = false;
-        }
+        var vidPoster = card.getAttribute("data-vip-poster") || "";
+        vipLbVideo.poster = vidPoster;
+        vipLbVideo.src = vidSrc;
+        vipLbVideo.hidden = false;
 
         vipLightbox.classList.add("is-open");
         vipLightbox.setAttribute("aria-hidden", "false");

@@ -367,6 +367,31 @@
       accent-color: var(--orange-1);
     }
 
+    .admin-type-hint {
+      margin: 12px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .admin-type-hint__label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .admin-type-hint__body {
+      margin: 0;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
     .media-previews {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -630,7 +655,7 @@
 
     <section class="admin-card">
     <h2>Feed VIP (posts)</h2>
-    <p class="admin-help">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.<br /><strong>VIP bloqueado</strong> (caixa marcada): miniatura borrada + selo VIP; o visitante <strong>não</strong> abre o foco/lightbox (assinatura VIP virá depois). <strong>Comum</strong> (desmarcada): miniatura <strong>nítida</strong> no grid; ao clicar continua abrindo o lightbox.</p>
+    <p class="admin-help">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.<br /><strong>VIP bloqueado</strong> (caixa marcada): miniatura borrada + selo VIP; o visitante <strong>não</strong> abre o foco/lightbox (assinatura VIP virá depois). <strong>Comum</strong> (desmarcada): miniatura <strong>nítida</strong> no grid; <strong>foto</strong> não abre tela cheia. <strong>Vídeo</strong> comum ainda abre o player em tela cheia ao tocar.</p>
     <div id="feedEditor"></div>
     <button type="button" class="secondary" id="btnAddFeed">+ Adicionar post</button>
     </section>
@@ -849,12 +874,15 @@
           '<label>Tipo</label><select class="f-type"><option value="image">Foto VIP</option><option value="video">Vídeo VIP</option></select>' +
           '<div class="admin-vip-toggle">' +
           '<label><input type="checkbox" class="f-vip-locked" />' +
-          "<span><strong>Bloquear como VIP</strong> — embaçado no feed, selo VIP e sem abrir em tela cheia. Desmarque para <strong>conteúdo comum</strong> (nítido; clique abre o foco).</span></label></div>" +
+          "<span><strong>Bloquear como VIP</strong> — embaçado no feed, selo VIP e sem abrir em tela cheia. Desmarque para <strong>conteúdo comum</strong> (nítido no grid; só vídeo abre em tela cheia).</span></label></div>" +
           '<label>Miniatura (grid)</label><input type="text" class="f-thumb" placeholder="Feed teaser/teaser-1.jpg" />' +
-          '<div class="f-img-only"><label>Imagem no lightbox (URL)</label><input type="text" class="f-full" /></div>' +
+          '<div class="f-img-only"><label>Imagem em alta (URL, opcional)</label><input type="text" class="f-full" placeholder="Reserva; no /vip o card usa a miniatura" /></div>' +
           '<div class="f-vid-only hidden"><label>Arquivo vídeo (.mp4)</label><input type="text" class="f-video" /></div>' +
           '<div class="f-vid-only hidden"><label>Poster (jpg)</label><input type="text" class="f-poster" /></div>' +
-          '<label>Texto alt</label><input type="text" class="f-alt" />' +
+          '<div class="admin-type-hint" role="status">' +
+          '<span class="admin-type-hint__label">Tipo no /vip</span>' +
+          '<p class="admin-type-hint__body f-type-stats-line"></p>' +
+          "</div>" +
           '<label>Fallback miniatura (URL)</label><input type="url" class="f-tfb" />' +
           '<label>Handle no card</label><input type="text" class="f-handle" />' +
           '<div class="row2"><div><label>Views</label><input type="text" class="f-views" /></div><div><label>Likes</label><input type="text" class="f-likes" /></div></div>' +
@@ -866,7 +894,6 @@
         wrap.querySelector(".f-full").value = it.full || "";
         wrap.querySelector(".f-video").value = it.video || "";
         wrap.querySelector(".f-poster").value = it.poster || "";
-        wrap.querySelector(".f-alt").value = it.alt || "";
         wrap.querySelector(".f-tfb").value = it.thumbFallback || "";
         wrap.querySelector(".f-handle").value = it.handle || "@carolzinha";
         wrap.querySelector(".f-views").value = (it.metrics && it.metrics.views) || "";
@@ -874,12 +901,30 @@
         wrap.querySelector(".f-hearts").value = (it.metrics && it.metrics.hearts) || "";
         var vipCb = wrap.querySelector(".f-vip-locked");
         if (vipCb) vipCb.checked = isFeedItemVipLocked(it);
+        function updateFeedTypeHint() {
+          var line = wrap.querySelector(".f-type-stats-line");
+          if (!line) return;
+          var isVideo = wrap.querySelector(".f-type").value === "video";
+          line.textContent = "";
+          line.appendChild(document.createTextNode("Arquivo: "));
+          var strong = document.createElement("strong");
+          strong.textContent = isVideo ? "vídeo" : "imagem";
+          line.appendChild(strong);
+          line.appendChild(
+            document.createTextNode(
+              isVideo
+                ? " — nas estatísticas do perfil entra em Postagens e no contador Vídeos."
+                : " — nas estatísticas do perfil entra em Postagens (não no contador Vídeos)."
+            )
+          );
+        }
         function toggleVid() {
           var v = wrap.querySelector(".f-type").value === "video";
           wrap.querySelector(".f-img-only").classList.toggle("hidden", v);
           wrap.querySelectorAll(".f-vid-only").forEach(function (el) {
             el.classList.toggle("hidden", !v);
           });
+          updateFeedTypeHint();
         }
         toggleVid();
         wrap.querySelector(".f-type").addEventListener("change", toggleVid);
@@ -962,7 +1007,6 @@
               full: p.full,
               video: p.video,
               poster: p.poster,
-              alt: "",
               thumbFallback: "",
               handle: "@carolzinha",
               metrics: { views: "", likes: "", hearts: "" },
@@ -993,11 +1037,9 @@
           else o.vipLocked = false;
           if (t === "image") {
             o.full = wrap.querySelector(".f-full").value.trim();
-            o.alt = wrap.querySelector(".f-alt").value.trim();
           } else {
             o.video = wrap.querySelector(".f-video").value.trim();
             o.poster = wrap.querySelector(".f-poster").value.trim();
-            o.alt = wrap.querySelector(".f-alt").value.trim();
           }
           out.push(o);
         });
