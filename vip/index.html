@@ -436,6 +436,12 @@
       transition: filter 0.35s ease, transform 0.35s ease;
     }
 
+    /* Prévia de vídeo no grid: primeiro frame / poster — sem roubar clique do card */
+    .card__img.card__preview-video {
+      pointer-events: none;
+      background: #0a0a0a;
+    }
+
     .card__blur {
       filter: blur(12px) brightness(0.85);
       transform: scale(1.08);
@@ -935,6 +941,69 @@
           .replace(/"/g, "&quot;");
       }
 
+      /** URLs de vídeo não funcionam como src de <img> — usar <video> ou imagem de capa. */
+      function isProbablyVideoUrl(u) {
+        if (!u || typeof u !== "string") return false;
+        return /\.(mp4|webm|mov|m4v|ogv)(\?|#|$)/i.test(u.trim());
+      }
+
+      /** Primeira URL que pareça imagem (poster, thumb, fallback). */
+      function firstImagePreviewUrl(it) {
+        if (!it) return "";
+        var order = [it.poster, it.thumb, it.thumbFallback];
+        for (var i = 0; i < order.length; i++) {
+          var s = String(order[i] == null ? "" : order[i]).trim();
+          if (s && !isProbablyVideoUrl(s)) return s;
+        }
+        return "";
+      }
+
+      /** HTML da mídia do card: imagem estática ou <video> só para prévia (metadata). */
+      function buildFeedCardMedia(it, isVid, imgCls, alt) {
+        var vidUrl = String((it && it.video) || "").trim();
+        if (!isVid) {
+          return (
+            '<img class="' +
+            imgCls +
+            '" src="' +
+            esc(it.thumb || "") +
+            '" width="900" height="1200" alt="' +
+            esc(alt || "Post") +
+            '" loading="lazy" decoding="async"/>'
+          );
+        }
+        var imgSrc = firstImagePreviewUrl(it);
+        if (imgSrc) {
+          return (
+            '<img class="' +
+            imgCls +
+            '" src="' +
+            esc(imgSrc) +
+            '" width="900" height="1200" alt="' +
+            esc(alt || "Post") +
+            '" loading="lazy" decoding="async"/>'
+          );
+        }
+        if (vidUrl) {
+          return (
+            '<video class="' +
+            imgCls +
+            ' card__preview-video" src="' +
+            esc(vidUrl) +
+            '" muted playsinline preload="metadata" aria-label="' +
+            esc(alt || "Prévia do vídeo") +
+            '"></video>'
+          );
+        }
+        return (
+          '<img class="' +
+          imgCls +
+          '" src="" width="900" height="1200" alt="' +
+          esc(alt || "Post") +
+          '" loading="lazy" decoding="async"/>'
+        );
+      }
+
       function isFeedItemVipLocked(it) {
         var v = it && it.vipLocked;
         if (v === false || v === "false" || v === 0 || v === "0") return false;
@@ -990,7 +1059,12 @@
                 (isVid ? "video" : "image") +
                 '"';
               if (isVid) {
-                attrs += ' data-vip-video="' + esc(it.video || "") + '" data-vip-poster="' + esc(it.poster || it.thumb || "") + '"';
+                attrs +=
+                  ' data-vip-video="' +
+                  esc(it.video || "") +
+                  '" data-vip-poster="' +
+                  esc(firstImagePreviewUrl(it)) +
+                  '"';
                 attrs += ' data-vip-alt="' + esc(it.alt || "") + '"';
               } else {
                 attrs += ' data-vip-src="' + esc(lbImg) + '" data-vip-alt="' + esc(it.alt || "") + '"';
@@ -1007,13 +1081,7 @@
               attrs +
               ">" +
               vipBadge +
-              '<img class="' +
-              imgCls +
-              '" src="' +
-              esc(it.thumb || "") +
-              '" width="900" height="1200" alt="' +
-              esc(it.alt || "Post") +
-              '" loading="lazy" decoding="async"/>' +
+              buildFeedCardMedia(it, isVid, imgCls, it.alt || "Post") +
               play +
               '<div class="card__grad" aria-hidden="true"></div><div class="card__menu"><button type="button" class="icon-btn" title="Opções">⋮</button></div><div class="card__footer"><div class="card__user">' +
               handle +
@@ -1028,13 +1096,33 @@
           })
           .join("");
         root.innerHTML = html;
-        var imgs = root.querySelectorAll(".card__img");
+        var articles = root.querySelectorAll("article.card");
         items.forEach(function (it, idx) {
-          var img = imgs[idx];
-          if (!img || !it.thumbFallback) return;
-          img.addEventListener("error", function once() {
-            img.removeEventListener("error", once);
-            img.src = it.thumbFallback;
+          var card = articles[idx];
+          if (!card) return;
+          var el = card.querySelector(".card__img");
+          if (!el || el.tagName === "VIDEO") return;
+          var fb = String(it.thumbFallback == null ? "" : it.thumbFallback).trim();
+          if (!fb) return;
+          el.addEventListener("error", function once() {
+            el.removeEventListener("error", once);
+            if (it.type === "video" && isProbablyVideoUrl(fb)) {
+              var v = document.createElement("video");
+              v.className = el.className + " card__preview-video";
+              v.muted = true;
+              v.playsInline = true;
+              v.setAttribute("playsinline", "");
+              v.setAttribute("webkit-playsinline", "");
+              v.preload = "metadata";
+              v.src = String(it.video || "").trim() || fb;
+              var posterImg = firstImagePreviewUrl(it);
+              if (posterImg) v.poster = posterImg;
+              el.replaceWith(v);
+              return;
+            }
+            if (!isProbablyVideoUrl(fb)) {
+              el.src = fb;
+            }
           });
         });
       }
