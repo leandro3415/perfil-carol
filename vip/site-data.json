@@ -86,12 +86,5 @@
     "terms": "#",
     "support": "#",
     "copyright": "© 2026"
-  },
-  "novidades": [
-    {
-      "title": "Bem-vindo ao perfil",
-      "date": "2026-03-21",
-      "body": "Publique novidades pelo painel admin — elas aparecem aqui para seus visitantes."
-    }
-  ]
+  }
 }

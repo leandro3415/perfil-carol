@@ -181,25 +181,51 @@
       padding-top: 4px;
     }
 
-    @media (max-width: 380px) {
+    /* Mobile: coluna única — texto em largura confortável (evita bio espremida ao lado do avatar) */
+    @media (max-width: 560px) {
       .profile-head {
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        gap: 12px;
-      }
-
-      .profile-head__body {
-        padding-top: 0;
-        width: 100%;
+        gap: 14px;
+        margin-top: -48px;
+        padding: 0 clamp(18px, 5vw, 24px) 28px;
       }
 
       .profile-head__avatar {
         margin-top: -40px;
       }
 
+      .profile-head__body {
+        padding-top: 0;
+        width: 100%;
+        max-width: 32rem;
+        margin-inline: auto;
+      }
+
       .bio__name {
         justify-content: center;
+      }
+
+      .bio__handle {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .profile-tagline {
+        text-align: left;
+        margin: 0 0 10px;
+        font-size: 1.02rem;
+        line-height: 1.5;
+        font-weight: 600;
+        text-wrap: balance;
+      }
+
+      .bio__text {
+        text-align: left;
+        line-height: 1.65;
+        font-size: 0.97rem;
+        color: #e8e8e8;
+        letter-spacing: 0.01em;
       }
     }
 
@@ -244,6 +270,7 @@
       margin: 0;
       color: #e5e5e5;
       font-size: 0.95rem;
+      line-height: 1.55;
     }
 
     .bio__text--collapsed {
@@ -263,6 +290,28 @@
       border: none;
       padding: 0;
       cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .bio__more:hover {
+      color: var(--orange-soft);
+    }
+
+    @media (max-width: 560px) {
+      .bio__text--collapsed {
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
+      }
+
+      .bio__more {
+        margin-top: 12px;
+        padding: 10px 12px 10px 0;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        -webkit-tap-highlight-color: transparent;
+      }
     }
 
     .sub-bar {
@@ -603,44 +652,6 @@
       text-align: center;
     }
 
-    .novidades {
-      padding: 0 20px 8px;
-    }
-
-    .novidades__list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 8px;
-    }
-
-    .novidades__item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-    }
-
-    .novidades__item time {
-      font-size: 0.75rem;
-      color: var(--orange-soft);
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .novidades__item h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .novidades__item p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: #d4d4d4;
-      white-space: pre-wrap;
-    }
-
     .site-footer {
       padding: 24px 20px 16px;
       border-top: 1px solid #262626;
@@ -760,7 +771,7 @@
     • teaser-*.jpg  → 900 x 1200 px (3:4) — mínimo 600 x 800; o card do feed usa proporção 3:4
 
     Contagens: npm run stats  |  Servidor: npm start → http://localhost:3333/
-    Conteúdos editáveis: site-data.json (painel http://localhost:3333/admin.html — só com servidor ligado)
+    Conteúdos editáveis: site-data.json (painel /admin/ — só com servidor ligado)
   -->
   <header class="hero">
     <img
@@ -806,7 +817,8 @@
       <p class="bio__handle" id="profileHandle">@carolzinha</p>
       <p class="profile-tagline" id="profileTagline">Sou uma safadinha que adora se exibir 🔥</p>
       <p id="bioText" class="bio__text bio__text--collapsed">
-        Para acessar os meus conteúdos explícitos e interagir comigo no chat, entre no meu perfil 🔥 Aqui você encontra teasers; o restante fica no VIP com fotos, vídeos e conversa direta 🍑
+        Veja Todos os meus conteúdos explícitos  abaixo 🔥
+		o restante fica no VIP com fotos, vídeos Extras 🍑
       </p>
       <button type="button" class="bio__more" id="bioMore" aria-expanded="false">Ler mais</button>
     </div>
@@ -828,11 +840,6 @@
       <div class="stat__value" id="stat-midias">2</div>
       <div class="stat__label">Mídias</div>
     </div>
-  </section>
-
-  <section id="novidadesSection" class="novidades" aria-label="Novidades" hidden>
-    <h2 class="section-title">Novidades</h2>
-    <div id="novidadesList" class="novidades__list"></div>
   </section>
 
   <div class="divider" aria-hidden="true"></div>
@@ -942,31 +949,6 @@
         });
       }
 
-      function renderNovidades(list) {
-        var sec = document.getElementById("novidadesSection");
-        var listEl = document.getElementById("novidadesList");
-        if (!sec || !listEl) return;
-        if (!list || !list.length) {
-          sec.hidden = true;
-          return;
-        }
-        sec.hidden = false;
-        listEl.innerHTML = list
-          .map(function (n) {
-            var body = esc(n.body || "").replace(/\n/g, "<br>");
-            return (
-              '<article class="novidades__item"><time>' +
-              esc(n.date || "") +
-              "</time><h3>" +
-              esc(n.title || "") +
-              "</h3><p>" +
-              body +
-              "</p></article>"
-            );
-          })
-          .join("");
-      }
-
       function applySiteData(d) {
         if (!d) return;
         try {
@@ -1035,7 +1017,6 @@
             if (fcp) fcp.textContent = d.footer.copyright || "";
           }
           if (d.feed && d.feed.length) renderFeed(d.feed);
-          renderNovidades(d.novidades || []);
         } catch (err) {
           console.warn("site-data", err);
         }

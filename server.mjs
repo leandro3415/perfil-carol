@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
+import busboy from "busboy";
 import { getStats } from "./scripts/count-media.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,6 +18,33 @@ const ADMIN_USER = process.env.ADMIN_USER || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "3415787@#";
 
 const sessions = new Map();
+
+const VIP_MEDIA_DIRS = new Set(["Postagens", "Midias", "Feed teaser"]);
+
+const FOLDER_QUERY_MAP = {
+  postagens: "Postagens",
+  midias: "Midias",
+  "feed-teaser": "Feed teaser",
+};
+
+function sanitizeUploadFilename(name) {
+  const base = path.basename(name || "upload").replace(/[^a-zA-Z0-9._-]/g, "_");
+  return base.length > 160 ? base.slice(-160) : base || "upload.bin";
+}
+
+function resolveVipMediaPath(rel) {
+  const normalized = String(rel || "")
+    .replace(/\\/g, "/")
+    .replace(/^\/+/, "");
+  if (!normalized || normalized.includes("..")) return null;
+  const parts = normalized.split("/").filter(Boolean);
+  if (parts.length < 2 || !VIP_MEDIA_DIRS.has(parts[0])) return null;
+  const full = path.join(ROOT, "vip", ...parts);
+  const resolved = path.resolve(full);
+  const vipRoot = path.resolve(path.join(ROOT, "vip"));
+  if (!resolved.startsWith(vipRoot + path.sep) && resolved !== vipRoot) return null;
+  return resolved;
+}
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -140,6 +168,95 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (url.pathname === "/api/admin/upload" && method === "POST") {
+    if (!isAuthenticated(req)) {
+      json(res, 401, { ok: false, error: "Não autorizado" });
+      return;
+    }
+    const ct = req.headers["content-type"] || "";
+    if (!ct.toLowerCase().includes("multipart/form-data")) {
+      json(res, 400, { ok: false, error: "Use multipart/form-data com campo file" });
+      return;
+    }
+    const fk = (url.searchParams.get("folder") || "postagens").toLowerCase();
+    const dirName = FOLDER_QUERY_MAP[fk] || FOLDER_QUERY_MAP.postagens;
+
+    const bb = busboy({
+      headers: req.headers,
+      limits: { fileSize: 85 * 1024 * 1024 },
+    });
+
+    let savedPath = null;
+    let fileError = null;
+    let sawFile = false;
+
+    bb.on("file", (fieldname, file, info) => {
+      if (fieldname !== "file") {
+        file.resume();
+        return;
+      }
+      sawFile = true;
+      const dir = dirName;
+      const fname = sanitizeUploadFilename(info.filename);
+      const destDir = path.join(ROOT, "vip", dir);
+      const dest = path.join(destDir, fname);
+      const chunks = [];
+      file.on("data", (chunk) => chunks.push(chunk));
+      file.on("limit", () => {
+        fileError = "Arquivo muito grande (máx. ~85 MB)";
+      });
+      file.on("end", () => {
+        if (fileError) return;
+        try {
+          fs.mkdirSync(destDir, { recursive: true });
+          fs.writeFileSync(dest, Buffer.concat(chunks));
+          savedPath = `${dir}/${fname}`.replace(/\\/g, "/");
+        } catch (e) {
+          fileError = String(e.message || e);
+        }
+      });
+    });
+
+    bb.on("error", (err) => {
+      json(res, 400, { ok: false, error: String(err.message || err) });
+    });
+
+    bb.on("finish", () => {
+      if (fileError) {
+        json(res, 400, { ok: false, error: fileError });
+        return;
+      }
+      if (!sawFile || !savedPath) {
+        json(res, 400, { ok: false, error: 'Envie um arquivo no campo "file"' });
+        return;
+      }
+      json(res, 200, { ok: true, path: savedPath });
+    });
+
+    req.pipe(bb);
+    return;
+  }
+
+  if (url.pathname === "/api/admin/media" && method === "DELETE") {
+    if (!isAuthenticated(req)) {
+      json(res, 401, { ok: false, error: "Não autorizado" });
+      return;
+    }
+    const rel = url.searchParams.get("path") || "";
+    const resolved = resolveVipMediaPath(rel);
+    if (!resolved) {
+      json(res, 400, { ok: false, error: "path inválido (use Postagens/…, Midias/… ou Feed teaser/…)" });
+      return;
+    }
+    try {
+      fs.unlinkSync(resolved);
+      json(res, 200, { ok: true });
+    } catch (e) {
+      json(res, 404, { ok: false, error: "Arquivo não encontrado" });
+    }
+    return;
+  }
+
   if (url.pathname === "/api/admin/site-data" && method === "PUT") {
     if (!isAuthenticated(req)) {
       json(res, 401, { ok: false, error: "Não autorizado" });
@@ -216,4 +333,5 @@ server.listen(PORT, () => {
   console.log(`Perfil VIP:     http://localhost:${PORT}/vip/`);
   console.log(`Painel admin:   http://localhost:${PORT}/admin/`);
   console.log(`Dados VIP:      vip/site-data.json (PUT via admin)`);
+  console.log(`Upload admin:   POST /api/admin/upload?folder=postagens|midias|feed-teaser`);
 });

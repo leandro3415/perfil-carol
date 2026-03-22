@@ -1,1215 +1,722 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <base href="/vip/" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Perfil Carolzinha — teaser e assinatura" />
-  <title>Carolzinha | Perfil</title>
+  <meta name="site-data-json" content="/vip/site-data.json" />
+  <meta name="admin-preview-href" content="/vip/" />
+  <title>Painel admin — Carolzinha</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a0a;
-      --bg-card: #141414;
-      --text: #ffffff;
-      --text-muted: #a3a3a3;
-      --orange-1: #ff6b00;
-      --orange-2: #ffa500;
-      --orange-soft: #ff8c42;
-      --border: rgba(255, 140, 66, 0.35);
-      --overlay: rgba(0, 0, 0, 0.45);
-      --radius: 14px;
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --border: #333;
+      --orange: #ff6b00;
+      --text: #eee;
+      --muted: #888;
     }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: Inter, system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      padding-bottom: calc(88px + var(--safe-bottom));
+      min-height: 100vh;
+      padding: 20px;
     }
-
-    img {
-      max-width: 100%;
-      display: block;
+    h1 { font-size: 1.35rem; margin: 0 0 8px; }
+    h2 { font-size: 1rem; color: var(--orange); margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .warn {
+      background: rgba(255, 107, 0, 0.12);
+      border: 1px solid rgba(255, 107, 0, 0.35);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      color: #ffb380;
+      margin-bottom: 20px;
     }
-
-    button {
+    .login-box, .panel {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .login-box { max-width: 400px; margin-top: 8vh; }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin: 12px 0 4px; }
+    input[type="text"], input[type="password"], input[type="url"], input[type="date"], textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #111;
+      color: var(--text);
       font: inherit;
-      cursor: pointer;
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
+    button.primary {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
       border: none;
-      background: none;
-      color: inherit;
-    }
-
-    a {
-      color: var(--orange-soft);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .hero {
-      position: relative;
-      min-height: 42vh;
-      max-height: 520px;
-      overflow: hidden;
-    }
-
-    .hero__img {
-      width: 100%;
-      height: 100%;
-      min-height: 42vh;
-      object-fit: cover;
-      filter: saturate(1.05);
-    }
-
-    .hero__overlay {
-      position: absolute;
-      inset: 0;
-      /* Degradê alto: preto sobe bem na capa antes de sumir */
-      background: linear-gradient(
-        to top,
-        var(--bg) 0%,
-        rgba(10, 10, 10, 0.98) 14%,
-        rgba(10, 10, 10, 0.9) 30%,
-        rgba(10, 10, 10, 0.68) 48%,
-        rgba(10, 10, 10, 0.42) 62%,
-        rgba(10, 10, 10, 0.2) 78%,
-        rgba(10, 10, 10, 0.06) 90%,
-        transparent 97%,
-        var(--overlay) 100%
-      );
-      pointer-events: none;
-    }
-
-    .hero__bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-end;
-      padding: 12px 16px;
-      z-index: 2;
-    }
-
-    .icon-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.5);
-      display: grid;
-      place-items: center;
-      font-size: 1.25rem;
-      transition: background 0.2s;
-    }
-
-    .icon-btn:hover {
-      background: rgba(0, 0, 0, 0.7);
-    }
-
-    /* Bloco perfil: avatar + textos na mesma linha — evita texto atrás do círculo */
-    .profile-head {
-      position: relative;
-      z-index: 3;
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      margin-top: -52px;
-      padding: 0 20px 28px;
-      border-radius: 20px 20px 0 0;
-      /* Degradê no topo: faixa mais alta fundindo com a capa */
-      background-color: var(--bg);
-      background-image: linear-gradient(
-        180deg,
-        rgba(10, 10, 10, 0) 0%,
-        rgba(10, 10, 10, 0.18) 16%,
-        rgba(10, 10, 10, 0.48) 40%,
-        rgba(10, 10, 10, 0.8) 66%,
-        rgba(10, 10, 10, 0.97) 90%,
-        var(--bg) 100%
-      );
-      background-size: 100% clamp(150px, 44vw, 300px);
-      background-repeat: no-repeat;
-      background-position: center top;
-    }
-
-    .profile-head__avatar {
-      flex-shrink: 0;
-      width: 104px;
-      height: 104px;
-      margin-top: 0;
-    }
-
-    @media (min-width: 480px) {
-      .profile-head__avatar {
-        width: 112px;
-        height: 112px;
-      }
-    }
-
-    .avatar {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 4px solid var(--bg);
-      object-fit: cover;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    }
-
-    .profile-head__body {
-      flex: 1;
-      min-width: 0;
-      padding-top: 4px;
-    }
-
-    /* Mobile: coluna única — texto em largura confortável (evita bio espremida ao lado do avatar) */
-    @media (max-width: 560px) {
-      .profile-head {
-        flex-direction: column;
-        align-items: center;
-        gap: 14px;
-        margin-top: -48px;
-        padding: 0 clamp(18px, 5vw, 24px) 28px;
-      }
-
-      .profile-head__avatar {
-        margin-top: -40px;
-      }
-
-      .profile-head__body {
-        padding-top: 0;
-        width: 100%;
-        max-width: 32rem;
-        margin-inline: auto;
-      }
-
-      .bio__name {
-        justify-content: center;
-      }
-
-      .bio__handle {
-        text-align: center;
-        margin-bottom: 10px;
-      }
-
-      .profile-tagline {
-        text-align: left;
-        margin: 0 0 10px;
-        font-size: 1.02rem;
-        line-height: 1.5;
-        font-weight: 600;
-        text-wrap: balance;
-      }
-
-      .bio__text {
-        text-align: left;
-        line-height: 1.65;
-        font-size: 0.97rem;
-        color: #e8e8e8;
-        letter-spacing: 0.01em;
-      }
-    }
-
-    .profile-tagline {
-      margin: 0 0 12px;
-      font-size: clamp(0.9rem, 2.8vw, 1rem);
-      color: #f5f5f5;
-      line-height: 1.45;
-      word-wrap: break-word;
-      overflow-wrap: anywhere;
-    }
-
-    .bio__name {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      font-size: 1.35rem;
+      border-radius: 8px;
       font-weight: 700;
-      margin: 0 0 4px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      font-size: 0.7rem;
+      cursor: pointer;
+      background: linear-gradient(90deg, #ff6b00, #ffa500);
       color: #fff;
     }
-
-    .bio__handle {
-      margin: 0 0 16px;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .bio__text {
-      margin: 0;
-      color: #e5e5e5;
-      font-size: 0.95rem;
-      line-height: 1.55;
-    }
-
-    .bio__text--collapsed {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .bio__more {
-      margin-top: 10px;
-      display: inline-block;
-      font-weight: 600;
-      color: var(--orange-2);
-      background: none;
-      border: none;
-      padding: 0;
+    button.secondary {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #222;
+      color: var(--text);
       cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      font-size: 0.85rem;
     }
-
-    .bio__more:hover {
-      color: var(--orange-soft);
+    button.danger { border-color: #842; color: #f88; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+    .toolbar a { color: var(--orange); }
+    .feed-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #141414;
     }
-
-    @media (max-width: 560px) {
-      .bio__text--collapsed {
-        -webkit-line-clamp: 4;
-        line-clamp: 4;
-      }
-
-      .bio__more {
-        margin-top: 12px;
-        padding: 10px 12px 10px 0;
-        min-height: 44px;
-        display: inline-flex;
-        align-items: center;
-        -webkit-tap-highlight-color: transparent;
-      }
-    }
-
-    .sub-bar {
-      margin: 0 20px 24px;
-      padding: 18px 20px;
-      border-radius: var(--radius);
-      background: linear-gradient(90deg, #ff4500, #ffa500);
-      box-shadow: 0 8px 32px rgba(255, 107, 0, 0.25);
-    }
-
-    .sub-bar__btn {
-      width: 100%;
-      padding: 14px 24px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: #fff;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      backdrop-filter: blur(8px);
-      transition: transform 0.15s, background 0.2s;
-    }
-
-    .sub-bar__btn:hover {
-      background: rgba(255, 255, 255, 0.28);
-      transform: scale(1.01);
-    }
-
-    .sub-bar__hint {
-      margin: 12px 0 0;
-      font-size: 0.8rem;
-      text-align: center;
-      opacity: 0.95;
-    }
-
-    .stats {
-      margin: 0 20px 28px;
-      padding: 20px 16px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card);
-      border-radius: var(--radius);
+    .feed-item h3 { margin: 0 0 10px; font-size: 0.9rem; color: var(--muted); }
+    .media-previews {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 14px;
+      margin-top: 12px;
     }
-
-    .stat {
-      text-align: center;
-      padding: 8px;
+    @media (max-width: 560px) {
+      .media-previews { grid-template-columns: 1fr; }
     }
-
-    .stat__icon {
-      font-size: 1.25rem;
-      margin-bottom: 4px;
-    }
-
-    .stat__value {
-      font-weight: 800;
-      font-size: 1.15rem;
-    }
-
-    .stat__label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--orange-1), transparent);
-      margin: 0 20px 24px;
-    }
-
-    .section-title {
-      margin: 0 20px 14px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .feed {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      padding: 0 20px 32px;
-    }
-
-    @media (min-width: 640px) {
-      .feed {
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 900px;
-        margin: 0 auto 32px;
-      }
-    }
-
-    .card {
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--bg-card);
-      aspect-ratio: 3 / 4;
-      border: 1px solid rgba(255, 140, 66, 0.12);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 140, 66, 0.35);
-      border-color: rgba(255, 140, 66, 0.35);
-    }
-
-    .card__img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      transition: filter 0.35s ease, transform 0.35s ease;
-    }
-
-    .card__blur {
-      filter: blur(12px) brightness(0.85);
-      transform: scale(1.08);
-    }
-
-    .card:hover .card__blur {
-      filter: blur(7px) brightness(0.92);
-      transform: scale(1.05);
-    }
-
-    .card__grad {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.35) 42%, transparent 68%);
-      pointer-events: none;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .card,
-      .card__img {
-        transition: none;
-      }
-
-      .card:hover {
-        transform: none;
-      }
-
-      .card:hover .card__blur {
-        filter: blur(12px) brightness(0.85);
-        transform: scale(1.08);
-      }
-    }
-
-    .card__menu {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      z-index: 2;
-    }
-
-    .card__menu .icon-btn {
-      width: 36px;
-      height: 36px;
-      font-size: 1rem;
-    }
-
-    .card__footer {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 14px 10px 12px;
-      z-index: 2;
-    }
-
-    .card__user {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
-    }
-
-    .card__user .badge {
-      width: 16px;
-      height: 16px;
-      font-size: 0.55rem;
-    }
-
-    .card__metrics {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      font-size: 0.72rem;
-      color: #e8e8e8;
-      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
-    }
-
-    .card__metrics span {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .card[data-vip-type] {
-      cursor: pointer;
-    }
-
-    .card[data-vip-type]:focus-visible {
-      outline: 2px solid var(--orange-soft);
-      outline-offset: 2px;
-    }
-
-    .card__vip {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 4;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #fff;
-      background: linear-gradient(135deg, #ff6b00, #ff4500);
-      box-shadow: 0 2px 12px rgba(255, 80, 0, 0.45);
-      pointer-events: none;
-    }
-
-    .card--video .card__play-wrap {
-      position: absolute;
-      inset: 0;
-      z-index: 3;
-      display: grid;
-      place-items: center;
-      pointer-events: none;
-    }
-
-    .card__play {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.55);
-      border: 2px solid rgba(255, 255, 255, 0.85);
-      display: grid;
-      place-items: center;
-      font-size: 1.25rem;
-      color: #fff;
-      padding-left: 4px;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
-    }
-
-    .lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      box-sizing: border-box;
-    }
-
-    .lightbox.is-open {
-      display: flex;
-    }
-
-    body.lightbox-open {
-      overflow: hidden;
-    }
-
-    .lightbox__backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      cursor: pointer;
-    }
-
-    .lightbox__panel {
-      position: relative;
-      z-index: 1;
-      max-width: min(96vw, 520px);
-      max-height: min(88vh, 900px);
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .lightbox__close {
-      position: absolute;
-      top: -48px;
-      right: 0;
-      width: 44px;
-      height: 44px;
-      font-size: 1.5rem;
-      line-height: 1;
-      z-index: 2;
-    }
-
-    @media (min-width: 480px) {
-      .lightbox__close {
-        top: -52px;
-      }
-    }
-
-    .lightbox__img,
-    .lightbox__video {
-      max-width: 100%;
-      max-height: min(78vh, 780px);
-      width: auto;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-    }
-
-    .lightbox__video {
-      background: #000;
-    }
-
-    .lightbox__img[hidden],
-    .lightbox__video[hidden] {
-      display: none !important;
-    }
-
-    .lightbox__hint {
-      margin: 0;
-      font-size: 0.8rem;
-      color: #a3a3a3;
-      text-align: center;
-    }
-
-    .novidades {
-      padding: 0 20px 8px;
-    }
-
-    .novidades__list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 8px;
-    }
-
-    .novidades__item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-    }
-
-    .novidades__item time {
+    .lbl-prev {
       font-size: 0.75rem;
-      color: var(--orange-soft);
+      color: var(--muted);
       display: block;
       margin-bottom: 6px;
     }
-
-    .novidades__item h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .novidades__item p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: #d4d4d4;
-      white-space: pre-wrap;
-    }
-
-    .site-footer {
-      padding: 24px 20px 16px;
-      border-top: 1px solid #262626;
-      text-align: center;
-    }
-
-    .site-footer__links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px 24px;
-      margin-bottom: 16px;
-      font-size: 0.85rem;
-    }
-
-    .site-footer__links a {
-      color: var(--text-muted);
-    }
-
-    .site-footer__copy {
-      margin: 0;
-      font-size: 0.75rem;
-      color: #525252;
-    }
-
-    .fab {
-      position: fixed;
-      left: 16px;
-      right: 16px;
-      bottom: calc(16px + var(--safe-bottom));
-      z-index: 50;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      pointer-events: none;
-    }
-
-    .fab__btn {
-      pointer-events: auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: min(100%, 300px);
-      padding: 14px 28px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: #fff;
-      text-decoration: none;
-      text-align: center;
-      background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
-      box-shadow: 0 10px 40px rgba(255, 107, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: transform 0.15s, box-shadow 0.2s;
-    }
-
-    .fab__btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 48px rgba(255, 107, 0, 0.45);
-      color: #fff;
-    }
-
-    .menu-dropdown {
-      position: fixed;
-      top: 56px;
-      right: 16px;
-      min-width: 200px;
-      background: #1f1f1f;
-      border: 1px solid #333;
-      border-radius: 12px;
-      padding: 8px 0;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
-      z-index: 100;
-      display: none;
-    }
-
-    .menu-dropdown.is-open {
-      display: block;
-    }
-
-    .menu-dropdown button {
+    .media-preview {
       width: 100%;
-      text-align: left;
-      padding: 12px 16px;
-      font-size: 0.9rem;
-      color: #e5e5e5;
+      max-height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
     }
-
-    .menu-dropdown button:hover {
-      background: #2a2a2a;
+    .help {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0 0 12px;
+      line-height: 1.45;
     }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+    .upload-tools {
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 8px;
+      background: #141414;
     }
+    .feed-preview-block { margin-top: 10px; }
+    .f-feed-preview {
+      width: 100%;
+      max-height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-top: 4px;
+    }
+    .hidden { display: none !important; }
+    #saveStatus { font-size: 0.85rem; margin-left: 8px; color: var(--muted); }
+    #saveStatus.ok { color: #6d6; }
+    #saveStatus.err { color: #f66; }
   </style>
 </head>
 <body>
-  <!--
-    Mídias locais (mesmo nível que index.html):
-    Postagens/capa.jpg — banner do topo
-    Midias/avatar.jpg — foto redonda do perfil
-    Feed teaser/teaser-1.jpg … teaser-4.jpg — thumbnails do grid
-    Feed teaser/teaser-3.mp4 e teaser-4.mp4 — vídeos VIP (poster = mesmo número .jpg)
+  <p class="warn">
+    Acesse só em rede confiável. Em produção use HTTPS e defina <code>ADMIN_USER</code> e <code>ADMIN_PASSWORD</code> no ambiente — não commite senha no Git.
+  </p>
 
-    Resoluções recomendadas (exportar as fotos assim fica nítido no celular e no PC):
-    • capa.jpg      → 1920 x 1080 px (16:9) — mínimo ~1200 x 675; área visível corta com object-fit: cover
-    • avatar.jpg    → 512 x 512 px (quadrada) — mínimo 256 x 256; exibida ~112 px, margem para retina
-    • teaser-*.jpg  → 900 x 1200 px (3:4) — mínimo 600 x 800; o card do feed usa proporção 3:4
-
-    Contagens: npm run stats  |  Servidor: npm start → http://localhost:3333/
-    Conteúdos editáveis: site-data.json (painel http://localhost:3333/admin.html — só com servidor ligado)
-  -->
-  <header class="hero">
-    <img
-      id="heroCover"
-      class="hero__img"
-      src="Postagens/capa.jpg"
-      onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80'"
-      alt="Capa do perfil"
-      width="1920"
-      height="1080"
-    />
-    <div class="hero__overlay" aria-hidden="true"></div>
-    <div class="hero__bar">
-      <button type="button" class="icon-btn" id="menuToggle" aria-expanded="false" aria-haspopup="true" aria-controls="mainMenu" title="Menu">
-        ⋮
-      </button>
-    </div>
-  </header>
-
-  <div id="mainMenu" class="menu-dropdown" role="menu" aria-label="Opções do perfil">
-    <button type="button" role="menuitem">Compartilhar perfil</button>
-    <button type="button" role="menuitem">Copiar link</button>
-    <button type="button" role="menuitem">Denunciar</button>
+  <div id="loginScreen" class="login-box">
+    <p id="localOnlyWarn" class="hidden" style="background:rgba(255,80,80,0.12);border:1px solid rgba(255,100,100,0.4);border-radius:8px;padding:12px 14px;font-size:0.85rem;color:#faa;margin:0 0 16px;line-height:1.45;">
+      Este arquivo foi aberto direto do disco (<code>file://</code>). O login <strong>não funciona</strong> assim.
+      No terminal, na pasta do projeto, rode <code>node server.mjs</code> e abra no navegador:
+      <strong>http://localhost:3333/admin/</strong> (use a mesma porta que o terminal mostrar).
+    </p>
+    <h1>Painel admin</h1>
+    <p style="color:var(--muted);font-size:0.9rem;margin:0 0 16px;">Entre para editar o site.</p>
+    <label for="admUser">Usuário</label>
+    <input type="text" id="admUser" autocomplete="username" />
+    <label for="admPass">Senha</label>
+    <input type="password" id="admPass" autocomplete="current-password" />
+    <p id="loginErr" class="hidden" style="color:#f66;font-size:0.85rem;margin-top:10px;"></p>
+    <button type="button" class="primary" id="btnLogin">Entrar</button>
   </div>
 
-  <section class="profile-head" aria-label="Perfil">
-    <div class="profile-head__avatar">
-      <img
-        id="avatarImg"
-        class="avatar"
-        src="Midias/avatar.jpg"
-        onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=512&q=80'"
-        alt="Foto de perfil de Carolzinha"
-        width="512"
-        height="512"
-      />
+  <div id="dashboard" class="panel hidden">
+    <div class="toolbar">
+      <h1 style="margin:0;flex:1;">Editar site</h1>
+      <button type="button" class="secondary" id="btnPreview">Abrir site</button>
+      <button type="button" class="secondary danger" id="btnLogout">Sair</button>
     </div>
-    <div class="profile-head__body">
-      <h1 class="bio__name">
-        <span id="profileName">Carolzinha</span>
-        <span class="badge" title="Verificado" aria-hidden="true">✓</span>
-      </h1>
-      <p class="bio__handle" id="profileHandle">@carolzinha</p>
-      <p class="profile-tagline" id="profileTagline">Sou uma safadinha que adora se exibir 🔥</p>
-      <p id="bioText" class="bio__text bio__text--collapsed">
-        Veja Todos os meus conteúdos explícitos  abaixo 🔥
-		o restante fica no VIP com fotos, vídeos Extras 🍑
-      </p>
-      <button type="button" class="bio__more" id="bioMore" aria-expanded="false">Ler mais</button>
+
+    <h2>Meta (Google / aba do navegador)</h2>
+    <label for="metaTitle">Título da página</label>
+    <input type="text" id="metaTitle" />
+    <label for="metaDesc">Descrição</label>
+    <textarea id="metaDesc" rows="2"></textarea>
+
+    <h2>Perfil</h2>
+    <div class="row2">
+      <div>
+        <label for="profName">Nome exibido</label>
+        <input type="text" id="profName" />
+      </div>
+      <div>
+        <label for="profHandle">Handle (ex. @carolzinha)</label>
+        <input type="text" id="profHandle" />
+      </div>
     </div>
-  </section>
+    <label for="profTag">Tagline (linha curta)</label>
+    <input type="text" id="profTag" />
+    <label for="profBio">Bio (texto longo)</label>
+    <textarea id="profBio" rows="4"></textarea>
 
-  <section class="sub-bar" aria-label="Assinatura">
-    <button type="button" class="sub-bar__btn" id="subBarBtn"><span id="subBarBtnLabel">Gratuito</span></button>
-    <p class="sub-bar__hint" id="subBarHint">Perfil teaser — desbloqueie o VIP para conteúdo completo e chat</p>
-  </section>
-
-  <section class="stats" aria-label="Estatísticas">
-    <div class="stat">
-      <div class="stat__icon" aria-hidden="true">📸</div>
-      <div class="stat__value" id="stat-postagens">1</div>
-      <div class="stat__label">Postagens</div>
+    <h2>Caminhos das mídias</h2>
+    <div class="row2">
+      <div>
+        <label for="mediaHero">Capa (hero)</label>
+        <input type="text" id="mediaHero" placeholder="Postagens/capa.jpg" />
+      </div>
+      <div>
+        <label for="mediaHeroFb">Fallback URL capa</label>
+        <input type="url" id="mediaHeroFb" />
+      </div>
     </div>
-    <div class="stat">
-      <div class="stat__icon" aria-hidden="true">▶️</div>
-      <div class="stat__value" id="stat-midias">2</div>
-      <div class="stat__label">Mídias</div>
+    <div class="row2">
+      <div>
+        <label for="mediaAv">Avatar</label>
+        <input type="text" id="mediaAv" placeholder="Midias/avatar.jpg" />
+      </div>
+      <div>
+        <label for="mediaAvFb">Fallback URL avatar</label>
+        <input type="url" id="mediaAvFb" />
+      </div>
     </div>
-  </section>
+    <div class="media-previews">
+      <div>
+        <span class="lbl-prev">Prévia da capa</span>
+        <img id="previewHero" class="media-preview hidden" alt="" />
+      </div>
+      <div>
+        <span class="lbl-prev">Prévia do avatar</span>
+        <img id="previewAv" class="media-preview hidden" alt="" />
+      </div>
+    </div>
 
-  <section id="novidadesSection" class="novidades" aria-label="Novidades" hidden>
-    <h2 class="section-title">Novidades</h2>
-    <div id="novidadesList" class="novidades__list"></div>
-  </section>
+    <h2>Publicar / excluir arquivo no disco</h2>
+    <p class="help" id="mediaToolsHint"></p>
+    <div id="mediaTools" class="upload-tools">
+      <label for="upFolder">Pasta dentro de <code>vip/</code></label>
+      <select id="upFolder" style="width:100%;max-width:320px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#111;color:var(--text);font:inherit;">
+        <option value="postagens">Postagens (ex.: capa)</option>
+        <option value="midias">Midias (ex.: avatar)</option>
+        <option value="feed-teaser">Feed teaser (miniaturas / vídeos)</option>
+      </select>
+      <label for="upFile">Arquivo</label>
+      <input type="file" id="upFile" />
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+        <button type="button" class="secondary" id="btnUpload">Enviar</button>
+        <span id="upStatus" style="font-size:0.85rem;color:var(--muted);"></span>
+      </div>
+      <p style="margin:16px 0 8px;font-size:0.8rem;color:var(--muted);">Excluir arquivo (caminho exato, ex.: <code>Feed teaser/old.jpg</code>)</p>
+      <input type="text" id="delPath" placeholder="Postagens/arquivo.jpg" />
+      <button type="button" class="secondary danger" id="btnDelMedia" style="margin-top:10px;">Excluir do disco</button>
+    </div>
 
-  <div class="divider" aria-hidden="true"></div>
+    <h2>Faixa laranja (Gratuito)</h2>
+    <div class="row2">
+      <div>
+        <label for="subBtn">Texto do botão</label>
+        <input type="text" id="subBtn" />
+      </div>
+      <div>
+        <label for="subHint">Subtítulo</label>
+        <input type="text" id="subHint" />
+      </div>
+    </div>
 
-  <h2 class="section-title">Feed teaser</h2>
-  <!--
-    Dicas para melhorar cada postagem no feed:
-    • Use fotos em 3:4 (ex.: 900x1200), rosto ou foco principal um pouco acima do centro — o rodapé escuro cobre a base.
-    • Luz frontal ou lateral suave; evite foto muito escura (o blur + degradê já reduzem detalhe).
-    • Exporte JPG ~80–90% de qualidade ou WebP para carregar rápido no celular.
-    • No hover o card levanta e o blur diminui levemente — bom para dar sensação de "quase ver" (teaser).
-    • Ajuste texto/métricas por card copiando o bloco <article class="card"> e mudando números ou @.
-    • VIP imagem: toque abre lightbox sem blur — data-vip-type="image" + data-vip-src (pode ser o mesmo JPG ou versão full).
-    • VIP vídeo: coloque teaser-N.mp4 na pasta Feed teaser; use data-vip-type="video" + data-vip-video + poster no <img>.
-  -->
-  <div class="feed" id="feedRoot" role="list"></div>
+    <h2>Botão flutuante (VIP)</h2>
+    <div class="row2">
+      <div>
+        <label for="fabHref">Link (URL)</label>
+        <input type="text" id="fabHref" placeholder="https://..." />
+      </div>
+      <div>
+        <label for="fabLabel">Texto</label>
+        <input type="text" id="fabLabel" />
+      </div>
+    </div>
+    <label for="fabEmoji">Emoji (opcional)</label>
+    <input type="text" id="fabEmoji" maxlength="4" style="max-width:120px" />
 
-  <footer class="site-footer">
-    <nav class="site-footer__links" aria-label="Rodapé">
-      <a href="#" id="footerPrivacy">Política de privacidade</a>
-      <a href="#" id="footerTerms">Termos de uso</a>
-      <a href="#" id="footerSupport">Suporte</a>
-    </nav>
-    <p class="site-footer__copy" id="footerCopy">© 2026 — Página demonstrativa. Substitua links e imagens pelos seus.</p>
-  </footer>
+    <h2>Rodapé</h2>
+    <div class="row2">
+      <div>
+        <label for="ftPriv">Política (URL)</label>
+        <input type="text" id="ftPriv" />
+      </div>
+      <div>
+        <label for="ftTerms">Termos (URL)</label>
+        <input type="text" id="ftTerms" />
+      </div>
+    </div>
+    <label for="ftSupport">Suporte (URL)</label>
+    <input type="text" id="ftSupport" />
+    <label for="ftCopy">Copyright / texto final</label>
+    <input type="text" id="ftCopy" />
 
-  <div class="fab">
-    <a id="fabBtn" class="fab__btn" href="#" role="button" aria-label="Assinar VIP"><span id="fabLabel">Assinar VIP</span> <span id="fabEmoji" aria-hidden="true">🔥</span></a>
-  </div>
+    <h2>Feed VIP (posts)</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin:0 0 12px;">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.</p>
+    <div id="feedEditor"></div>
+    <button type="button" class="secondary" id="btnAddFeed">+ Adicionar post</button>
 
-  <div id="vipLightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Visualizar conteúdo VIP" aria-hidden="true">
-    <div class="lightbox__backdrop" data-lightbox-close tabindex="-1"></div>
-    <div class="lightbox__panel">
-      <button type="button" class="lightbox__close icon-btn" data-lightbox-close aria-label="Fechar">×</button>
-      <img class="lightbox__img" alt="" hidden />
-      <video class="lightbox__video" controls playsinline preload="metadata" hidden></video>
-      <p class="lightbox__hint">Toque fora ou em Fechar para sair</p>
+    <div style="margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+      <button type="button" class="primary" id="btnSave" style="width:auto;min-width:160px;padding:12px 24px;">Salvar tudo</button>
+      <span id="saveStatus"></span>
     </div>
   </div>
 
   <script>
     (function () {
-      function esc(s) {
-        return String(s == null ? "" : s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/"/g, "&quot;");
+      var loginScreen = document.getElementById("loginScreen");
+      var dashboard = document.getElementById("dashboard");
+      /** @type {any} */
+      var siteData = null;
+      /** Só HTTP(S) tem origem válida para cookies e /api — file:// quebra o login */
+      var API_BASE =
+        location.protocol === "http:" || location.protocol === "https:"
+          ? location.origin
+          : "";
+
+      if (!API_BASE) {
+        document.getElementById("localOnlyWarn").classList.remove("hidden");
+        document.getElementById("btnLogin").disabled = true;
       }
 
-      function renderFeed(items) {
-        var root = document.getElementById("feedRoot");
-        if (!root || !items || !items.length) return;
-        var html = items
-          .map(function (it) {
-            var isVid = it.type === "video";
-            var cls = isVid ? "card card--video" : "card";
-            var label = isVid ? "Reproduzir vídeo VIP" : "Ver foto VIP em tela cheia";
-            var play = isVid
-              ? '<div class="card__play-wrap" aria-hidden="true"><span class="card__play">▶</span></div>'
-              : "";
-            var attrs =
-              ' role="listitem" tabindex="0" aria-label="' +
-              esc(label) +
-              '" data-vip-type="' +
-              (isVid ? "video" : "image") +
-              '"';
-            if (isVid) {
-              attrs += ' data-vip-video="' + esc(it.video || "") + '" data-vip-poster="' + esc(it.poster || it.thumb || "") + '"';
-              attrs += ' data-vip-alt="' + esc(it.alt || "") + '"';
-            } else {
-              attrs += ' data-vip-src="' + esc(it.full || it.thumb || "") + '" data-vip-alt="' + esc(it.alt || "") + '"';
-            }
-            var m = it.metrics || {};
-            var handle = esc(it.handle || "@carolzinha");
-            return (
-              '<article class="' +
-              cls +
-              '"' +
-              attrs +
-              '><span class="card__vip">VIP</span><img class="card__img card__blur" src="' +
-              esc(it.thumb || "") +
-              '" width="900" height="1200" alt="' +
-              esc(it.alt || "VIP") +
-              '" loading="lazy" decoding="async"/>' +
-              play +
-              '<div class="card__grad" aria-hidden="true"></div><div class="card__menu"><button type="button" class="icon-btn" title="Opções">⋮</button></div><div class="card__footer"><div class="card__user">' +
-              handle +
-              ' <span class="badge" aria-label="Verificado">✓</span></div><div class="card__metrics"><span>👁 ' +
-              esc(m.views) +
-              '</span><span>❤️ ' +
-              esc(m.likes) +
-              '</span><span>💕 ' +
-              esc(m.hearts) +
-              "</span></div></div></article>"
-            );
-          })
-          .join("");
-        root.innerHTML = html;
-        var imgs = root.querySelectorAll(".card__img");
-        items.forEach(function (it, idx) {
-          var img = imgs[idx];
-          if (!img || !it.thumbFallback) return;
-          img.addEventListener("error", function once() {
-            img.removeEventListener("error", once);
-            img.src = it.thumbFallback;
+      function apiUrl(path) {
+        return API_BASE + path;
+      }
+
+      function getSiteDataUrl() {
+        var m = document.querySelector('meta[name="site-data-json"]');
+        if (m && m.getAttribute("content")) return m.getAttribute("content").trim();
+        return "/vip/site-data.json";
+      }
+
+      function getPreviewHref() {
+        var m = document.querySelector('meta[name="admin-preview-href"]');
+        if (m && m.getAttribute("content")) return m.getAttribute("content").trim();
+        return "/vip/";
+      }
+
+      function vipAssetUrl(rel) {
+        if (!rel || !String(rel).trim()) return "";
+        var parts = String(rel)
+          .trim()
+          .split("/")
+          .map(function (p) {
+            return encodeURIComponent(p);
           });
+        return apiUrl("/vip/" + parts.join("/"));
+      }
+
+      function syncMediaPreviews() {
+        function one(inputId, imgId) {
+          var inp = document.getElementById(inputId);
+          var img = document.getElementById(imgId);
+          if (!inp || !img) return;
+          var v = inp.value.trim();
+          if (!v) {
+            img.classList.add("hidden");
+            img.removeAttribute("src");
+            return;
+          }
+          img.src = vipAssetUrl(v);
+          img.classList.remove("hidden");
+          img.onerror = function () {
+            img.classList.add("hidden");
+          };
+        }
+        one("mediaHero", "previewHero");
+        one("mediaAv", "previewAv");
+      }
+
+      function refreshMediaTools() {
+        var hint = document.getElementById("mediaToolsHint");
+        var box = document.getElementById("mediaTools");
+        var local = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+        if (hint) {
+          hint.textContent = local
+            ? "Grava em vip/ neste PC. Se mudar nomes de arquivo, ajuste os campos acima / feed e clique em Salvar tudo. Contadores: npm run stats no terminal."
+            : "Na Vercel não há pasta gravável pelo navegador: envie imagens pelo Git em vip/… e use Salvar tudo. Para enviar pelo painel, use node server.mjs no PC.";
+        }
+        if (box) {
+          box.style.opacity = local ? "1" : "0.6";
+          ["upFolder", "upFile", "delPath", "btnUpload", "btnDelMedia"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.disabled = !local;
+          });
+        }
+      }
+
+      function api(path, opts) {
+        opts = opts || {};
+        opts.credentials = "include";
+        opts.headers = opts.headers || {};
+        if (opts.body && typeof opts.body === "object" && !(opts.body instanceof FormData)) {
+          opts.body = JSON.stringify(opts.body);
+          opts.headers["Content-Type"] = "application/json";
+        }
+        return fetch(apiUrl(path), opts);
+      }
+
+      function showLogin() {
+        loginScreen.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+      }
+
+      function showDash() {
+        loginScreen.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        refreshMediaTools();
+      }
+
+      function fillForm(d) {
+        siteData = d;
+        document.getElementById("metaTitle").value = d.meta.title || "";
+        document.getElementById("metaDesc").value = d.meta.description || "";
+        document.getElementById("profName").value = d.profile.displayName || "";
+        document.getElementById("profHandle").value = d.profile.handle || "";
+        document.getElementById("profTag").value = d.profile.tagline || "";
+        document.getElementById("profBio").value = d.profile.bio || "";
+        document.getElementById("mediaHero").value = d.media.hero || "";
+        document.getElementById("mediaHeroFb").value = d.media.heroFallback || "";
+        document.getElementById("mediaAv").value = d.media.avatar || "";
+        document.getElementById("mediaAvFb").value = d.media.avatarFallback || "";
+        document.getElementById("subBtn").value = d.subBar.buttonLabel || "";
+        document.getElementById("subHint").value = d.subBar.hint || "";
+        document.getElementById("fabHref").value = d.fab.href || "";
+        document.getElementById("fabLabel").value = d.fab.label || "";
+        document.getElementById("fabEmoji").value = d.fab.emoji || "";
+        document.getElementById("ftPriv").value = d.footer.privacy || "";
+        document.getElementById("ftTerms").value = d.footer.terms || "";
+        document.getElementById("ftSupport").value = d.footer.support || "";
+        document.getElementById("ftCopy").value = d.footer.copyright || "";
+        renderFeedEditor(d.feed || []);
+        syncMediaPreviews();
+      }
+
+      function collectData() {
+        var feed = collectFeedFromEditor();
+        return {
+          version: siteData && siteData.version ? siteData.version : 1,
+          meta: {
+            title: document.getElementById("metaTitle").value.trim(),
+            description: document.getElementById("metaDesc").value.trim(),
+          },
+          profile: {
+            displayName: document.getElementById("profName").value.trim(),
+            handle: document.getElementById("profHandle").value.trim(),
+            tagline: document.getElementById("profTag").value.trim(),
+            bio: document.getElementById("profBio").value.trim(),
+          },
+          media: {
+            hero: document.getElementById("mediaHero").value.trim(),
+            heroFallback: document.getElementById("mediaHeroFb").value.trim(),
+            avatar: document.getElementById("mediaAv").value.trim(),
+            avatarFallback: document.getElementById("mediaAvFb").value.trim(),
+          },
+          subBar: {
+            buttonLabel: document.getElementById("subBtn").value.trim(),
+            hint: document.getElementById("subHint").value.trim(),
+          },
+          feed: feed,
+          fab: {
+            href: document.getElementById("fabHref").value.trim() || "#",
+            label: document.getElementById("fabLabel").value.trim(),
+            emoji: document.getElementById("fabEmoji").value.trim() || "🔥",
+          },
+          footer: {
+            privacy: document.getElementById("ftPriv").value.trim() || "#",
+            terms: document.getElementById("ftTerms").value.trim() || "#",
+            support: document.getElementById("ftSupport").value.trim() || "#",
+            copyright: document.getElementById("ftCopy").value.trim(),
+          },
+        };
+      }
+
+      var feedEditor = document.getElementById("feedEditor");
+
+      function renderFeedEditor(items) {
+        feedEditor.innerHTML = "";
+        items.forEach(function (it, i) {
+          feedEditor.appendChild(feedRowEl(it, i));
         });
       }
 
-      function renderNovidades(list) {
-        var sec = document.getElementById("novidadesSection");
-        var listEl = document.getElementById("novidadesList");
-        if (!sec || !listEl) return;
-        if (!list || !list.length) {
-          sec.hidden = true;
+      function feedRowEl(it, index) {
+        var wrap = document.createElement("div");
+        wrap.className = "feed-item";
+        wrap.dataset.index = String(index);
+        var type = it.type === "video" ? "video" : "image";
+        wrap.innerHTML =
+          "<h3>Post #" +
+          (index + 1) +
+          "</h3>" +
+          '<label>Tipo</label><select class="f-type"><option value="image">Foto VIP</option><option value="video">Vídeo VIP</option></select>' +
+          '<label>Miniatura (grid)</label><input type="text" class="f-thumb" placeholder="Feed teaser/teaser-1.jpg" />' +
+          '<div class="f-img-only"><label>Imagem no lightbox (URL)</label><input type="text" class="f-full" /></div>' +
+          '<div class="f-vid-only hidden"><label>Arquivo vídeo (.mp4)</label><input type="text" class="f-video" /></div>' +
+          '<div class="f-vid-only hidden"><label>Poster (jpg)</label><input type="text" class="f-poster" /></div>' +
+          '<label>Texto alt</label><input type="text" class="f-alt" />' +
+          '<label>Fallback miniatura (URL)</label><input type="url" class="f-tfb" />' +
+          '<label>Handle no card</label><input type="text" class="f-handle" />' +
+          '<div class="row2"><div><label>Views</label><input type="text" class="f-views" /></div><div><label>Likes</label><input type="text" class="f-likes" /></div></div>' +
+          '<label>Corações (texto)</label><input type="text" class="f-hearts" />' +
+          '<div class="feed-preview-block"><span class="lbl-prev">Prévia (miniatura)</span><img class="f-feed-preview hidden" alt="" loading="lazy" /></div>' +
+          '<button type="button" class="secondary danger" style="margin-top:10px">Remover este post</button>';
+        wrap.querySelector(".f-type").value = type;
+        wrap.querySelector(".f-thumb").value = it.thumb || "";
+        wrap.querySelector(".f-full").value = it.full || "";
+        wrap.querySelector(".f-video").value = it.video || "";
+        wrap.querySelector(".f-poster").value = it.poster || "";
+        wrap.querySelector(".f-alt").value = it.alt || "";
+        wrap.querySelector(".f-tfb").value = it.thumbFallback || "";
+        wrap.querySelector(".f-handle").value = it.handle || "@carolzinha";
+        wrap.querySelector(".f-views").value = (it.metrics && it.metrics.views) || "";
+        wrap.querySelector(".f-likes").value = (it.metrics && it.metrics.likes) || "";
+        wrap.querySelector(".f-hearts").value = (it.metrics && it.metrics.hearts) || "";
+        function toggleVid() {
+          var v = wrap.querySelector(".f-type").value === "video";
+          wrap.querySelector(".f-img-only").classList.toggle("hidden", v);
+          wrap.querySelectorAll(".f-vid-only").forEach(function (el) {
+            el.classList.toggle("hidden", !v);
+          });
+        }
+        toggleVid();
+        wrap.querySelector(".f-type").addEventListener("change", toggleVid);
+        wrap.querySelector(".danger").addEventListener("click", function () {
+          wrap.remove();
+          renumberFeed();
+        });
+        function refreshFeedRowPreview() {
+          var img = wrap.querySelector(".f-feed-preview");
+          var thumb = wrap.querySelector(".f-thumb").value.trim();
+          var fb = wrap.querySelector(".f-tfb").value.trim();
+          if (!img) return;
+          if (!thumb) {
+            img.classList.add("hidden");
+            img.removeAttribute("src");
+            return;
+          }
+          img.classList.remove("hidden");
+          img.src = vipAssetUrl(thumb);
+          img.onerror = function () {
+            img.onerror = function () {
+              img.classList.add("hidden");
+            };
+            if (fb) img.src = fb;
+            else img.classList.add("hidden");
+          };
+        }
+        wrap.querySelector(".f-thumb").addEventListener("input", refreshFeedRowPreview);
+        wrap.querySelector(".f-tfb").addEventListener("input", refreshFeedRowPreview);
+        refreshFeedRowPreview();
+        return wrap;
+      }
+
+      function renumberFeed() {
+        feedEditor.querySelectorAll(".feed-item").forEach(function (el, i) {
+          el.querySelector("h3").textContent = "Post #" + (i + 1);
+        });
+      }
+
+      document.getElementById("btnAddFeed").addEventListener("click", function () {
+        feedEditor.appendChild(
+          feedRowEl(
+            {
+              type: "image",
+              thumb: "",
+              full: "",
+              alt: "",
+              thumbFallback: "",
+              handle: "@carolzinha",
+              metrics: { views: "", likes: "", hearts: "" },
+            },
+            feedEditor.children.length
+          )
+        );
+        renumberFeed();
+      });
+
+      function collectFeedFromEditor() {
+        var out = [];
+        feedEditor.querySelectorAll(".feed-item").forEach(function (wrap) {
+          var t = wrap.querySelector(".f-type").value;
+          var o = {
+            type: t,
+            thumb: wrap.querySelector(".f-thumb").value.trim(),
+            thumbFallback: wrap.querySelector(".f-tfb").value.trim(),
+            handle: wrap.querySelector(".f-handle").value.trim(),
+            metrics: {
+              views: wrap.querySelector(".f-views").value.trim(),
+              likes: wrap.querySelector(".f-likes").value.trim(),
+              hearts: wrap.querySelector(".f-hearts").value.trim(),
+            },
+          };
+          if (t === "image") {
+            o.full = wrap.querySelector(".f-full").value.trim();
+            o.alt = wrap.querySelector(".f-alt").value.trim();
+          } else {
+            o.video = wrap.querySelector(".f-video").value.trim();
+            o.poster = wrap.querySelector(".f-poster").value.trim();
+            o.alt = wrap.querySelector(".f-alt").value.trim();
+          }
+          out.push(o);
+        });
+        return out;
+      }
+
+      document.getElementById("btnLogin").addEventListener("click", async function () {
+        var err = document.getElementById("loginErr");
+        err.classList.add("hidden");
+        var r = await api("/api/admin/login", {
+          method: "POST",
+          body: {
+            username: document.getElementById("admUser").value.trim(),
+            password: document.getElementById("admPass").value,
+          },
+        });
+        var j = await r.json().catch(function () {
+          return {};
+        });
+        if (!r.ok) {
+          err.textContent = j.error || "Falha no login";
+          err.classList.remove("hidden");
           return;
         }
-        sec.hidden = false;
-        listEl.innerHTML = list
-          .map(function (n) {
-            var body = esc(n.body || "").replace(/\n/g, "<br>");
-            return (
-              '<article class="novidades__item"><time>' +
-              esc(n.date || "") +
-              "</time><h3>" +
-              esc(n.title || "") +
-              "</h3><p>" +
-              body +
-              "</p></article>"
-            );
-          })
-          .join("");
+        await loadSiteData();
+        showDash();
+      });
+
+      document.getElementById("btnLogout").addEventListener("click", async function () {
+        await api("/api/admin/logout", { method: "POST" });
+        showLogin();
+      });
+
+      document.getElementById("btnPreview").addEventListener("click", function () {
+        window.open(getPreviewHref(), "_blank");
+      });
+
+      async function loadSiteData() {
+        var r = await fetch(apiUrl(getSiteDataUrl()), { cache: "no-store", credentials: "include" });
+        siteData = await r.json();
+        fillForm(siteData);
       }
 
-      function applySiteData(d) {
-        if (!d) return;
-        try {
-          if (d.meta) {
-            if (d.meta.title) document.title = d.meta.title;
-            var md = document.querySelector('meta[name="description"]');
-            if (md && d.meta.description) md.setAttribute("content", d.meta.description);
-          }
-          if (d.profile) {
-            var pn = document.getElementById("profileName");
-            if (pn) pn.textContent = d.profile.displayName || "";
-            var ph = document.getElementById("profileHandle");
-            if (ph) ph.textContent = d.profile.handle || "";
-            var pt = document.getElementById("profileTagline");
-            if (pt) pt.textContent = d.profile.tagline || "";
-            var bio = document.getElementById("bioText");
-            if (bio) bio.textContent = d.profile.bio || "";
-          }
-          if (d.media) {
-            var hero = document.getElementById("heroCover");
-            if (hero && d.media.hero) {
-              hero.src = d.media.hero;
-              if (d.media.heroFallback) {
-                hero.onerror = function () {
-                  this.onerror = null;
-                  this.src = d.media.heroFallback;
-                };
-              }
-            }
-            var av = document.getElementById("avatarImg");
-            if (av && d.media.avatar) {
-              av.src = d.media.avatar;
-              if (d.media.avatarFallback) {
-                av.onerror = function () {
-                  this.onerror = null;
-                  this.src = d.media.avatarFallback;
-                };
-              }
-            }
-          }
-          if (d.subBar) {
-            var sbl = document.getElementById("subBarBtnLabel");
-            if (sbl) sbl.textContent = d.subBar.buttonLabel || "";
-            var sh = document.getElementById("subBarHint");
-            if (sh) sh.textContent = d.subBar.hint || "";
-          }
-          if (d.fab) {
-            var fb = document.getElementById("fabBtn");
-            if (fb) {
-              fb.href = d.fab.href || "#";
-              fb.setAttribute("aria-label", (d.fab.label || "Assinar") + (d.fab.emoji ? " " + d.fab.emoji : ""));
-              var fl = document.getElementById("fabLabel");
-              if (fl) fl.textContent = d.fab.label || "";
-              var fe = document.getElementById("fabEmoji");
-              if (fe) fe.textContent = d.fab.emoji || "🔥";
-            }
-          }
-          if (d.footer) {
-            var fpr = document.getElementById("footerPrivacy");
-            if (fpr) fpr.href = d.footer.privacy || "#";
-            var ftr = document.getElementById("footerTerms");
-            if (ftr) ftr.href = d.footer.terms || "#";
-            var fsp = document.getElementById("footerSupport");
-            if (fsp) fsp.href = d.footer.support || "#";
-            var fcp = document.getElementById("footerCopy");
-            if (fcp) fcp.textContent = d.footer.copyright || "";
-          }
-          if (d.feed && d.feed.length) renderFeed(d.feed);
-          renderNovidades(d.novidades || []);
-        } catch (err) {
-          console.warn("site-data", err);
+      document.getElementById("mediaHero").addEventListener("input", syncMediaPreviews);
+      document.getElementById("mediaAv").addEventListener("input", syncMediaPreviews);
+
+      document.getElementById("btnUpload").addEventListener("click", async function () {
+        var fileEl = document.getElementById("upFile");
+        var status = document.getElementById("upStatus");
+        if (!fileEl.files || !fileEl.files[0]) {
+          status.textContent = "Escolha um arquivo.";
+          return;
         }
-      }
-
-      var menuToggle = document.getElementById("menuToggle");
-      var mainMenu = document.getElementById("mainMenu");
-      var bioText = document.getElementById("bioText");
-      var bioMore = document.getElementById("bioMore");
-
-      menuToggle.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var open = mainMenu.classList.toggle("is-open");
-        menuToggle.setAttribute("aria-expanded", open);
-      });
-
-      document.addEventListener("click", function () {
-        mainMenu.classList.remove("is-open");
-        menuToggle.setAttribute("aria-expanded", "false");
-      });
-
-      mainMenu.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
-
-      bioMore.addEventListener("click", function () {
-        var expanded = bioText.classList.toggle("bio__text--collapsed");
-        bioMore.setAttribute("aria-expanded", !expanded);
-        bioMore.textContent = expanded ? "Ler mais" : "Ler menos";
-      });
-
-      function fetchStats() {
-        fetch("media-stats.json", { cache: "no-store" })
-          .then(function (r) {
-            return r.ok ? r.json() : Promise.reject();
-          })
-          .then(function (data) {
-            var p = document.getElementById("stat-postagens");
-            var m = document.getElementById("stat-midias");
-            if (p && typeof data.postagens === "number") p.textContent = String(data.postagens);
-            if (m && typeof data.midias === "number") m.textContent = String(data.midias);
-          })
-          .catch(function () {});
-      }
-
-      var vipLightbox = document.getElementById("vipLightbox");
-      var vipLbImg = vipLightbox.querySelector(".lightbox__img");
-      var vipLbVideo = vipLightbox.querySelector(".lightbox__video");
-
-      function closeVipLightbox() {
-        vipLightbox.classList.remove("is-open");
-        vipLightbox.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("lightbox-open");
-        vipLbVideo.pause();
-        vipLbVideo.removeAttribute("src");
-        vipLbVideo.removeAttribute("poster");
-        vipLbVideo.load();
-        vipLbImg.removeAttribute("src");
-        vipLbImg.hidden = true;
-        vipLbVideo.hidden = true;
-      }
-
-      function openVipLightbox(card) {
-        var type = card.getAttribute("data-vip-type");
-        vipLbImg.hidden = true;
-        vipLbVideo.hidden = true;
-
-        if (type === "image") {
-          var imgSrc = card.getAttribute("data-vip-src");
-          var imgAlt = card.getAttribute("data-vip-alt") || "Conteúdo VIP";
-          vipLbImg.src = imgSrc;
-          vipLbImg.alt = imgAlt;
-          vipLbImg.hidden = false;
-        } else if (type === "video") {
-          var vidSrc = card.getAttribute("data-vip-video");
-          var vidPoster = card.getAttribute("data-vip-poster") || "";
-          vipLbVideo.poster = vidPoster;
-          vipLbVideo.src = vidSrc;
-          vipLbVideo.hidden = false;
+        var folder = document.getElementById("upFolder").value;
+        var fd = new FormData();
+        fd.append("file", fileEl.files[0]);
+        status.textContent = "Enviando…";
+        var r = await fetch(apiUrl("/api/admin/upload?folder=" + encodeURIComponent(folder)), {
+          method: "POST",
+          body: fd,
+          credentials: "include",
+        });
+        var j = await r.json().catch(function () {
+          return {};
+        });
+        if (r.ok) {
+          status.textContent = "OK: vip/" + (j.path || "") + " — use esse caminho nos campos acima ou no feed.";
+          fileEl.value = "";
+        } else {
+          status.textContent = j.error || "Falha no envio";
         }
-
-        vipLightbox.classList.add("is-open");
-        vipLightbox.setAttribute("aria-hidden", "false");
-        document.body.classList.add("lightbox-open");
-        vipLightbox.querySelector(".lightbox__close").focus();
-      }
-
-      function bindVipCards() {
-        document.querySelectorAll(".card[data-vip-type]").forEach(function (card) {
-          card.addEventListener("click", function (e) {
-            if (e.target.closest(".card__menu")) return;
-            openVipLightbox(card);
-          });
-          card.addEventListener("keydown", function (e) {
-            if (e.key !== "Enter" && e.key !== " ") return;
-            if (e.target.closest && e.target.closest(".card__menu")) return;
-            e.preventDefault();
-            openVipLightbox(card);
-          });
-        });
-      }
-
-      vipLightbox.addEventListener("click", function (e) {
-        if (e.target.closest("[data-lightbox-close]")) closeVipLightbox();
       });
 
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && vipLightbox.classList.contains("is-open")) closeVipLightbox();
+      document.getElementById("btnDelMedia").addEventListener("click", async function () {
+        var p = document.getElementById("delPath").value.trim();
+        if (!p) return;
+        if (!confirm("Excluir permanentemente do disco:\n" + p)) return;
+        var r = await fetch(apiUrl("/api/admin/media?path=" + encodeURIComponent(p)), {
+          method: "DELETE",
+          credentials: "include",
+        });
+        var j = await r.json().catch(function () {
+          return {};
+        });
+        alert(r.ok ? "Arquivo removido." : j.error || "Erro ao excluir");
       });
 
-      fetch("site-data.json", { cache: "no-store" })
-        .then(function (r) {
-          return r.ok ? r.json() : Promise.reject();
-        })
-        .then(function (data) {
-          applySiteData(data);
-          bindVipCards();
-        })
-        .catch(function () {
-          bindVipCards();
-        })
-        .finally(function () {
-          fetchStats();
+      document.getElementById("btnSave").addEventListener("click", async function () {
+        var st = document.getElementById("saveStatus");
+        st.textContent = "Salvando…";
+        st.className = "";
+        var data = collectData();
+        var r = await api("/api/admin/site-data", { method: "PUT", body: data });
+        var j = await r.json().catch(function () {
+          return {};
         });
+        if (r.ok) {
+          st.textContent =
+            location.hostname.indexOf("vercel.app") !== -1
+              ? "Salvo no repositório GitHub. O site /vip pode levar ~1–2 min para atualizar (novo deploy)."
+              : "Salvo — atualize o /vip no navegador para ver (cache: Ctrl+F5).";
+          st.className = "ok";
+          syncMediaPreviews();
+          feedEditor.querySelectorAll(".feed-item").forEach(function (w) {
+            var thumb = w.querySelector(".f-thumb");
+            if (thumb) thumb.dispatchEvent(new Event("input"));
+          });
+        } else {
+          st.textContent = j.error || "Erro ao salvar";
+          st.className = "err";
+        }
+      });
+
+      if (API_BASE) {
+        api("/api/admin/session").then(function (r) {
+          return r.json();
+        }).then(function (j) {
+          if (j.authenticated) {
+            loadSiteData().then(showDash);
+          } else {
+            showLogin();
+          }
+        });
+      } else {
+        showLogin();
+      }
     })();
   </script>
 </body>

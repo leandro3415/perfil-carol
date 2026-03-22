@@ -6,7 +6,7 @@
 |--------|-----------|
 | `/` | App **Foto aleatória** (Google Drive) — igual ao que já estava no [perfilcarol.vercel.app](https://perfilcarol.vercel.app/) |
 | `/vip/` | Perfil Carolzinha (`vip/index.html` + mídias em `vip/`) |
-| `/admin/` | Painel admin (editar textos, feed, novidades) |
+| `/admin/` | Painel admin (textos, mídias, feed; upload de arquivo só com `node server.mjs` local) |
 
 Repositório sugerido: [github.com/leandro3415/perfil-carol](https://github.com/leandro3415/perfil-carol).
 
