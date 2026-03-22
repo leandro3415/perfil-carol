@@ -479,7 +479,7 @@
       position: absolute;
       top: 8px;
       right: 8px;
-      z-index: 2;
+      z-index: 5;
     }
 
     .card__menu .icon-btn {
@@ -494,7 +494,7 @@
       right: 0;
       bottom: 0;
       padding: 14px 10px 12px;
-      z-index: 2;
+      z-index: 5;
     }
 
     .card__user {
@@ -598,7 +598,7 @@
     .card--video .card__play-wrap {
       position: absolute;
       inset: 0;
-      z-index: 3;
+      z-index: 4;
       display: grid;
       place-items: center;
       pointer-events: none;
@@ -958,6 +958,59 @@
         return "";
       }
 
+      /** Media Fragment (#t=) ajuda alguns navegadores a posicionar e pintar um frame inicial. */
+      function videoUrlWithSeekFragment(url) {
+        var s = String(url || "").trim();
+        if (!s) return s;
+        var base = s.split("#")[0];
+        return base + "#t=0.08";
+      }
+
+      /**
+       * preload=metadata costuma deixar o <video> preto até haver seek.
+       * Puxamos um instante > 0 para forçar decodificar um frame visível.
+       */
+      function primeSingleVideoPreview(v) {
+        if (!v || v.tagName !== "VIDEO") return;
+        var src = (v.getAttribute("src") || v.src || "").trim();
+        if (!src) return;
+        v.muted = true;
+        v.defaultMuted = true;
+        v.playsInline = true;
+        v.setAttribute("playsinline", "");
+        v.setAttribute("webkit-playsinline", "");
+        v.preload = "auto";
+        var sought = false;
+        function seekThumbFrame() {
+          if (sought) return;
+          var d = v.duration;
+          if (d == null || !isFinite(d) || d <= 0) return;
+          sought = true;
+          var t = Math.min(1, Math.max(0.05, d * 0.06));
+          try {
+            v.currentTime = t;
+          } catch (err) {
+            try {
+              v.currentTime = 0.08;
+            } catch (e2) {}
+          }
+        }
+        v.addEventListener("loadedmetadata", seekThumbFrame, { once: true });
+        v.addEventListener("loadeddata", seekThumbFrame, { once: true });
+        v.addEventListener(
+          "canplay",
+          function () {
+            if (!sought) seekThumbFrame();
+          },
+          { once: true }
+        );
+      }
+
+      function primeVideoFeedPreviews(root) {
+        if (!root) return;
+        root.querySelectorAll("video.card__preview-video").forEach(primeSingleVideoPreview);
+      }
+
       /** HTML da mídia do card: imagem estática ou <video> só para prévia (metadata). */
       function buildFeedCardMedia(it, isVid, imgCls, alt) {
         var vidUrl = String((it && it.video) || "").trim();
@@ -989,8 +1042,8 @@
             '<video class="' +
             imgCls +
             ' card__preview-video" src="' +
-            esc(vidUrl) +
-            '" muted playsinline preload="metadata" aria-label="' +
+            esc(videoUrlWithSeekFragment(vidUrl)) +
+            '" muted playsinline preload="auto" aria-label="' +
             esc(alt || "Prévia do vídeo") +
             '"></video>'
           );
@@ -1050,7 +1103,14 @@
             var attrs = ' role="listitem" aria-label="' + esc(label) + '"';
             var lbImg =
               String((it && it.full) || "")
-                .trim() || String((it && it.thumb) || "").trim();
+                .trim() ||
+              (!isVid
+                ? (function () {
+                    var fb = String((it && it.thumbFallback) || "").trim();
+                    if (fb && !isProbablyVideoUrl(fb)) return fb;
+                    return String((it && it.thumb) || "").trim();
+                  })()
+                : String((it && it.thumb) || "").trim());
             if (locked) {
               attrs += ' tabindex="-1" data-vip-locked="1"';
             } else {
@@ -1110,14 +1170,16 @@
               var v = document.createElement("video");
               v.className = el.className + " card__preview-video";
               v.muted = true;
+              v.defaultMuted = true;
               v.playsInline = true;
               v.setAttribute("playsinline", "");
               v.setAttribute("webkit-playsinline", "");
-              v.preload = "metadata";
-              v.src = String(it.video || "").trim() || fb;
+              v.preload = "auto";
+              v.src = videoUrlWithSeekFragment(String(it.video || "").trim() || fb);
               var posterImg = firstImagePreviewUrl(it);
               if (posterImg) v.poster = posterImg;
               el.replaceWith(v);
+              primeSingleVideoPreview(v);
               return;
             }
             if (!isProbablyVideoUrl(fb)) {
@@ -1125,6 +1187,7 @@
             }
           });
         });
+        primeVideoFeedPreviews(root);
       }
 
       function applySiteData(d) {
@@ -1271,11 +1334,15 @@
         vipLbVideo.hidden = true;
 
         if (type === "image") {
-          var imgSrc = (card.getAttribute("data-vip-src") || "").trim();
-          if (!imgSrc) {
-            var gridImg = card.querySelector(".card__img");
-            if (gridImg && gridImg.getAttribute("src")) imgSrc = gridImg.getAttribute("src").trim();
+          var gridImg = card.querySelector(".card__img");
+          var gridSrc = "";
+          if (gridImg && gridImg.tagName === "IMG") {
+            gridSrc = (gridImg.getAttribute("src") || gridImg.src || "").trim();
           }
+          var dataSrc = (card.getAttribute("data-vip-src") || "").trim();
+          /* O card pode estar com thumbFallback (URL absoluta) após falha do caminho local;
+             data-vip-src costuma ser só full||thumb relativo — priorize o que realmente carregou no grid. */
+          var imgSrc = gridSrc || dataSrc;
           if (!imgSrc) return;
           var imgAlt = card.getAttribute("data-vip-alt") || "Imagem";
           vipLbImg.removeAttribute("src");
@@ -1286,9 +1353,37 @@
           var vidSrc = (card.getAttribute("data-vip-video") || "").trim();
           if (!vidSrc) return;
           var vidPoster = card.getAttribute("data-vip-poster") || "";
+          vipLbVideo.pause();
+          try {
+            vipLbVideo.currentTime = 0;
+          } catch (errCt) {}
+          vipLbVideo.muted = false;
+          vipLbVideo.defaultMuted = false;
+          vipLbVideo.playsInline = true;
+          vipLbVideo.setAttribute("playsinline", "");
+          vipLbVideo.setAttribute("webkit-playsinline", "");
           vipLbVideo.poster = vidPoster;
           vipLbVideo.src = vidSrc;
           vipLbVideo.hidden = false;
+
+          var lbPlayTried = false;
+          function tryLightboxAutoplay() {
+            if (lbPlayTried) return;
+            if (vipLbVideo.readyState < 2) return;
+            lbPlayTried = true;
+            var pr = vipLbVideo.play();
+            if (pr !== undefined) {
+              pr.catch(function () {
+                lbPlayTried = false;
+                vipLbVideo.muted = true;
+                var pr2 = vipLbVideo.play();
+                if (pr2 !== undefined) pr2.catch(function () {});
+              });
+            }
+          }
+          vipLbVideo.addEventListener("canplay", tryLightboxAutoplay, { once: true });
+          vipLbVideo.addEventListener("loadeddata", tryLightboxAutoplay, { once: true });
+          tryLightboxAutoplay();
         } else {
           return;
         }
