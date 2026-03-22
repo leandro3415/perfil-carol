@@ -531,6 +531,47 @@
       outline-offset: 2px;
     }
 
+    /* VIP bloqueado no admin: sem lightbox, blur mais forte */
+    .card--vip-locked {
+      cursor: default;
+    }
+
+    .card--vip-locked:focus-visible {
+      outline: none;
+    }
+
+    .card--vip-locked .card__blur {
+      filter: blur(22px) brightness(0.72);
+      transform: scale(1.1);
+    }
+
+    .card--vip-locked:hover .card__blur {
+      filter: blur(18px) brightness(0.78);
+      transform: scale(1.08);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card--vip-locked:hover .card__blur {
+        filter: blur(22px) brightness(0.72);
+        transform: scale(1.1);
+      }
+    }
+
+    .card--vip-locked .card__play {
+      opacity: 0.35;
+    }
+
+    /* Prévia liberada (vipLocked: false): imagem nítida no grid */
+    .card--preview-open .card__img {
+      filter: none;
+      transform: none;
+    }
+
+    .card--preview-open:hover .card__img {
+      filter: none;
+      transform: scale(1.02);
+    }
+
     .card__vip {
       position: absolute;
       top: 10px;
@@ -852,8 +893,8 @@
     • Exporte JPG ~80–90% de qualidade ou WebP para carregar rápido no celular.
     • No hover o card levanta e o blur diminui levemente — bom para dar sensação de "quase ver" (teaser).
     • Ajuste texto/métricas por card copiando o bloco <article class="card"> e mudando números ou @.
-    • VIP imagem: toque abre lightbox sem blur — data-vip-type="image" + data-vip-src (pode ser o mesmo JPG ou versão full).
-    • VIP vídeo: coloque teaser-N.mp4 na pasta Feed teaser; use data-vip-type="video" + data-vip-video + poster no <img>.
+    • No admin: "Bloquear como VIP" = borrado + selo + sem lightbox (vipLocked true). Desmarcado = nítido + clique abre lightbox.
+    • Imagem comum: data-vip-type="image" + data-vip-src. Vídeo: data-vip-type="video" + data-vip-video + poster.
   -->
   <div class="feed" id="feedRoot" role="list"></div>
 
@@ -895,34 +936,50 @@
         var html = items
           .map(function (it) {
             var isVid = it.type === "video";
+            var locked = it.vipLocked !== false;
             var cls = isVid ? "card card--video" : "card";
-            var label = isVid ? "Reproduzir vídeo VIP" : "Ver foto VIP em tela cheia";
+            if (locked) cls += " card--vip-locked";
+            else cls += " card--preview-open";
+            var label = locked
+              ? "Conteúdo VIP bloqueado"
+              : isVid
+                ? "Reproduzir vídeo em tela cheia"
+                : "Ver foto em tela cheia";
             var play = isVid
               ? '<div class="card__play-wrap" aria-hidden="true"><span class="card__play">▶</span></div>'
               : "";
-            var attrs =
-              ' role="listitem" tabindex="0" aria-label="' +
-              esc(label) +
-              '" data-vip-type="' +
-              (isVid ? "video" : "image") +
-              '"';
-            if (isVid) {
-              attrs += ' data-vip-video="' + esc(it.video || "") + '" data-vip-poster="' + esc(it.poster || it.thumb || "") + '"';
-              attrs += ' data-vip-alt="' + esc(it.alt || "") + '"';
+            var attrs = ' role="listitem" aria-label="' + esc(label) + '"';
+            if (locked) {
+              attrs += ' tabindex="-1" data-vip-locked="1"';
             } else {
-              attrs += ' data-vip-src="' + esc(it.full || it.thumb || "") + '" data-vip-alt="' + esc(it.alt || "") + '"';
+              attrs +=
+                ' tabindex="0" data-vip-type="' +
+                (isVid ? "video" : "image") +
+                '"';
+              if (isVid) {
+                attrs += ' data-vip-video="' + esc(it.video || "") + '" data-vip-poster="' + esc(it.poster || it.thumb || "") + '"';
+                attrs += ' data-vip-alt="' + esc(it.alt || "") + '"';
+              } else {
+                attrs += ' data-vip-src="' + esc(it.full || it.thumb || "") + '" data-vip-alt="' + esc(it.alt || "") + '"';
+              }
             }
             var m = it.metrics || {};
             var handle = esc(it.handle || "@carolzinha");
+            var vipBadge = locked ? '<span class="card__vip">VIP</span>' : "";
+            var imgCls = locked ? "card__img card__blur" : "card__img";
             return (
               '<article class="' +
               cls +
               '"' +
               attrs +
-              '><span class="card__vip">VIP</span><img class="card__img card__blur" src="' +
+              ">" +
+              vipBadge +
+              '<img class="' +
+              imgCls +
+              '" src="' +
               esc(it.thumb || "") +
               '" width="900" height="1200" alt="' +
-              esc(it.alt || "VIP") +
+              esc(it.alt || "Post") +
               '" loading="lazy" decoding="async"/>' +
               play +
               '<div class="card__grad" aria-hidden="true"></div><div class="card__menu"><button type="button" class="icon-btn" title="Opções">⋮</button></div><div class="card__footer"><div class="card__user">' +
@@ -1080,6 +1137,7 @@
       }
 
       function openVipLightbox(card) {
+        if (!card || card.getAttribute("data-vip-locked") === "1") return;
         var type = card.getAttribute("data-vip-type");
         vipLbImg.hidden = true;
         vipLbVideo.hidden = true;

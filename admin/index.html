@@ -7,174 +7,506 @@
   <meta name="admin-preview-href" content="/vip/" />
   <title>Painel admin — Carolzinha</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0f0f0f;
-      --card: #1a1a1a;
-      --border: #333;
-      --orange: #ff6b00;
-      --text: #eee;
-      --muted: #888;
+      --bg: #0a0a0a;
+      --bg-card: #141414;
+      --text: #ffffff;
+      --text-muted: #a3a3a3;
+      --orange-1: #ff6b00;
+      --orange-2: #ffa500;
+      --orange-soft: #ff8c42;
+      --border: rgba(255, 140, 66, 0.35);
+      --border-subtle: rgba(255, 140, 66, 0.12);
+      --radius: 14px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      /* aliases para JS/templates antigos */
+      --orange: var(--orange-1);
+      --muted: var(--text-muted);
+      --card: var(--bg-card);
     }
-    * { box-sizing: border-box; }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      font-family: Inter, system-ui, sans-serif;
+      font-family: "Inter", system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
       min-height: 100vh;
-      padding: 20px;
+      padding: 0 0 calc(24px + var(--safe-bottom));
     }
-    h1 { font-size: 1.35rem; margin: 0 0 8px; }
-    h2 { font-size: 1rem; color: var(--orange); margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    .warn {
+
+    a {
+      color: var(--orange-soft);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    code {
+      font-size: 0.88em;
+      padding: 0.12em 0.35em;
+      border-radius: 4px;
       background: rgba(255, 107, 0, 0.12);
-      border: 1px solid rgba(255, 107, 0, 0.35);
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-size: 0.85rem;
-      color: #ffb380;
-      margin-bottom: 20px;
+      color: #ffd4b8;
     }
-    .login-box, .panel {
-      max-width: 720px;
+
+    .admin-shell {
+      max-width: 920px;
       margin: 0 auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
+      padding: 16px 20px 32px;
     }
-    .login-box { max-width: 400px; margin-top: 8vh; }
-    label { display: block; font-size: 0.8rem; color: var(--muted); margin: 12px 0 4px; }
-    input[type="text"], input[type="password"], input[type="url"], input[type="date"], textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 8px;
+
+    .admin-banner {
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
-      background: #111;
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.14), rgba(20, 20, 20, 0.95));
+      font-size: 0.85rem;
+      color: #ffd4b8;
+      line-height: 1.5;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .login-box {
+      max-width: 420px;
+      margin: 6vh auto 0;
+      padding: 28px 26px 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 107, 0, 0.08);
+    }
+
+    .login-box .admin-brand {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 6px;
+    }
+
+    .login-box h1 {
+      margin: 0 0 8px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .login-box .admin-lead {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin: 0 0 20px;
+    }
+
+    .login-box .file-warn {
+      background: rgba(255, 80, 80, 0.1);
+      border: 1px solid rgba(255, 120, 100, 0.35);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      color: #ffb3a8;
+      margin: 0 0 18px;
+      line-height: 1.45;
+    }
+
+    .panel {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0;
+      background: transparent;
+      border: none;
+    }
+
+    .admin-dash-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding: 22px 22px 24px;
+      border-radius: var(--radius);
+      background: linear-gradient(125deg, rgba(255, 69, 0, 0.22) 0%, rgba(20, 20, 20, 0.98) 42%, var(--bg-card) 100%);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .admin-dash-top__kicker {
+      margin: 0 0 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange-soft);
+    }
+
+    .admin-dash-top h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .admin-dash-top__sub {
+      margin: 8px 0 0;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 36rem;
+    }
+
+    .admin-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #dashboard h2 {
+      margin: 0 0 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: none;
+      padding: 0;
+    }
+
+    #dashboard h2::after {
+      content: "";
+      display: block;
+      width: 40px;
+      height: 3px;
+      margin-top: 10px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
+    }
+
+    .admin-card {
+      padding: 20px 22px 24px;
+      margin-bottom: 18px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin: 14px 0 6px;
+      letter-spacing: 0.02em;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="url"],
+    input[type="date"],
+    input[type="file"],
+    textarea,
+    select.admin-select {
+      width: 100%;
+      max-width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(10, 10, 10, 0.65);
       color: var(--text);
       font: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    textarea { min-height: 88px; resize: vertical; }
-    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
-    button.primary {
-      margin-top: 16px;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(90deg, #ff6b00, #ffa500);
-      color: #fff;
+
+    input:focus,
+    textarea:focus,
+    select.admin-select:focus {
+      outline: none;
+      border-color: rgba(255, 140, 66, 0.55);
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.12);
     }
-    button.secondary {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #222;
-      color: var(--text);
-      cursor: pointer;
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    input[type="file"] {
+      padding: 10px;
       font-size: 0.85rem;
     }
-    button.danger { border-color: #842; color: #f88; }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
-    .toolbar a { color: var(--orange); }
-    .feed-item {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-      background: #141414;
-    }
-    .feed-item h3 { margin: 0 0 10px; font-size: 0.9rem; color: var(--muted); }
-    .media-previews {
+
+    .row2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
-      margin-top: 12px;
     }
+
     @media (max-width: 560px) {
-      .media-previews { grid-template-columns: 1fr; }
+      .row2 {
+        grid-template-columns: 1fr;
+      }
     }
+
+    button.primary {
+      margin-top: 0;
+      padding: 14px 22px;
+      border: none;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
+      color: #fff;
+      box-shadow: 0 8px 28px rgba(255, 107, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 36px rgba(255, 107, 0, 0.42);
+    }
+
+    .login-box button.primary {
+      margin-top: 18px;
+      width: 100%;
+    }
+
+    button.secondary {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 140, 66, 0.35);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    button.secondary:hover {
+      background: rgba(255, 107, 0, 0.12);
+      border-color: rgba(255, 140, 66, 0.55);
+    }
+
+    button.danger {
+      border-color: rgba(248, 113, 113, 0.45);
+      color: #fca5a5;
+    }
+
+    button.danger:hover {
+      background: rgba(248, 113, 113, 0.1);
+    }
+
+    .feed-item {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 14px;
+      background: rgba(10, 10, 10, 0.5);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      transition: border-color 0.2s;
+    }
+
+    .feed-item:hover {
+      border-color: rgba(255, 140, 66, 0.22);
+    }
+
+    .feed-item h3 {
+      margin: 0 0 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .admin-vip-toggle {
+      margin: 12px 0;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 107, 0, 0.06);
+    }
+
+    .admin-vip-toggle label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 0;
+      cursor: pointer;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .admin-vip-toggle input[type="checkbox"] {
+      margin-top: 4px;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--orange-1);
+    }
+
+    .media-previews {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 560px) {
+      .media-previews {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .lbl-prev {
-      font-size: 0.75rem;
-      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
+
     .media-preview {
       width: 100%;
-      max-height: 120px;
+      max-height: 128px;
       object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-    .help {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin: 0 0 12px;
-      line-height: 1.45;
-    }
-    .upload-tools {
-      border: 1px dashed var(--border);
       border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 8px;
-      background: #141414;
+      border: 1px solid var(--border-subtle);
     }
-    .feed-preview-block { margin-top: 10px; }
+
+    .help,
+    .admin-help {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin: 0 0 14px;
+      line-height: 1.55;
+    }
+
+    .upload-tools {
+      border: 1px dashed rgba(255, 140, 66, 0.28);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 8px;
+      background: rgba(10, 10, 10, 0.4);
+    }
+
+    .feed-preview-block {
+      margin-top: 12px;
+    }
+
     .f-feed-preview {
       width: 100%;
-      max-height: 160px;
+      max-height: 168px;
       object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-top: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      margin-top: 6px;
     }
-    .hidden { display: none !important; }
-    #saveStatus { font-size: 0.85rem; margin-left: 8px; color: var(--muted); }
-    #saveStatus.ok { color: #6d6; }
-    #saveStatus.err { color: #f66; }
+
+    .admin-save-bar {
+      margin-top: 32px;
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(90deg, rgba(255, 69, 0, 0.18), rgba(20, 20, 20, 0.95));
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 8px 32px rgba(255, 107, 0, 0.12);
+    }
+
+    .admin-save-bar button.primary {
+      min-width: 180px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #saveStatus {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    #saveStatus.ok {
+      color: #86efac;
+    }
+
+    #saveStatus.err {
+      color: #fca5a5;
+    }
   </style>
 </head>
 <body>
-  <p class="warn">
-    Acesse só em rede confiável. Em produção use HTTPS e defina <code>ADMIN_USER</code> e <code>ADMIN_PASSWORD</code> no ambiente — não commite senha no Git.
+  <div class="admin-shell">
+  <p class="admin-banner">
+    Acesse só em rede confiável. Em produção use <strong>HTTPS</strong> e defina <code>ADMIN_USER</code> e <code>ADMIN_PASSWORD</code> no ambiente — não commite senha no Git.
   </p>
 
   <div id="loginScreen" class="login-box">
-    <p id="localOnlyWarn" class="hidden" style="background:rgba(255,80,80,0.12);border:1px solid rgba(255,100,100,0.4);border-radius:8px;padding:12px 14px;font-size:0.85rem;color:#faa;margin:0 0 16px;line-height:1.45;">
+    <p id="localOnlyWarn" class="hidden file-warn">
       Este arquivo foi aberto direto do disco (<code>file://</code>). O login <strong>não funciona</strong> assim.
       No terminal, na pasta do projeto, rode <code>node server.mjs</code> e abra no navegador:
       <strong>http://localhost:3333/admin/</strong> (use a mesma porta que o terminal mostrar).
     </p>
+    <p class="admin-brand">Carolzinha · edição</p>
     <h1>Painel admin</h1>
-    <p style="color:var(--muted);font-size:0.9rem;margin:0 0 16px;">Entre para editar o site.</p>
+    <p class="admin-lead">Mesmo visual do perfil VIP — aqui você altera textos, mídias e feed.</p>
     <label for="admUser">Usuário</label>
     <input type="text" id="admUser" autocomplete="username" />
     <label for="admPass">Senha</label>
     <input type="password" id="admPass" autocomplete="current-password" />
-    <p id="loginErr" class="hidden" style="color:#f66;font-size:0.85rem;margin-top:10px;"></p>
+    <p id="loginErr" class="hidden" style="color:#fca5a5;font-size:0.85rem;margin-top:12px;"></p>
     <button type="button" class="primary" id="btnLogin">Entrar</button>
   </div>
 
   <div id="dashboard" class="panel hidden">
-    <div class="toolbar">
-      <h1 style="margin:0;flex:1;">Editar site</h1>
-      <button type="button" class="secondary" id="btnPreview">Abrir site</button>
-      <button type="button" class="secondary danger" id="btnLogout">Sair</button>
-    </div>
+    <header class="admin-dash-top">
+      <div>
+        <p class="admin-dash-top__kicker">Perfil VIP · painel</p>
+        <h1>Editar site</h1>
+        <p class="admin-dash-top__sub">Alterações vão para <code>site-data.json</code> e aparecem no <code>/vip</code> após salvar (na Vercel, após deploy).</p>
+      </div>
+      <div class="admin-actions">
+        <button type="button" class="secondary" id="btnPreview">Abrir /vip</button>
+        <button type="button" class="secondary danger" id="btnLogout">Sair</button>
+      </div>
+    </header>
 
+    <section class="admin-card">
     <h2>Meta (Google / aba do navegador)</h2>
     <label for="metaTitle">Título da página</label>
     <input type="text" id="metaTitle" />
     <label for="metaDesc">Descrição</label>
     <textarea id="metaDesc" rows="2"></textarea>
+    </section>
 
+    <section class="admin-card">
     <h2>Perfil</h2>
     <div class="row2">
       <div>
@@ -190,7 +522,9 @@
     <input type="text" id="profTag" />
     <label for="profBio">Bio (texto longo)</label>
     <textarea id="profBio" rows="4"></textarea>
+    </section>
 
+    <section class="admin-card">
     <h2>Caminhos das mídias</h2>
     <div class="row2">
       <div>
@@ -222,27 +556,31 @@
         <img id="previewAv" class="media-preview hidden" alt="" />
       </div>
     </div>
+    </section>
 
-    <h2>Publicar / excluir arquivo no disco</h2>
+    <section class="admin-card">
+    <h2>Publicar / excluir arquivo</h2>
     <p class="help" id="mediaToolsHint"></p>
     <div id="mediaTools" class="upload-tools">
       <label for="upFolder">Pasta dentro de <code>vip/</code></label>
-      <select id="upFolder" style="width:100%;max-width:320px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#111;color:var(--text);font:inherit;">
+      <select id="upFolder" class="admin-select" style="max-width:320px;">
         <option value="postagens">Postagens (ex.: capa)</option>
         <option value="midias">Midias (ex.: avatar)</option>
         <option value="feed-teaser">Feed teaser (miniaturas / vídeos)</option>
       </select>
       <label for="upFile">Arquivo</label>
       <input type="file" id="upFile" />
-      <div style="margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+      <div class="admin-actions" style="margin-top:12px;">
         <button type="button" class="secondary" id="btnUpload">Enviar</button>
-        <span id="upStatus" style="font-size:0.85rem;color:var(--muted);"></span>
+        <span id="upStatus" style="font-size:0.85rem;color:var(--text-muted);"></span>
       </div>
-      <p style="margin:16px 0 8px;font-size:0.8rem;color:var(--muted);">Excluir arquivo (caminho exato, ex.: <code>Feed teaser/old.jpg</code>)</p>
+      <p class="admin-help" style="margin-top:18px;margin-bottom:6px;">Excluir arquivo (caminho exato, ex.: <code>Feed teaser/old.jpg</code>)</p>
       <input type="text" id="delPath" placeholder="Postagens/arquivo.jpg" />
-      <button type="button" class="secondary danger" id="btnDelMedia" style="margin-top:10px;">Excluir arquivo</button>
+      <button type="button" class="secondary danger" id="btnDelMedia" style="margin-top:12px;">Excluir arquivo</button>
     </div>
+    </section>
 
+    <section class="admin-card">
     <h2>Faixa laranja (Gratuito)</h2>
     <div class="row2">
       <div>
@@ -254,7 +592,9 @@
         <input type="text" id="subHint" />
       </div>
     </div>
+    </section>
 
+    <section class="admin-card">
     <h2>Botão flutuante (VIP)</h2>
     <div class="row2">
       <div>
@@ -268,7 +608,9 @@
     </div>
     <label for="fabEmoji">Emoji (opcional)</label>
     <input type="text" id="fabEmoji" maxlength="4" style="max-width:120px" />
+    </section>
 
+    <section class="admin-card">
     <h2>Rodapé</h2>
     <div class="row2">
       <div>
@@ -284,16 +626,21 @@
     <input type="text" id="ftSupport" />
     <label for="ftCopy">Copyright / texto final</label>
     <input type="text" id="ftCopy" />
+    </section>
 
+    <section class="admin-card">
     <h2>Feed VIP (posts)</h2>
-    <p style="color:var(--muted);font-size:0.85rem;margin:0 0 12px;">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.</p>
+    <p class="admin-help">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.<br /><strong>VIP bloqueado</strong> (caixa marcada): miniatura borrada + selo VIP; o visitante <strong>não</strong> abre o foco/lightbox (assinatura VIP virá depois). <strong>Comum</strong> (desmarcada): miniatura <strong>nítida</strong> no grid; ao clicar continua abrindo o lightbox.</p>
     <div id="feedEditor"></div>
     <button type="button" class="secondary" id="btnAddFeed">+ Adicionar post</button>
+    </section>
 
-    <div style="margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
-      <button type="button" class="primary" id="btnSave" style="width:auto;min-width:160px;padding:12px 24px;">Salvar tudo</button>
+    <div class="admin-save-bar">
+      <button type="button" class="primary" id="btnSave">Salvar tudo</button>
       <span id="saveStatus"></span>
     </div>
+  </div>
+
   </div>
 
   <script>
@@ -492,6 +839,9 @@
           (index + 1) +
           "</h3>" +
           '<label>Tipo</label><select class="f-type"><option value="image">Foto VIP</option><option value="video">Vídeo VIP</option></select>' +
+          '<div class="admin-vip-toggle">' +
+          '<label><input type="checkbox" class="f-vip-locked" />' +
+          "<span><strong>Bloquear como VIP</strong> — embaçado no feed, selo VIP e sem abrir em tela cheia. Desmarque para <strong>conteúdo comum</strong> (nítido; clique abre o foco).</span></label></div>" +
           '<label>Miniatura (grid)</label><input type="text" class="f-thumb" placeholder="Feed teaser/teaser-1.jpg" />' +
           '<div class="f-img-only"><label>Imagem no lightbox (URL)</label><input type="text" class="f-full" /></div>' +
           '<div class="f-vid-only hidden"><label>Arquivo vídeo (.mp4)</label><input type="text" class="f-video" /></div>' +
@@ -514,6 +864,8 @@
         wrap.querySelector(".f-views").value = (it.metrics && it.metrics.views) || "";
         wrap.querySelector(".f-likes").value = (it.metrics && it.metrics.likes) || "";
         wrap.querySelector(".f-hearts").value = (it.metrics && it.metrics.hearts) || "";
+        var vipCb = wrap.querySelector(".f-vip-locked");
+        if (vipCb) vipCb.checked = it.vipLocked !== false;
         function toggleVid() {
           var v = wrap.querySelector(".f-type").value === "video";
           wrap.querySelector(".f-img-only").classList.toggle("hidden", v);
@@ -564,6 +916,7 @@
           feedRowEl(
             {
               type: "image",
+              vipLocked: true,
               thumb: "",
               full: "",
               alt: "",
@@ -592,6 +945,9 @@
               hearts: wrap.querySelector(".f-hearts").value.trim(),
             },
           };
+          var vlock = wrap.querySelector(".f-vip-locked");
+          if (vlock && vlock.checked) o.vipLocked = true;
+          else o.vipLocked = false;
           if (t === "image") {
             o.full = wrap.querySelector(".f-full").value.trim();
             o.alt = wrap.querySelector(".f-alt").value.trim();
