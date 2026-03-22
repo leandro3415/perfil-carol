@@ -6,7 +6,7 @@
 |--------|-----------|
 | `/` | App **Foto aleatória** (Google Drive) — igual ao que já estava no [perfilcarol.vercel.app](https://perfilcarol.vercel.app/) |
 | `/vip/` | Perfil Carolzinha (`vip/index.html` + mídias em `vip/`) |
-| `/admin/` | Painel admin (textos, mídias, feed; upload de arquivo só com `node server.mjs` local) |
+| `/admin/` | Painel admin (textos, mídias, feed; upload/exclusão na **web** via GitHub se `GITHUB_TOKEN` estiver na Vercel; no PC com `node server.mjs` grava em disco) |
 
 Repositório sugerido: [github.com/leandro3415/perfil-carol](https://github.com/leandro3415/perfil-carol).
 
@@ -84,7 +84,7 @@ O `node server.mjs` precisa estar rodando.
 | `ADMIN_USER` | recomendado | Usuário do painel |
 | `ADMIN_PASSWORD` | **sim** | Senha do painel |
 | `ADMIN_SESSION_SECRET` | opcional | Segredo para assinar o cookie (se vazio, usa `ADMIN_PASSWORD`) |
-| `GITHUB_TOKEN` | **sim para salvar na nuvem** | [Personal Access Token](https://github.com/settings/tokens) com escopo **repo** (gravar `vip/site-data.json`) |
+| `GITHUB_TOKEN` | **sim para salvar na nuvem** | [Personal Access Token](https://github.com/settings/tokens) com escopo **repo** — usado para **Salvar tudo** (`site-data.json`), **upload** e **exclusão** de mídia em `vip/Postagens`, `vip/Midias`, `vip/Feed teaser` |
 | `GITHUB_OWNER` | opcional | Padrão: `leandro3415` |
 | `GITHUB_REPO` | opcional | Padrão: `perfil-carol` |
 | `GITHUB_BRANCH` | opcional | Padrão: `main` |
@@ -94,6 +94,8 @@ O `node server.mjs` precisa estar rodando.
    - `https://perfilcarol.vercel.app/` — foto aleatória  
    - `https://perfilcarol.vercel.app/vip` — perfil  
    - `https://perfilcarol.vercel.app/admin` — painel  
+
+**Mídia pelo admin na web:** com `GITHUB_TOKEN` configurado, **Enviar** e **Excluir arquivo** gravam no repositório; a Vercel faz um novo deploy e **todos** passam a ver o `/vip` atualizado (costuma levar ~1–2 min). No plano Hobby da Vercel o corpo da requisição tem limite (~4,5 MB): imagens grandes podem precisar de `git push` manual.
 
 ---
 

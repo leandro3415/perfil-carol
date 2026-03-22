@@ -240,7 +240,7 @@
       </div>
       <p style="margin:16px 0 8px;font-size:0.8rem;color:var(--muted);">Excluir arquivo (caminho exato, ex.: <code>Feed teaser/old.jpg</code>)</p>
       <input type="text" id="delPath" placeholder="Postagens/arquivo.jpg" />
-      <button type="button" class="secondary danger" id="btnDelMedia" style="margin-top:10px;">Excluir do disco</button>
+      <button type="button" class="secondary danger" id="btnDelMedia" style="margin-top:10px;">Excluir arquivo</button>
     </div>
 
     <h2>Faixa laranja (Gratuito)</h2>
@@ -365,16 +365,24 @@
         var hint = document.getElementById("mediaToolsHint");
         var box = document.getElementById("mediaTools");
         var local = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+        var vercel = location.hostname.indexOf("vercel.app") !== -1;
         if (hint) {
-          hint.textContent = local
-            ? "Grava em vip/ neste PC. Se mudar nomes de arquivo, ajuste os campos acima / feed e clique em Salvar tudo. Contadores: npm run stats no terminal."
-            : "Na Vercel não há pasta gravável pelo navegador: envie imagens pelo Git em vip/… e use Salvar tudo. Para enviar pelo painel, use node server.mjs no PC.";
+          if (local) {
+            hint.textContent =
+              "Neste PC: arquivos vão para a pasta vip/ no disco. Ajuste caminhos no site-data se precisar e use Salvar tudo. Contadores: npm run stats.";
+          } else if (vercel) {
+            hint.textContent =
+              "Na web: envio e exclusão vão para o GitHub (vip/…). Todo mundo passa a ver no /vip após o deploy da Vercel (~1–2 min). É obrigatório GITHUB_TOKEN no projeto. Plano Hobby: limite ~4,5 MB por upload — vídeos grandes use git push.";
+          } else {
+            hint.textContent =
+              "Upload/exclusão usam a API do servidor (disco local ou GitHub, conforme o host). Em produção na Vercel, configure GITHUB_TOKEN.";
+          }
         }
         if (box) {
-          box.style.opacity = local ? "1" : "0.6";
+          box.style.opacity = "1";
           ["upFolder", "upFile", "delPath", "btnUpload", "btnDelMedia"].forEach(function (id) {
             var el = document.getElementById(id);
-            if (el) el.disabled = !local;
+            if (el) el.disabled = !API_BASE;
           });
         }
       }
@@ -657,7 +665,10 @@
           return {};
         });
         if (r.ok) {
-          status.textContent = "OK: vip/" + (j.path || "") + " — use esse caminho nos campos acima ou no feed.";
+          status.textContent =
+            "OK: vip/" +
+            (j.path || "") +
+            (j.note ? " — " + j.note : " — use o caminho nos campos acima ou no feed.");
           fileEl.value = "";
         } else {
           status.textContent = j.error || "Falha no envio";
@@ -667,7 +678,7 @@
       document.getElementById("btnDelMedia").addEventListener("click", async function () {
         var p = document.getElementById("delPath").value.trim();
         if (!p) return;
-        if (!confirm("Excluir permanentemente do disco:\n" + p)) return;
+        if (!confirm("Excluir permanentemente:\n" + p)) return;
         var r = await fetch(apiUrl("/api/admin/media?path=" + encodeURIComponent(p)), {
           method: "DELETE",
           credentials: "include",
@@ -675,7 +686,7 @@
         var j = await r.json().catch(function () {
           return {};
         });
-        alert(r.ok ? "Arquivo removido." : j.error || "Erro ao excluir");
+        alert(r.ok ? "Removido. " + (j.note || "") : j.error || "Erro ao excluir");
       });
 
       document.getElementById("btnSave").addEventListener("click", async function () {
