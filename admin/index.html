@@ -655,7 +655,7 @@
 
     <section class="admin-card">
     <h2>Feed VIP (posts)</h2>
-    <p class="admin-help">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.<br /><strong>VIP bloqueado</strong> (caixa marcada): miniatura borrada + selo VIP; o visitante <strong>não</strong> abre o foco/lightbox (assinatura VIP virá depois). <strong>Comum</strong> (desmarcada): miniatura <strong>nítida</strong> no grid; <strong>foto</strong> não abre tela cheia. <strong>Vídeo</strong> comum ainda abre o player em tela cheia ao tocar.</p>
+    <p class="admin-help">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.<br /><strong>VIP bloqueado</strong> (caixa marcada): miniatura borrada + selo VIP; o visitante <strong>não</strong> abre o foco/lightbox (assinatura VIP virá depois). <strong>Comum</strong> (desmarcada): miniatura <strong>nítida</strong> no grid; toque abre tela cheia. Em <strong>foto</strong>, se “imagem em alta” estiver vazio, a tela cheia usa a mesma URL da miniatura.</p>
     <div id="feedEditor"></div>
     <button type="button" class="secondary" id="btnAddFeed">+ Adicionar post</button>
     </section>
@@ -874,9 +874,9 @@
           '<label>Tipo</label><select class="f-type"><option value="image">Foto VIP</option><option value="video">Vídeo VIP</option></select>' +
           '<div class="admin-vip-toggle">' +
           '<label><input type="checkbox" class="f-vip-locked" />' +
-          "<span><strong>Bloquear como VIP</strong> — embaçado no feed, selo VIP e sem abrir em tela cheia. Desmarque para <strong>conteúdo comum</strong> (nítido no grid; só vídeo abre em tela cheia).</span></label></div>" +
+          "<span><strong>Bloquear como VIP</strong> — embaçado no feed, selo VIP e sem abrir em tela cheia. Desmarque para <strong>conteúdo comum</strong> (nítido; toque abre em tela cheia).</span></label></div>" +
           '<label>Miniatura (grid)</label><input type="text" class="f-thumb" placeholder="Feed teaser/teaser-1.jpg" />' +
-          '<div class="f-img-only"><label>Imagem em alta (URL, opcional)</label><input type="text" class="f-full" placeholder="Reserva; no /vip o card usa a miniatura" /></div>' +
+          '<div class="f-img-only"><label>Imagem em tela cheia (URL)</label><input type="text" class="f-full" placeholder="Opcional: vazio = usa a miniatura no lightbox" /></div>' +
           '<div class="f-vid-only hidden"><label>Arquivo vídeo (.mp4)</label><input type="text" class="f-video" /></div>' +
           '<div class="f-vid-only hidden"><label>Poster (jpg)</label><input type="text" class="f-poster" /></div>' +
           '<div class="admin-type-hint" role="status">' +
