@@ -677,6 +677,11 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     }
 
+    /* Conteúdo comum: garantir imagem nítida (nunca herdar blur do card) */
+    .lightbox__img {
+      filter: none;
+    }
+
     .lightbox__video {
       background: #000;
     }
@@ -870,16 +875,16 @@
     <p class="sub-bar__hint" id="subBarHint">Perfil teaser — desbloqueie o VIP para conteúdo completo e chat</p>
   </section>
 
-  <section class="stats" aria-label="Estatísticas">
+  <section class="stats" aria-label="Estatísticas do feed">
     <div class="stat">
       <div class="stat__icon" aria-hidden="true">📸</div>
-      <div class="stat__value" id="stat-postagens">1</div>
+      <div class="stat__value" id="stat-postagens">0</div>
       <div class="stat__label">Postagens</div>
     </div>
     <div class="stat">
       <div class="stat__icon" aria-hidden="true">▶️</div>
-      <div class="stat__value" id="stat-midias">2</div>
-      <div class="stat__label">Mídias</div>
+      <div class="stat__value" id="stat-midias">0</div>
+      <div class="stat__label">Vídeos</div>
     </div>
   </section>
 
@@ -911,7 +916,7 @@
     <a id="fabBtn" class="fab__btn" href="#" role="button" aria-label="Assinar VIP"><span id="fabLabel">Assinar VIP</span> <span id="fabEmoji" aria-hidden="true">🔥</span></a>
   </div>
 
-  <div id="vipLightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Visualizar conteúdo VIP" aria-hidden="true">
+  <div id="vipLightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Visualizar em tela cheia" aria-hidden="true">
     <div class="lightbox__backdrop" data-lightbox-close tabindex="-1"></div>
     <div class="lightbox__panel">
       <button type="button" class="lightbox__close icon-btn" data-lightbox-close aria-label="Fechar">×</button>
@@ -930,13 +935,38 @@
           .replace(/"/g, "&quot;");
       }
 
+      function isFeedItemVipLocked(it) {
+        var v = it && it.vipLocked;
+        if (v === false || v === "false" || v === 0 || v === "0") return false;
+        if (v === true || v === "true") return true;
+        if (v == null) return true;
+        return Boolean(v);
+      }
+
+      function updateStatsFromFeed(feed) {
+        var pEl = document.getElementById("stat-postagens");
+        var mEl = document.getElementById("stat-midias");
+        if (!pEl || !mEl) return;
+        var arr = Array.isArray(feed) ? feed : [];
+        var vids = 0;
+        arr.forEach(function (it) {
+          if (it && it.type === "video") vids++;
+        });
+        pEl.textContent = String(arr.length);
+        mEl.textContent = String(vids);
+      }
+
       function renderFeed(items) {
         var root = document.getElementById("feedRoot");
-        if (!root || !items || !items.length) return;
+        if (!root) return;
+        if (!items || !items.length) {
+          root.innerHTML = "";
+          return;
+        }
         var html = items
           .map(function (it) {
             var isVid = it.type === "video";
-            var locked = it.vipLocked !== false;
+            var locked = isFeedItemVipLocked(it);
             var cls = isVid ? "card card--video" : "card";
             if (locked) cls += " card--vip-locked";
             else cls += " card--preview-open";
@@ -1007,7 +1037,8 @@
       }
 
       function applySiteData(d) {
-        if (!d) return;
+        if (!d) return false;
+        var statsFromFeed = false;
         try {
           if (d.meta) {
             if (d.meta.title) document.title = d.meta.title;
@@ -1073,10 +1104,15 @@
             var fcp = document.getElementById("footerCopy");
             if (fcp) fcp.textContent = d.footer.copyright || "";
           }
-          if (d.feed && d.feed.length) renderFeed(d.feed);
+          if (Array.isArray(d.feed)) {
+            statsFromFeed = true;
+            renderFeed(d.feed);
+            updateStatsFromFeed(d.feed);
+          }
         } catch (err) {
           console.warn("site-data", err);
         }
+        return statsFromFeed;
       }
 
       var menuToggle = document.getElementById("menuToggle");
@@ -1105,7 +1141,8 @@
         bioMore.textContent = expanded ? "Ler mais" : "Ler menos";
       });
 
-      function fetchStats() {
+      /** Fallback: contagens por pastas (Postagens / Midias / Feed teaser) — só se site-data não tiver array feed */
+      function fetchStatsFromFiles() {
         fetch("media-stats.json", { cache: "no-store" })
           .then(function (r) {
             return r.ok ? r.json() : Promise.reject();
@@ -1144,8 +1181,9 @@
 
         if (type === "image") {
           var imgSrc = card.getAttribute("data-vip-src");
-          var imgAlt = card.getAttribute("data-vip-alt") || "Conteúdo VIP";
-          vipLbImg.src = imgSrc;
+          var imgAlt = card.getAttribute("data-vip-alt") || "Imagem";
+          vipLbImg.removeAttribute("src");
+          vipLbImg.src = imgSrc || "";
           vipLbImg.alt = imgAlt;
           vipLbImg.hidden = false;
         } else if (type === "video") {
@@ -1162,20 +1200,24 @@
         vipLightbox.querySelector(".lightbox__close").focus();
       }
 
-      function bindVipCards() {
-        document.querySelectorAll(".card[data-vip-type]").forEach(function (card) {
-          card.addEventListener("click", function (e) {
-            if (e.target.closest(".card__menu")) return;
-            openVipLightbox(card);
-          });
-          card.addEventListener("keydown", function (e) {
-            if (e.key !== "Enter" && e.key !== " ") return;
-            if (e.target.closest && e.target.closest(".card__menu")) return;
-            e.preventDefault();
-            openVipLightbox(card);
-          });
+      (function bindFeedLightboxDelegation() {
+        var feedRoot = document.getElementById("feedRoot");
+        if (!feedRoot) return;
+        feedRoot.addEventListener("click", function (e) {
+          var card = e.target.closest("article.card[data-vip-type]");
+          if (!card || card.getAttribute("data-vip-locked") === "1") return;
+          if (e.target.closest(".card__menu")) return;
+          openVipLightbox(card);
         });
-      }
+        feedRoot.addEventListener("keydown", function (e) {
+          var card = e.target.closest("article.card[data-vip-type]");
+          if (!card || card.getAttribute("data-vip-locked") === "1") return;
+          if (e.key !== "Enter" && e.key !== " ") return;
+          if (e.target.closest && e.target.closest(".card__menu")) return;
+          e.preventDefault();
+          openVipLightbox(card);
+        });
+      })();
 
       vipLightbox.addEventListener("click", function (e) {
         if (e.target.closest("[data-lightbox-close]")) closeVipLightbox();
@@ -1190,14 +1232,10 @@
           return r.ok ? r.json() : Promise.reject();
         })
         .then(function (data) {
-          applySiteData(data);
-          bindVipCards();
+          if (!applySiteData(data)) fetchStatsFromFiles();
         })
         .catch(function () {
-          bindVipCards();
-        })
-        .finally(function () {
-          fetchStats();
+          fetchStatsFromFiles();
         });
     })();
   </script>

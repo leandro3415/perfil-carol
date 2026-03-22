@@ -822,6 +822,14 @@
 
       var feedEditor = document.getElementById("feedEditor");
 
+      function isFeedItemVipLocked(it) {
+        var v = it && it.vipLocked;
+        if (v === false || v === "false" || v === 0 || v === "0") return false;
+        if (v === true || v === "true") return true;
+        if (v == null) return true;
+        return Boolean(v);
+      }
+
       function renderFeedEditor(items) {
         feedEditor.innerHTML = "";
         items.forEach(function (it, i) {
@@ -865,7 +873,7 @@
         wrap.querySelector(".f-likes").value = (it.metrics && it.metrics.likes) || "";
         wrap.querySelector(".f-hearts").value = (it.metrics && it.metrics.hearts) || "";
         var vipCb = wrap.querySelector(".f-vip-locked");
-        if (vipCb) vipCb.checked = it.vipLocked !== false;
+        if (vipCb) vipCb.checked = isFeedItemVipLocked(it);
         function toggleVid() {
           var v = wrap.querySelector(".f-type").value === "video";
           wrap.querySelector(".f-img-only").classList.toggle("hidden", v);
@@ -911,14 +919,49 @@
         });
       }
 
+      function maxTeaserIndexInEditor() {
+        var maxN = 0;
+        var re = /teaser-(\d+)/gi;
+        function scan(val) {
+          if (!val || !String(val).trim()) return;
+          var s = String(val);
+          var m;
+          re.lastIndex = 0;
+          while ((m = re.exec(s)) !== null) {
+            var n = parseInt(m[1], 10);
+            if (!isNaN(n) && n > maxN) maxN = n;
+          }
+        }
+        feedEditor.querySelectorAll(".feed-item").forEach(function (row) {
+          scan(row.querySelector(".f-thumb") && row.querySelector(".f-thumb").value);
+          scan(row.querySelector(".f-full") && row.querySelector(".f-full").value);
+          scan(row.querySelector(".f-video") && row.querySelector(".f-video").value);
+          scan(row.querySelector(".f-poster") && row.querySelector(".f-poster").value);
+        });
+        return maxN;
+      }
+
+      function nextTeaserPaths(type) {
+        var n = maxTeaserIndexInEditor() + 1;
+        var base = "Feed teaser/teaser-" + n;
+        if (type === "video") {
+          return { thumb: base + ".jpg", full: "", video: base + ".mp4", poster: base + ".jpg" };
+        }
+        return { thumb: base + ".jpg", full: base + ".jpg", video: "", poster: "" };
+      }
+
       document.getElementById("btnAddFeed").addEventListener("click", function () {
+        var type = "image";
+        var p = nextTeaserPaths(type);
         feedEditor.appendChild(
           feedRowEl(
             {
-              type: "image",
+              type: type,
               vipLocked: true,
-              thumb: "",
-              full: "",
+              thumb: p.thumb,
+              full: p.full,
+              video: p.video,
+              poster: p.poster,
               alt: "",
               thumbFallback: "",
               handle: "@carolzinha",

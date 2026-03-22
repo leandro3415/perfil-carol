@@ -108,11 +108,20 @@ O `node server.mjs` precisa estar rodando.
 
 ## 7. Estatísticas (mídias)
 
+No **`/vip/`**, os contadores acima do feed usam o **`site-data.json`**:
+
+- **Postagens** = quantidade de itens no array `feed`
+- **Vídeos** = quantos posts têm `type: "video"` (não conta arquivos `.mp4` soltos na pasta)
+
+Se o `site-data.json` não puder ser lido ou não tiver `feed` em formato de lista, a página cai no fallback `vip/media-stats.json` (contagem de arquivos nas pastas — legado).
+
+Para regenerar só o JSON por pastas (útil no terminal / servidor local):
+
 ```powershell
 npm run stats
 ```
 
-Atualiza `vip/media-stats.json` e os números em `vip/index.html`.
+Atualiza `vip/media-stats.json` (não altera a lógica do `/vip` quando há `feed` no site-data).
 
 ---
 
