@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base href="/vip/" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Perfil Carolzinha — teaser e assinatura" />
+  <title>Carolzinha | Perfil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-card: #141414;
+      --text: #ffffff;
+      --text-muted: #a3a3a3;
+      --orange-1: #ff6b00;
+      --orange-2: #ffa500;
+      --orange-soft: #ff8c42;
+      --border: rgba(255, 140, 66, 0.35);
+      --overlay: rgba(0, 0, 0, 0.45);
+      --radius: 14px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: calc(88px + var(--safe-bottom));
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+
+    a {
+      color: var(--orange-soft);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 42vh;
+      max-height: 520px;
+      overflow: hidden;
+    }
+
+    .hero__img {
+      width: 100%;
+      height: 100%;
+      min-height: 42vh;
+      object-fit: cover;
+      filter: saturate(1.05);
+    }
+
+    .hero__overlay {
+      position: absolute;
+      inset: 0;
+      /* Degradê alto: preto sobe bem na capa antes de sumir */
+      background: linear-gradient(
+        to top,
+        var(--bg) 0%,
+        rgba(10, 10, 10, 0.98) 14%,
+        rgba(10, 10, 10, 0.9) 30%,
+        rgba(10, 10, 10, 0.68) 48%,
+        rgba(10, 10, 10, 0.42) 62%,
+        rgba(10, 10, 10, 0.2) 78%,
+        rgba(10, 10, 10, 0.06) 90%,
+        transparent 97%,
+        var(--overlay) 100%
+      );
+      pointer-events: none;
+    }
+
+    .hero__bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 12px 16px;
+      z-index: 2;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.5);
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    /* Bloco perfil: avatar + textos na mesma linha — evita texto atrás do círculo */
+    .profile-head {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-top: -52px;
+      padding: 0 20px 28px;
+      border-radius: 20px 20px 0 0;
+      /* Degradê no topo: faixa mais alta fundindo com a capa */
+      background-color: var(--bg);
+      background-image: linear-gradient(
+        180deg,
+        rgba(10, 10, 10, 0) 0%,
+        rgba(10, 10, 10, 0.18) 16%,
+        rgba(10, 10, 10, 0.48) 40%,
+        rgba(10, 10, 10, 0.8) 66%,
+        rgba(10, 10, 10, 0.97) 90%,
+        var(--bg) 100%
+      );
+      background-size: 100% clamp(150px, 44vw, 300px);
+      background-repeat: no-repeat;
+      background-position: center top;
+    }
+
+    .profile-head__avatar {
+      flex-shrink: 0;
+      width: 104px;
+      height: 104px;
+      margin-top: 0;
+    }
+
+    @media (min-width: 480px) {
+      .profile-head__avatar {
+        width: 112px;
+        height: 112px;
+      }
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 4px solid var(--bg);
+      object-fit: cover;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .profile-head__body {
+      flex: 1;
+      min-width: 0;
+      padding-top: 4px;
+    }
+
+    @media (max-width: 380px) {
+      .profile-head {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+      }
+
+      .profile-head__body {
+        padding-top: 0;
+        width: 100%;
+      }
+
+      .profile-head__avatar {
+        margin-top: -40px;
+      }
+
+      .bio__name {
+        justify-content: center;
+      }
+    }
+
+    .profile-tagline {
+      margin: 0 0 12px;
+      font-size: clamp(0.9rem, 2.8vw, 1rem);
+      color: #f5f5f5;
+      line-height: 1.45;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .bio__name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      font-size: 0.7rem;
+      color: #fff;
+    }
+
+    .bio__handle {
+      margin: 0 0 16px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .bio__text {
+      margin: 0;
+      color: #e5e5e5;
+      font-size: 0.95rem;
+    }
+
+    .bio__text--collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .bio__more {
+      margin-top: 10px;
+      display: inline-block;
+      font-weight: 600;
+      color: var(--orange-2);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .sub-bar {
+      margin: 0 20px 24px;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      background: linear-gradient(90deg, #ff4500, #ffa500);
+      box-shadow: 0 8px 32px rgba(255, 107, 0, 0.25);
+    }
+
+    .sub-bar__btn {
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(8px);
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .sub-bar__btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+      transform: scale(1.01);
+    }
+
+    .sub-bar__hint {
+      margin: 12px 0 0;
+      font-size: 0.8rem;
+      text-align: center;
+      opacity: 0.95;
+    }
+
+    .stats {
+      margin: 0 20px 28px;
+      padding: 20px 16px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 8px;
+    }
+
+    .stat__icon {
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+
+    .stat__value {
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    .stat__label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orange-1), transparent);
+      margin: 0 20px 24px;
+    }
+
+    .section-title {
+      margin: 0 20px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .feed {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 0 20px 32px;
+    }
+
+    @media (min-width: 640px) {
+      .feed {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 900px;
+        margin: 0 auto 32px;
+      }
+    }
+
+    .card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-card);
+      aspect-ratio: 3 / 4;
+      border: 1px solid rgba(255, 140, 66, 0.12);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 140, 66, 0.35);
+      border-color: rgba(255, 140, 66, 0.35);
+    }
+
+    .card__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: filter 0.35s ease, transform 0.35s ease;
+    }
+
+    .card__blur {
+      filter: blur(12px) brightness(0.85);
+      transform: scale(1.08);
+    }
+
+    .card:hover .card__blur {
+      filter: blur(7px) brightness(0.92);
+      transform: scale(1.05);
+    }
+
+    .card__grad {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.35) 42%, transparent 68%);
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card,
+      .card__img {
+        transition: none;
+      }
+
+      .card:hover {
+        transform: none;
+      }
+
+      .card:hover .card__blur {
+        filter: blur(12px) brightness(0.85);
+        transform: scale(1.08);
+      }
+    }
+
+    .card__menu {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+    }
+
+    .card__menu .icon-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+    }
+
+    .card__footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 14px 10px 12px;
+      z-index: 2;
+    }
+
+    .card__user {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+    }
+
+    .card__user .badge {
+      width: 16px;
+      height: 16px;
+      font-size: 0.55rem;
+    }
+
+    .card__metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: #e8e8e8;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
+    }
+
+    .card__metrics span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card[data-vip-type] {
+      cursor: pointer;
+    }
+
+    .card[data-vip-type]:focus-visible {
+      outline: 2px solid var(--orange-soft);
+      outline-offset: 2px;
+    }
+
+    .card__vip {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 4;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, #ff6b00, #ff4500);
+      box-shadow: 0 2px 12px rgba(255, 80, 0, 0.45);
+      pointer-events: none;
+    }
+
+    .card--video .card__play-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+
+    .card__play {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55);
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+      color: #fff;
+      padding-left: 4px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .lightbox.is-open {
+      display: flex;
+    }
+
+    body.lightbox-open {
+      overflow: hidden;
+    }
+
+    .lightbox__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      cursor: pointer;
+    }
+
+    .lightbox__panel {
+      position: relative;
+      z-index: 1;
+      max-width: min(96vw, 520px);
+      max-height: min(88vh, 900px);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lightbox__close {
+      position: absolute;
+      top: -48px;
+      right: 0;
+      width: 44px;
+      height: 44px;
+      font-size: 1.5rem;
+      line-height: 1;
+      z-index: 2;
+    }
+
+    @media (min-width: 480px) {
+      .lightbox__close {
+        top: -52px;
+      }
+    }
+
+    .lightbox__img,
+    .lightbox__video {
+      max-width: 100%;
+      max-height: min(78vh, 780px);
+      width: auto;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .lightbox__video {
+      background: #000;
+    }
+
+    .lightbox__img[hidden],
+    .lightbox__video[hidden] {
+      display: none !important;
+    }
+
+    .lightbox__hint {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #a3a3a3;
+      text-align: center;
+    }
+
+    .novidades {
+      padding: 0 20px 8px;
+    }
+
+    .novidades__list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 8px;
+    }
+
+    .novidades__item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+
+    .novidades__item time {
+      font-size: 0.75rem;
+      color: var(--orange-soft);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .novidades__item h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .novidades__item p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #d4d4d4;
+      white-space: pre-wrap;
+    }
+
+    .site-footer {
+      padding: 24px 20px 16px;
+      border-top: 1px solid #262626;
+      text-align: center;
+    }
+
+    .site-footer__links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px 24px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+
+    .site-footer__links a {
+      color: var(--text-muted);
+    }
+
+    .site-footer__copy {
+      margin: 0;
+      font-size: 0.75rem;
+      color: #525252;
+    }
+
+    .fab {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: calc(16px + var(--safe-bottom));
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .fab__btn {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: min(100%, 300px);
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
+      box-shadow: 0 10px 40px rgba(255, 107, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+
+    .fab__btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 48px rgba(255, 107, 0, 0.45);
+      color: #fff;
+    }
+
+    .menu-dropdown {
+      position: fixed;
+      top: 56px;
+      right: 16px;
+      min-width: 200px;
+      background: #1f1f1f;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 8px 0;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      display: none;
+    }
+
+    .menu-dropdown.is-open {
+      display: block;
+    }
+
+    .menu-dropdown button {
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      color: #e5e5e5;
+    }
+
+    .menu-dropdown button:hover {
+      background: #2a2a2a;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    Mídias locais (mesmo nível que index.html):
+    Postagens/capa.jpg — banner do topo
+    Midias/avatar.jpg — foto redonda do perfil
+    Feed teaser/teaser-1.jpg … teaser-4.jpg — thumbnails do grid
+    Feed teaser/teaser-3.mp4 e teaser-4.mp4 — vídeos VIP (poster = mesmo número .jpg)
+
+    Resoluções recomendadas (exportar as fotos assim fica nítido no celular e no PC):
+    • capa.jpg      → 1920 x 1080 px (16:9) — mínimo ~1200 x 675; área visível corta com object-fit: cover
+    • avatar.jpg    → 512 x 512 px (quadrada) — mínimo 256 x 256; exibida ~112 px, margem para retina
+    • teaser-*.jpg  → 900 x 1200 px (3:4) — mínimo 600 x 800; o card do feed usa proporção 3:4
+
+    Contagens: npm run stats  |  Servidor: npm start → http://localhost:3333/
+    Conteúdos editáveis: site-data.json (painel http://localhost:3333/admin.html — só com servidor ligado)
+  -->
+  <header class="hero">
+    <img
+      id="heroCover"
+      class="hero__img"
+      src="Postagens/capa.jpg"
+      onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80'"
+      alt="Capa do perfil"
+      width="1920"
+      height="1080"
+    />
+    <div class="hero__overlay" aria-hidden="true"></div>
+    <div class="hero__bar">
+      <button type="button" class="icon-btn" id="menuToggle" aria-expanded="false" aria-haspopup="true" aria-controls="mainMenu" title="Menu">
+        ⋮
+      </button>
+    </div>
+  </header>
+
+  <div id="mainMenu" class="menu-dropdown" role="menu" aria-label="Opções do perfil">
+    <button type="button" role="menuitem">Compartilhar perfil</button>
+    <button type="button" role="menuitem">Copiar link</button>
+    <button type="button" role="menuitem">Denunciar</button>
+  </div>
+
+  <section class="profile-head" aria-label="Perfil">
+    <div class="profile-head__avatar">
+      <img
+        id="avatarImg"
+        class="avatar"
+        src="Midias/avatar.jpg"
+        onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=512&q=80'"
+        alt="Foto de perfil de Carolzinha"
+        width="512"
+        height="512"
+      />
+    </div>
+    <div class="profile-head__body">
+      <h1 class="bio__name">
+        <span id="profileName">Carolzinha</span>
+        <span class="badge" title="Verificado" aria-hidden="true">✓</span>
+      </h1>
+      <p class="bio__handle" id="profileHandle">@carolzinha</p>
+      <p class="profile-tagline" id="profileTagline">Sou uma safadinha que adora se exibir 🔥</p>
+      <p id="bioText" class="bio__text bio__text--collapsed">
+        Para acessar os meus conteúdos explícitos e interagir comigo no chat, entre no meu perfil 🔥 Aqui você encontra teasers; o restante fica no VIP com fotos, vídeos e conversa direta 🍑
+      </p>
+      <button type="button" class="bio__more" id="bioMore" aria-expanded="false">Ler mais</button>
+    </div>
+  </section>
+
+  <section class="sub-bar" aria-label="Assinatura">
+    <button type="button" class="sub-bar__btn" id="subBarBtn"><span id="subBarBtnLabel">Gratuito</span></button>
+    <p class="sub-bar__hint" id="subBarHint">Perfil teaser — desbloqueie o VIP para conteúdo completo e chat</p>
+  </section>
+
+  <section class="stats" aria-label="Estatísticas">
+    <div class="stat">
+      <div class="stat__icon" aria-hidden="true">📸</div>
+      <div class="stat__value" id="stat-postagens">1</div>
+      <div class="stat__label">Postagens</div>
+    </div>
+    <div class="stat">
+      <div class="stat__icon" aria-hidden="true">▶️</div>
+      <div class="stat__value" id="stat-midias">2</div>
+      <div class="stat__label">Mídias</div>
+    </div>
+  </section>
+
+  <section id="novidadesSection" class="novidades" aria-label="Novidades" hidden>
+    <h2 class="section-title">Novidades</h2>
+    <div id="novidadesList" class="novidades__list"></div>
+  </section>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <h2 class="section-title">Feed teaser</h2>
+  <!--
+    Dicas para melhorar cada postagem no feed:
+    • Use fotos em 3:4 (ex.: 900x1200), rosto ou foco principal um pouco acima do centro — o rodapé escuro cobre a base.
+    • Luz frontal ou lateral suave; evite foto muito escura (o blur + degradê já reduzem detalhe).
+    • Exporte JPG ~80–90% de qualidade ou WebP para carregar rápido no celular.
+    • No hover o card levanta e o blur diminui levemente — bom para dar sensação de "quase ver" (teaser).
+    • Ajuste texto/métricas por card copiando o bloco <article class="card"> e mudando números ou @.
+    • VIP imagem: toque abre lightbox sem blur — data-vip-type="image" + data-vip-src (pode ser o mesmo JPG ou versão full).
+    • VIP vídeo: coloque teaser-N.mp4 na pasta Feed teaser; use data-vip-type="video" + data-vip-video + poster no <img>.
+  -->
+  <div class="feed" id="feedRoot" role="list"></div>
+
+  <footer class="site-footer">
+    <nav class="site-footer__links" aria-label="Rodapé">
+      <a href="#" id="footerPrivacy">Política de privacidade</a>
+      <a href="#" id="footerTerms">Termos de uso</a>
+      <a href="#" id="footerSupport">Suporte</a>
+    </nav>
+    <p class="site-footer__copy" id="footerCopy">© 2026 — Página demonstrativa. Substitua links e imagens pelos seus.</p>
+  </footer>
+
+  <div class="fab">
+    <a id="fabBtn" class="fab__btn" href="#" role="button" aria-label="Assinar VIP"><span id="fabLabel">Assinar VIP</span> <span id="fabEmoji" aria-hidden="true">🔥</span></a>
+  </div>
+
+  <div id="vipLightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Visualizar conteúdo VIP" aria-hidden="true">
+    <div class="lightbox__backdrop" data-lightbox-close tabindex="-1"></div>
+    <div class="lightbox__panel">
+      <button type="button" class="lightbox__close icon-btn" data-lightbox-close aria-label="Fechar">×</button>
+      <img class="lightbox__img" alt="" hidden />
+      <video class="lightbox__video" controls playsinline preload="metadata" hidden></video>
+      <p class="lightbox__hint">Toque fora ou em Fechar para sair</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function esc(s) {
+        return String(s == null ? "" : s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function renderFeed(items) {
+        var root = document.getElementById("feedRoot");
+        if (!root || !items || !items.length) return;
+        var html = items
+          .map(function (it) {
+            var isVid = it.type === "video";
+            var cls = isVid ? "card card--video" : "card";
+            var label = isVid ? "Reproduzir vídeo VIP" : "Ver foto VIP em tela cheia";
+            var play = isVid
+              ? '<div class="card__play-wrap" aria-hidden="true"><span class="card__play">▶</span></div>'
+              : "";
+            var attrs =
+              ' role="listitem" tabindex="0" aria-label="' +
+              esc(label) +
+              '" data-vip-type="' +
+              (isVid ? "video" : "image") +
+              '"';
+            if (isVid) {
+              attrs += ' data-vip-video="' + esc(it.video || "") + '" data-vip-poster="' + esc(it.poster || it.thumb || "") + '"';
+              attrs += ' data-vip-alt="' + esc(it.alt || "") + '"';
+            } else {
+              attrs += ' data-vip-src="' + esc(it.full || it.thumb || "") + '" data-vip-alt="' + esc(it.alt || "") + '"';
+            }
+            var m = it.metrics || {};
+            var handle = esc(it.handle || "@carolzinha");
+            return (
+              '<article class="' +
+              cls +
+              '"' +
+              attrs +
+              '><span class="card__vip">VIP</span><img class="card__img card__blur" src="' +
+              esc(it.thumb || "") +
+              '" width="900" height="1200" alt="' +
+              esc(it.alt || "VIP") +
+              '" loading="lazy" decoding="async"/>' +
+              play +
+              '<div class="card__grad" aria-hidden="true"></div><div class="card__menu"><button type="button" class="icon-btn" title="Opções">⋮</button></div><div class="card__footer"><div class="card__user">' +
+              handle +
+              ' <span class="badge" aria-label="Verificado">✓</span></div><div class="card__metrics"><span>👁 ' +
+              esc(m.views) +
+              '</span><span>❤️ ' +
+              esc(m.likes) +
+              '</span><span>💕 ' +
+              esc(m.hearts) +
+              "</span></div></div></article>"
+            );
+          })
+          .join("");
+        root.innerHTML = html;
+        var imgs = root.querySelectorAll(".card__img");
+        items.forEach(function (it, idx) {
+          var img = imgs[idx];
+          if (!img || !it.thumbFallback) return;
+          img.addEventListener("error", function once() {
+            img.removeEventListener("error", once);
+            img.src = it.thumbFallback;
+          });
+        });
+      }
+
+      function renderNovidades(list) {
+        var sec = document.getElementById("novidadesSection");
+        var listEl = document.getElementById("novidadesList");
+        if (!sec || !listEl) return;
+        if (!list || !list.length) {
+          sec.hidden = true;
+          return;
+        }
+        sec.hidden = false;
+        listEl.innerHTML = list
+          .map(function (n) {
+            var body = esc(n.body || "").replace(/\n/g, "<br>");
+            return (
+              '<article class="novidades__item"><time>' +
+              esc(n.date || "") +
+              "</time><h3>" +
+              esc(n.title || "") +
+              "</h3><p>" +
+              body +
+              "</p></article>"
+            );
+          })
+          .join("");
+      }
+
+      function applySiteData(d) {
+        if (!d) return;
+        try {
+          if (d.meta) {
+            if (d.meta.title) document.title = d.meta.title;
+            var md = document.querySelector('meta[name="description"]');
+            if (md && d.meta.description) md.setAttribute("content", d.meta.description);
+          }
+          if (d.profile) {
+            var pn = document.getElementById("profileName");
+            if (pn) pn.textContent = d.profile.displayName || "";
+            var ph = document.getElementById("profileHandle");
+            if (ph) ph.textContent = d.profile.handle || "";
+            var pt = document.getElementById("profileTagline");
+            if (pt) pt.textContent = d.profile.tagline || "";
+            var bio = document.getElementById("bioText");
+            if (bio) bio.textContent = d.profile.bio || "";
+          }
+          if (d.media) {
+            var hero = document.getElementById("heroCover");
+            if (hero && d.media.hero) {
+              hero.src = d.media.hero;
+              if (d.media.heroFallback) {
+                hero.onerror = function () {
+                  this.onerror = null;
+                  this.src = d.media.heroFallback;
+                };
+              }
+            }
+            var av = document.getElementById("avatarImg");
+            if (av && d.media.avatar) {
+              av.src = d.media.avatar;
+              if (d.media.avatarFallback) {
+                av.onerror = function () {
+                  this.onerror = null;
+                  this.src = d.media.avatarFallback;
+                };
+              }
+            }
+          }
+          if (d.subBar) {
+            var sbl = document.getElementById("subBarBtnLabel");
+            if (sbl) sbl.textContent = d.subBar.buttonLabel || "";
+            var sh = document.getElementById("subBarHint");
+            if (sh) sh.textContent = d.subBar.hint || "";
+          }
+          if (d.fab) {
+            var fb = document.getElementById("fabBtn");
+            if (fb) {
+              fb.href = d.fab.href || "#";
+              fb.setAttribute("aria-label", (d.fab.label || "Assinar") + (d.fab.emoji ? " " + d.fab.emoji : ""));
+              var fl = document.getElementById("fabLabel");
+              if (fl) fl.textContent = d.fab.label || "";
+              var fe = document.getElementById("fabEmoji");
+              if (fe) fe.textContent = d.fab.emoji || "🔥";
+            }
+          }
+          if (d.footer) {
+            var fpr = document.getElementById("footerPrivacy");
+            if (fpr) fpr.href = d.footer.privacy || "#";
+            var ftr = document.getElementById("footerTerms");
+            if (ftr) ftr.href = d.footer.terms || "#";
+            var fsp = document.getElementById("footerSupport");
+            if (fsp) fsp.href = d.footer.support || "#";
+            var fcp = document.getElementById("footerCopy");
+            if (fcp) fcp.textContent = d.footer.copyright || "";
+          }
+          if (d.feed && d.feed.length) renderFeed(d.feed);
+          renderNovidades(d.novidades || []);
+        } catch (err) {
+          console.warn("site-data", err);
+        }
+      }
+
+      var menuToggle = document.getElementById("menuToggle");
+      var mainMenu = document.getElementById("mainMenu");
+      var bioText = document.getElementById("bioText");
+      var bioMore = document.getElementById("bioMore");
+
+      menuToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var open = mainMenu.classList.toggle("is-open");
+        menuToggle.setAttribute("aria-expanded", open);
+      });
+
+      document.addEventListener("click", function () {
+        mainMenu.classList.remove("is-open");
+        menuToggle.setAttribute("aria-expanded", "false");
+      });
+
+      mainMenu.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+
+      bioMore.addEventListener("click", function () {
+        var expanded = bioText.classList.toggle("bio__text--collapsed");
+        bioMore.setAttribute("aria-expanded", !expanded);
+        bioMore.textContent = expanded ? "Ler mais" : "Ler menos";
+      });
+
+      function fetchStats() {
+        fetch("media-stats.json", { cache: "no-store" })
+          .then(function (r) {
+            return r.ok ? r.json() : Promise.reject();
+          })
+          .then(function (data) {
+            var p = document.getElementById("stat-postagens");
+            var m = document.getElementById("stat-midias");
+            if (p && typeof data.postagens === "number") p.textContent = String(data.postagens);
+            if (m && typeof data.midias === "number") m.textContent = String(data.midias);
+          })
+          .catch(function () {});
+      }
+
+      var vipLightbox = document.getElementById("vipLightbox");
+      var vipLbImg = vipLightbox.querySelector(".lightbox__img");
+      var vipLbVideo = vipLightbox.querySelector(".lightbox__video");
+
+      function closeVipLightbox() {
+        vipLightbox.classList.remove("is-open");
+        vipLightbox.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("lightbox-open");
+        vipLbVideo.pause();
+        vipLbVideo.removeAttribute("src");
+        vipLbVideo.removeAttribute("poster");
+        vipLbVideo.load();
+        vipLbImg.removeAttribute("src");
+        vipLbImg.hidden = true;
+        vipLbVideo.hidden = true;
+      }
+
+      function openVipLightbox(card) {
+        var type = card.getAttribute("data-vip-type");
+        vipLbImg.hidden = true;
+        vipLbVideo.hidden = true;
+
+        if (type === "image") {
+          var imgSrc = card.getAttribute("data-vip-src");
+          var imgAlt = card.getAttribute("data-vip-alt") || "Conteúdo VIP";
+          vipLbImg.src = imgSrc;
+          vipLbImg.alt = imgAlt;
+          vipLbImg.hidden = false;
+        } else if (type === "video") {
+          var vidSrc = card.getAttribute("data-vip-video");
+          var vidPoster = card.getAttribute("data-vip-poster") || "";
+          vipLbVideo.poster = vidPoster;
+          vipLbVideo.src = vidSrc;
+          vipLbVideo.hidden = false;
+        }
+
+        vipLightbox.classList.add("is-open");
+        vipLightbox.setAttribute("aria-hidden", "false");
+        document.body.classList.add("lightbox-open");
+        vipLightbox.querySelector(".lightbox__close").focus();
+      }
+
+      function bindVipCards() {
+        document.querySelectorAll(".card[data-vip-type]").forEach(function (card) {
+          card.addEventListener("click", function (e) {
+            if (e.target.closest(".card__menu")) return;
+            openVipLightbox(card);
+          });
+          card.addEventListener("keydown", function (e) {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            if (e.target.closest && e.target.closest(".card__menu")) return;
+            e.preventDefault();
+            openVipLightbox(card);
+          });
+        });
+      }
+
+      vipLightbox.addEventListener("click", function (e) {
+        if (e.target.closest("[data-lightbox-close]")) closeVipLightbox();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && vipLightbox.classList.contains("is-open")) closeVipLightbox();
+      });
+
+      fetch("site-data.json", { cache: "no-store" })
+        .then(function (r) {
+          return r.ok ? r.json() : Promise.reject();
+        })
+        .then(function (data) {
+          applySiteData(data);
+          bindVipCards();
+        })
+        .catch(function () {
+          bindVipCards();
+        })
+        .finally(function () {
+          fetchStats();
+        });
+    })();
+  </script>
+</body>
+</html>

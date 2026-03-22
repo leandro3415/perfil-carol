@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Foto aleatória — Banco no Google Drive</title>
+  <style>
+    :root {
+      --bg: #0f1218;
+      --card: #1a1f2e;
+      --text: #e8eaef;
+      --muted: #8b93a7;
+      --accent: #6c9eff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(ellipse 120% 80% at 50% -20%, #1e2a4a 0%, var(--bg) 55%);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: clamp(1.25rem, 4vw, 1.75rem);
+      margin: 0 0 0.35rem;
+      text-align: center;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      max-width: 36rem;
+    }
+    .frame {
+      width: min(92vw, 720px);
+      aspect-ratio: 4 / 3;
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .frame .placeholder {
+      color: var(--muted);
+      padding: 2rem;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .viewer {
+      width: min(92vw, 720px);
+    }
+    .download-row {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+    }
+    .download-row[hidden] {
+      display: none !important;
+    }
+    button.download {
+      background: #2d3748;
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    button.download:hover {
+      filter: brightness(1.12);
+    }
+    .actions {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    button {
+      font: inherit;
+      cursor: pointer;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #0a0e14;
+      font-weight: 600;
+    }
+    button:hover {
+      filter: brightness(1.08);
+    }
+    button.secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(108, 158, 255, 0.45);
+    }
+    .hint {
+      margin-top: 2rem;
+      max-width: 40rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .hint code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.12rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Foto aleatória</h1>
+  <p class="sub">A cada acesso ou atualização da página, uma imagem do banco é escolhida ao acaso.</p>
+
+  <div class="viewer">
+    <div class="frame" id="frame">
+      <div class="placeholder" id="placeholder">Configure os IDs das imagens ou a pasta + API key abaixo no arquivo.</div>
+      <img id="photo" alt="Foto selecionada" hidden />
+    </div>
+    <div class="download-row" id="downloadRow" hidden>
+      <button type="button" class="download" id="btnDownload">Baixar esta imagem</button>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button type="button" id="btnAnother">Outra foto</button>
+    <button type="button" id="btnReload" class="secondary">Recarregar página</button>
+  </div>
+
+  <p class="hint" style="margin-top: 1.25rem; text-align: center;">
+    <a href="/vip/" style="color: var(--accent); font-weight: 600;">Abrir perfil VIP</a>
+  </p>
+
+  <p class="hint">
+    <strong>Google Drive:</strong> cada arquivo compartilhado tem um ID na URL
+    (<code>.../file/d/<strong>ESTE_ID</strong>/view</code> ou
+    <code>.../open?id=<strong>ESTE_ID</strong></code>). Cole esses IDs em
+    <code>imageIds</code> no script, ou use <code>folderId</code> + <code>apiKey</code>
+    para buscar automaticamente (pasta precisa estar “Qualquer pessoa com o link pode ver” e a API Drive ativada no Google Cloud).
+  </p>
+
+  <script>
+    /**
+     * CONFIGURAÇÃO — edite aqui quando tiver o link do Drive
+     *
+     * Opção A (simples): cole só os IDs dos arquivos de imagem em imageIds.
+     * Opção B: deixe imageIds vazio, preencha folderId (da URL .../folders/XXXX)
+     *          e apiKey (Google Cloud → APIs → Drive API → credenciais).
+     */
+    const CONFIG = {
+      // Lista via API (imageIds vazio). Pasta: …/folders/1FCnqpekhBQTTf_gwzPadzrc_5iWCxBKZ
+      imageIds: [],
+      folderId: "1FCnqpekhBQTTf_gwzPadzrc_5iWCxBKZ",
+      apiKey: "AIzaSyDAQL9Rz2e1ReKgvfekheYlC97Jovze098",
+    };
+
+    const photoEl = document.getElementById("photo");
+    const placeholderEl = document.getElementById("placeholder");
+
+    function driveImageUrl(fileId) {
+      return "https://drive.google.com/uc?export=view&id=" + encodeURIComponent(fileId);
+    }
+
+    function driveThumbnailUrl(fileId) {
+      return (
+        "https://drive.google.com/thumbnail?id=" +
+        encodeURIComponent(fileId) +
+        "&sz=w2048"
+      );
+    }
+
+    let displayBlobUrl = null;
+
+    function revokeDisplayBlob() {
+      if (displayBlobUrl) {
+        URL.revokeObjectURL(displayBlobUrl);
+        displayBlobUrl = null;
+      }
+    }
+
+    function showImageLoadError() {
+      revokeDisplayBlob();
+      photoEl.hidden = true;
+      setDownloadVisible(false);
+      placeholderEl.hidden = false;
+      placeholderEl.textContent =
+        "Não foi possível carregar esta imagem. Com chave de API, o arquivo deve ser acessível pela API; confira também o compartilhamento “Qualquer pessoa com o link” e as restrições da chave (domínio/porta).";
+    }
+
+    async function loadIdsFromFolder(folderId, apiKey) {
+      const q = encodeURIComponent("'" + folderId + "' in parents and trashed = false");
+      const fields = encodeURIComponent("nextPageToken, files(id, mimeType, name)");
+      const url =
+        "https://www.googleapis.com/drive/v3/files?q=" +
+        q +
+        "&fields=" +
+        fields +
+        "&pageSize=1000&key=" +
+        encodeURIComponent(apiKey);
+
+      const list = [];
+      let pageToken = null;
+      do {
+        let u = url;
+        if (pageToken) u += "&pageToken=" + encodeURIComponent(pageToken);
+        const res = await fetch(u);
+        if (!res.ok) throw new Error("Drive API: " + res.status);
+        const data = await res.json();
+        for (const f of data.files || []) {
+          if (f.mimeType && f.mimeType.startsWith("image/")) {
+            list.push({ id: f.id, name: f.name || null });
+          }
+        }
+        pageToken = data.nextPageToken || null;
+      } while (pageToken);
+      return list;
+    }
+
+    const downloadRow = document.getElementById("downloadRow");
+    let currentFileId = null;
+    let currentFileName = null;
+
+    function driveDownloadPageUrl(fileId) {
+      return (
+        "https://drive.google.com/uc?export=download&id=" + encodeURIComponent(fileId)
+      );
+    }
+
+    function setDownloadVisible(visible) {
+      downloadRow.hidden = !visible;
+      if (!visible) {
+        revokeDisplayBlob();
+        currentFileId = null;
+        currentFileName = null;
+      }
+    }
+
+    function safeDownloadName(name, mimeHint) {
+      const ext =
+        mimeHint && mimeHint.includes("png")
+          ? "png"
+          : mimeHint && mimeHint.includes("jpeg")
+            ? "jpg"
+            : mimeHint && mimeHint.includes("webp")
+              ? "webp"
+              : "jpg";
+      const clean = name ? name.replace(/[\\/:*?"<>|]/g, "_").trim() : "";
+      if (clean && /\.[a-z0-9]{2,4}$/i.test(clean)) return clean;
+      const base = clean || "foto";
+      return base + "." + ext;
+    }
+
+    async function downloadCurrentImage() {
+      if (!currentFileId) return;
+      const apiKey = (CONFIG.apiKey || "").trim();
+      if (apiKey) {
+        try {
+          const mediaUrl =
+            "https://www.googleapis.com/drive/v3/files/" +
+            encodeURIComponent(currentFileId) +
+            "?alt=media&key=" +
+            encodeURIComponent(apiKey);
+          const res = await fetch(mediaUrl);
+          if (res.ok) {
+            const blob = await res.blob();
+            const fname = safeDownloadName(currentFileName, blob.type);
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = fname;
+            a.rel = "noopener";
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(a.href);
+            a.remove();
+            return;
+          }
+        } catch (_) {
+          /* fallback abaixo */
+        }
+      }
+      window.open(driveDownloadPageUrl(currentFileId), "_blank", "noopener,noreferrer");
+    }
+
+    async function showImage(fileId, displayName) {
+      revokeDisplayBlob();
+      currentFileId = fileId;
+      currentFileName = displayName || null;
+      placeholderEl.hidden = true;
+      photoEl.hidden = false;
+      setDownloadVisible(true);
+
+      const apiKey = (CONFIG.apiKey || "").trim();
+      if (apiKey) {
+        try {
+          const mediaUrl =
+            "https://www.googleapis.com/drive/v3/files/" +
+            encodeURIComponent(fileId) +
+            "?alt=media&key=" +
+            encodeURIComponent(apiKey);
+          const res = await fetch(mediaUrl);
+          if (res.ok) {
+            const blob = await res.blob();
+            displayBlobUrl = URL.createObjectURL(blob);
+            photoEl.onerror = showImageLoadError;
+            photoEl.src = displayBlobUrl;
+            return;
+          }
+        } catch (_) {
+          /* tenta miniatura */
+        }
+      }
+
+      photoEl.onerror = function () {
+        photoEl.onerror = showImageLoadError;
+        photoEl.src = driveImageUrl(fileId);
+      };
+      photoEl.src = driveThumbnailUrl(fileId);
+    }
+
+    function showMessage(text) {
+      revokeDisplayBlob();
+      photoEl.hidden = true;
+      setDownloadVisible(false);
+      placeholderEl.hidden = false;
+      placeholderEl.textContent = text;
+    }
+
+    async function resolveImageEntries() {
+      const rawIds = (CONFIG.imageIds || []).filter(Boolean);
+      if (rawIds.length) {
+        return rawIds.map(function (id) {
+          return { id: id, name: null };
+        });
+      }
+      if (CONFIG.folderId && CONFIG.apiKey) {
+        let entries = [];
+        try {
+          entries = await loadIdsFromFolder(CONFIG.folderId.trim(), CONFIG.apiKey.trim());
+        } catch (e) {
+          showMessage("Erro ao listar a pasta: " + (e.message || String(e)));
+          return [];
+        }
+        if (!entries.length) {
+          showMessage("Nenhuma imagem encontrada na pasta (ou pasta/API key incorretos).");
+        }
+        return entries;
+      }
+      showMessage(
+        "Adicione IDs em CONFIG.imageIds ou preencha CONFIG.folderId e CONFIG.apiKey no código HTML."
+      );
+      return [];
+    }
+
+    let cachedEntries = null;
+
+    async function pickRandom() {
+      if (!cachedEntries) cachedEntries = await resolveImageEntries();
+      if (!cachedEntries.length) return;
+      const i = Math.floor(Math.random() * cachedEntries.length);
+      const item = cachedEntries[i];
+      await showImage(item.id, item.name);
+    }
+
+    document.getElementById("btnAnother").addEventListener("click", function () {
+      pickRandom();
+    });
+    document.getElementById("btnReload").addEventListener("click", function () {
+      location.reload();
+    });
+    document.getElementById("btnDownload").addEventListener("click", function () {
+      downloadCurrentImage();
+    });
+
+    pickRandom();
+  </script>
+</body>
+</html>

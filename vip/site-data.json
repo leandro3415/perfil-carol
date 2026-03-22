@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Carolzinha | Perfil",
+    "description": "Perfil Carolzinha — teaser e assinatura"
+  },
+  "profile": {
+    "displayName": "Carolzinha",
+    "handle": "@carolzinha",
+    "tagline": "Sou uma safadinha que adora se exibir 🔥",
+    "bio": "Para acessar os meus conteúdos explícitos e interagir comigo no chat, entre no meu perfil 🔥 Aqui você encontra teasers; o restante fica no VIP com fotos, vídeos e conversa direta 🍑"
+  },
+  "media": {
+    "hero": "Postagens/capa.jpg",
+    "heroFallback": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80",
+    "avatar": "Midias/avatar.jpg",
+    "avatarFallback": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=512&q=80"
+  },
+  "subBar": {
+    "buttonLabel": "Gratuito",
+    "hint": "Perfil teaser — desbloqueie o VIP para conteúdo completo e chat"
+  },
+  "feed": [
+    {
+      "type": "image",
+      "thumb": "Feed teaser/teaser-1.jpg",
+      "thumbFallback": "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=900&q=80",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "532",
+        "likes": "143",
+        "hearts": "2.8K"
+      },
+      "full": "Feed teaser/teaser-1.jpg",
+      "alt": "Conteúdo VIP Carolzinha"
+    },
+    {
+      "type": "image",
+      "thumb": "Feed teaser/teaser-2.jpg",
+      "thumbFallback": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f252?w=900&q=80",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "412",
+        "likes": "98",
+        "hearts": "1.9K"
+      },
+      "full": "Feed teaser/teaser-2.jpg",
+      "alt": "Conteúdo VIP Carolzinha"
+    },
+    {
+      "type": "video",
+      "thumb": "Feed teaser/teaser-3.jpg",
+      "thumbFallback": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=900&q=80",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "891",
+        "likes": "201",
+        "hearts": "3.1K"
+      },
+      "video": "Feed teaser/teaser-3.mp4",
+      "poster": "Feed teaser/teaser-3.jpg",
+      "alt": ""
+    },
+    {
+      "type": "video",
+      "thumb": "Feed teaser/teaser-4.jpg",
+      "thumbFallback": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900&q=80",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "305",
+        "likes": "76",
+        "hearts": "1.2K"
+      },
+      "video": "Feed teaser/teaser-4.mp4",
+      "poster": "Feed teaser/teaser-4.jpg",
+      "alt": ""
+    }
+  ],
+  "fab": {
+    "href": "#",
+    "label": "Assinar VIP",
+    "emoji": "🔥"
+  },
+  "footer": {
+    "privacy": "#",
+    "terms": "#",
+    "support": "#",
+    "copyright": "© 2026"
+  },
+  "novidades": [
+    {
+      "title": "Bem-vindo ao perfil",
+      "date": "2026-03-21",
+      "body": "Publique novidades pelo painel admin — elas aparecem aqui para seus visitantes."
+    }
+  ]
+}

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="site-data-json" content="/vip/site-data.json" />
+  <meta name="admin-preview-href" content="/vip/" />
+  <title>Painel admin — Carolzinha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --border: #333;
+      --orange: #ff6b00;
+      --text: #eee;
+      --muted: #888;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 { font-size: 1.35rem; margin: 0 0 8px; }
+    h2 { font-size: 1rem; color: var(--orange); margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .warn {
+      background: rgba(255, 107, 0, 0.12);
+      border: 1px solid rgba(255, 107, 0, 0.35);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      color: #ffb380;
+      margin-bottom: 20px;
+    }
+    .login-box, .panel {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .login-box { max-width: 400px; margin-top: 8vh; }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin: 12px 0 4px; }
+    input[type="text"], input[type="password"], input[type="url"], input[type="date"], textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #111;
+      color: var(--text);
+      font: inherit;
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
+    button.primary {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(90deg, #ff6b00, #ffa500);
+      color: #fff;
+    }
+    button.secondary {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #222;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    button.danger { border-color: #842; color: #f88; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+    .toolbar a { color: var(--orange); }
+    .feed-item, .nov-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #141414;
+    }
+    .feed-item h3, .nov-item h3 { margin: 0 0 10px; font-size: 0.9rem; color: var(--muted); }
+    .hidden { display: none !important; }
+    #saveStatus { font-size: 0.85rem; margin-left: 8px; color: var(--muted); }
+    #saveStatus.ok { color: #6d6; }
+    #saveStatus.err { color: #f66; }
+  </style>
+</head>
+<body>
+  <p class="warn">
+    Acesse só em rede confiável. Em produção use HTTPS e defina <code>ADMIN_USER</code> e <code>ADMIN_PASSWORD</code> no ambiente — não commite senha no Git.
+  </p>
+
+  <div id="loginScreen" class="login-box">
+    <p id="localOnlyWarn" class="hidden" style="background:rgba(255,80,80,0.12);border:1px solid rgba(255,100,100,0.4);border-radius:8px;padding:12px 14px;font-size:0.85rem;color:#faa;margin:0 0 16px;line-height:1.45;">
+      Este arquivo foi aberto direto do disco (<code>file://</code>). O login <strong>não funciona</strong> assim.
+      No terminal, na pasta do projeto, rode <code>node server.mjs</code> e abra no navegador:
+      <strong>http://localhost:3333/admin/</strong> (use a mesma porta que o terminal mostrar).
+    </p>
+    <h1>Painel admin</h1>
+    <p style="color:var(--muted);font-size:0.9rem;margin:0 0 16px;">Entre para editar o site.</p>
+    <label for="admUser">Usuário</label>
+    <input type="text" id="admUser" autocomplete="username" />
+    <label for="admPass">Senha</label>
+    <input type="password" id="admPass" autocomplete="current-password" />
+    <p id="loginErr" class="hidden" style="color:#f66;font-size:0.85rem;margin-top:10px;"></p>
+    <button type="button" class="primary" id="btnLogin">Entrar</button>
+  </div>
+
+  <div id="dashboard" class="panel hidden">
+    <div class="toolbar">
+      <h1 style="margin:0;flex:1;">Editar site</h1>
+      <button type="button" class="secondary" id="btnPreview">Abrir site</button>
+      <button type="button" class="secondary danger" id="btnLogout">Sair</button>
+    </div>
+
+    <h2>Meta (Google / aba do navegador)</h2>
+    <label for="metaTitle">Título da página</label>
+    <input type="text" id="metaTitle" />
+    <label for="metaDesc">Descrição</label>
+    <textarea id="metaDesc" rows="2"></textarea>
+
+    <h2>Perfil</h2>
+    <div class="row2">
+      <div>
+        <label for="profName">Nome exibido</label>
+        <input type="text" id="profName" />
+      </div>
+      <div>
+        <label for="profHandle">Handle (ex. @carolzinha)</label>
+        <input type="text" id="profHandle" />
+      </div>
+    </div>
+    <label for="profTag">Tagline (linha curta)</label>
+    <input type="text" id="profTag" />
+    <label for="profBio">Bio (texto longo)</label>
+    <textarea id="profBio" rows="4"></textarea>
+
+    <h2>Caminhos das mídias</h2>
+    <div class="row2">
+      <div>
+        <label for="mediaHero">Capa (hero)</label>
+        <input type="text" id="mediaHero" placeholder="Postagens/capa.jpg" />
+      </div>
+      <div>
+        <label for="mediaHeroFb">Fallback URL capa</label>
+        <input type="url" id="mediaHeroFb" />
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label for="mediaAv">Avatar</label>
+        <input type="text" id="mediaAv" placeholder="Midias/avatar.jpg" />
+      </div>
+      <div>
+        <label for="mediaAvFb">Fallback URL avatar</label>
+        <input type="url" id="mediaAvFb" />
+      </div>
+    </div>
+
+    <h2>Faixa laranja (Gratuito)</h2>
+    <div class="row2">
+      <div>
+        <label for="subBtn">Texto do botão</label>
+        <input type="text" id="subBtn" />
+      </div>
+      <div>
+        <label for="subHint">Subtítulo</label>
+        <input type="text" id="subHint" />
+      </div>
+    </div>
+
+    <h2>Botão flutuante (VIP)</h2>
+    <div class="row2">
+      <div>
+        <label for="fabHref">Link (URL)</label>
+        <input type="text" id="fabHref" placeholder="https://..." />
+      </div>
+      <div>
+        <label for="fabLabel">Texto</label>
+        <input type="text" id="fabLabel" />
+      </div>
+    </div>
+    <label for="fabEmoji">Emoji (opcional)</label>
+    <input type="text" id="fabEmoji" maxlength="4" style="max-width:120px" />
+
+    <h2>Rodapé</h2>
+    <div class="row2">
+      <div>
+        <label for="ftPriv">Política (URL)</label>
+        <input type="text" id="ftPriv" />
+      </div>
+      <div>
+        <label for="ftTerms">Termos (URL)</label>
+        <input type="text" id="ftTerms" />
+      </div>
+    </div>
+    <label for="ftSupport">Suporte (URL)</label>
+    <input type="text" id="ftSupport" />
+    <label for="ftCopy">Copyright / texto final</label>
+    <input type="text" id="ftCopy" />
+
+    <h2>Feed VIP (posts)</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin:0 0 12px;">Imagem: preencha miniatura e URL da imagem grande. Vídeo: miniatura + arquivo .mp4 + poster.</p>
+    <div id="feedEditor"></div>
+    <button type="button" class="secondary" id="btnAddFeed">+ Adicionar post</button>
+
+    <h2>Novidades (timeline)</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin:0 0 12px;">Aparecem no perfil acima do feed — tipo rede social.</p>
+    <div id="novEditor"></div>
+    <button type="button" class="secondary" id="btnAddNov">+ Nova novidade</button>
+
+    <div style="margin-top:28px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+      <button type="button" class="primary" id="btnSave" style="width:auto;min-width:160px;padding:12px 24px;">Salvar tudo</button>
+      <span id="saveStatus"></span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var loginScreen = document.getElementById("loginScreen");
+      var dashboard = document.getElementById("dashboard");
+      /** @type {any} */
+      var siteData = null;
+      /** Só HTTP(S) tem origem válida para cookies e /api — file:// quebra o login */
+      var API_BASE =
+        location.protocol === "http:" || location.protocol === "https:"
+          ? location.origin
+          : "";
+
+      if (!API_BASE) {
+        document.getElementById("localOnlyWarn").classList.remove("hidden");
+        document.getElementById("btnLogin").disabled = true;
+      }
+
+      function apiUrl(path) {
+        return API_BASE + path;
+      }
+
+      function getSiteDataUrl() {
+        var m = document.querySelector('meta[name="site-data-json"]');
+        if (m && m.getAttribute("content")) return m.getAttribute("content").trim();
+        return "/vip/site-data.json";
+      }
+
+      function getPreviewHref() {
+        var m = document.querySelector('meta[name="admin-preview-href"]');
+        if (m && m.getAttribute("content")) return m.getAttribute("content").trim();
+        return "/vip/";
+      }
+
+      function api(path, opts) {
+        opts = opts || {};
+        opts.credentials = "include";
+        opts.headers = opts.headers || {};
+        if (opts.body && typeof opts.body === "object" && !(opts.body instanceof FormData)) {
+          opts.body = JSON.stringify(opts.body);
+          opts.headers["Content-Type"] = "application/json";
+        }
+        return fetch(apiUrl(path), opts);
+      }
+
+      function showLogin() {
+        loginScreen.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+      }
+
+      function showDash() {
+        loginScreen.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+      }
+
+      function fillForm(d) {
+        siteData = d;
+        document.getElementById("metaTitle").value = d.meta.title || "";
+        document.getElementById("metaDesc").value = d.meta.description || "";
+        document.getElementById("profName").value = d.profile.displayName || "";
+        document.getElementById("profHandle").value = d.profile.handle || "";
+        document.getElementById("profTag").value = d.profile.tagline || "";
+        document.getElementById("profBio").value = d.profile.bio || "";
+        document.getElementById("mediaHero").value = d.media.hero || "";
+        document.getElementById("mediaHeroFb").value = d.media.heroFallback || "";
+        document.getElementById("mediaAv").value = d.media.avatar || "";
+        document.getElementById("mediaAvFb").value = d.media.avatarFallback || "";
+        document.getElementById("subBtn").value = d.subBar.buttonLabel || "";
+        document.getElementById("subHint").value = d.subBar.hint || "";
+        document.getElementById("fabHref").value = d.fab.href || "";
+        document.getElementById("fabLabel").value = d.fab.label || "";
+        document.getElementById("fabEmoji").value = d.fab.emoji || "";
+        document.getElementById("ftPriv").value = d.footer.privacy || "";
+        document.getElementById("ftTerms").value = d.footer.terms || "";
+        document.getElementById("ftSupport").value = d.footer.support || "";
+        document.getElementById("ftCopy").value = d.footer.copyright || "";
+        renderFeedEditor(d.feed || []);
+        renderNovEditor(d.novidades || []);
+      }
+
+      function collectData() {
+        var feed = collectFeedFromEditor();
+        var novidades = collectNovFromEditor();
+        return {
+          version: siteData && siteData.version ? siteData.version : 1,
+          meta: {
+            title: document.getElementById("metaTitle").value.trim(),
+            description: document.getElementById("metaDesc").value.trim(),
+          },
+          profile: {
+            displayName: document.getElementById("profName").value.trim(),
+            handle: document.getElementById("profHandle").value.trim(),
+            tagline: document.getElementById("profTag").value.trim(),
+            bio: document.getElementById("profBio").value.trim(),
+          },
+          media: {
+            hero: document.getElementById("mediaHero").value.trim(),
+            heroFallback: document.getElementById("mediaHeroFb").value.trim(),
+            avatar: document.getElementById("mediaAv").value.trim(),
+            avatarFallback: document.getElementById("mediaAvFb").value.trim(),
+          },
+          subBar: {
+            buttonLabel: document.getElementById("subBtn").value.trim(),
+            hint: document.getElementById("subHint").value.trim(),
+          },
+          feed: feed,
+          fab: {
+            href: document.getElementById("fabHref").value.trim() || "#",
+            label: document.getElementById("fabLabel").value.trim(),
+            emoji: document.getElementById("fabEmoji").value.trim() || "🔥",
+          },
+          footer: {
+            privacy: document.getElementById("ftPriv").value.trim() || "#",
+            terms: document.getElementById("ftTerms").value.trim() || "#",
+            support: document.getElementById("ftSupport").value.trim() || "#",
+            copyright: document.getElementById("ftCopy").value.trim(),
+          },
+          novidades: novidades,
+        };
+      }
+
+      var feedEditor = document.getElementById("feedEditor");
+      var novEditor = document.getElementById("novEditor");
+
+      function renderFeedEditor(items) {
+        feedEditor.innerHTML = "";
+        items.forEach(function (it, i) {
+          feedEditor.appendChild(feedRowEl(it, i));
+        });
+      }
+
+      function feedRowEl(it, index) {
+        var wrap = document.createElement("div");
+        wrap.className = "feed-item";
+        wrap.dataset.index = String(index);
+        var type = it.type === "video" ? "video" : "image";
+        wrap.innerHTML =
+          "<h3>Post #" +
+          (index + 1) +
+          "</h3>" +
+          '<label>Tipo</label><select class="f-type"><option value="image">Foto VIP</option><option value="video">Vídeo VIP</option></select>' +
+          '<label>Miniatura (grid)</label><input type="text" class="f-thumb" placeholder="Feed teaser/teaser-1.jpg" />' +
+          '<div class="f-img-only"><label>Imagem no lightbox (URL)</label><input type="text" class="f-full" /></div>' +
+          '<div class="f-vid-only hidden"><label>Arquivo vídeo (.mp4)</label><input type="text" class="f-video" /></div>' +
+          '<div class="f-vid-only hidden"><label>Poster (jpg)</label><input type="text" class="f-poster" /></div>' +
+          '<label>Texto alt</label><input type="text" class="f-alt" />' +
+          '<label>Fallback miniatura (URL)</label><input type="url" class="f-tfb" />' +
+          '<label>Handle no card</label><input type="text" class="f-handle" />' +
+          '<div class="row2"><div><label>Views</label><input type="text" class="f-views" /></div><div><label>Likes</label><input type="text" class="f-likes" /></div></div>' +
+          '<label>Corações (texto)</label><input type="text" class="f-hearts" />' +
+          '<button type="button" class="secondary danger" style="margin-top:10px">Remover este post</button>';
+        wrap.querySelector(".f-type").value = type;
+        wrap.querySelector(".f-thumb").value = it.thumb || "";
+        wrap.querySelector(".f-full").value = it.full || "";
+        wrap.querySelector(".f-video").value = it.video || "";
+        wrap.querySelector(".f-poster").value = it.poster || "";
+        wrap.querySelector(".f-alt").value = it.alt || "";
+        wrap.querySelector(".f-tfb").value = it.thumbFallback || "";
+        wrap.querySelector(".f-handle").value = it.handle || "@carolzinha";
+        wrap.querySelector(".f-views").value = (it.metrics && it.metrics.views) || "";
+        wrap.querySelector(".f-likes").value = (it.metrics && it.metrics.likes) || "";
+        wrap.querySelector(".f-hearts").value = (it.metrics && it.metrics.hearts) || "";
+        function toggleVid() {
+          var v = wrap.querySelector(".f-type").value === "video";
+          wrap.querySelector(".f-img-only").classList.toggle("hidden", v);
+          wrap.querySelectorAll(".f-vid-only").forEach(function (el) {
+            el.classList.toggle("hidden", !v);
+          });
+        }
+        toggleVid();
+        wrap.querySelector(".f-type").addEventListener("change", toggleVid);
+        wrap.querySelector(".danger").addEventListener("click", function () {
+          wrap.remove();
+          renumberFeed();
+        });
+        return wrap;
+      }
+
+      function renumberFeed() {
+        feedEditor.querySelectorAll(".feed-item").forEach(function (el, i) {
+          el.querySelector("h3").textContent = "Post #" + (i + 1);
+        });
+      }
+
+      document.getElementById("btnAddFeed").addEventListener("click", function () {
+        feedEditor.appendChild(
+          feedRowEl(
+            {
+              type: "image",
+              thumb: "",
+              full: "",
+              alt: "",
+              thumbFallback: "",
+              handle: "@carolzinha",
+              metrics: { views: "", likes: "", hearts: "" },
+            },
+            feedEditor.children.length
+          )
+        );
+        renumberFeed();
+      });
+
+      function collectFeedFromEditor() {
+        var out = [];
+        feedEditor.querySelectorAll(".feed-item").forEach(function (wrap) {
+          var t = wrap.querySelector(".f-type").value;
+          var o = {
+            type: t,
+            thumb: wrap.querySelector(".f-thumb").value.trim(),
+            thumbFallback: wrap.querySelector(".f-tfb").value.trim(),
+            handle: wrap.querySelector(".f-handle").value.trim(),
+            metrics: {
+              views: wrap.querySelector(".f-views").value.trim(),
+              likes: wrap.querySelector(".f-likes").value.trim(),
+              hearts: wrap.querySelector(".f-hearts").value.trim(),
+            },
+          };
+          if (t === "image") {
+            o.full = wrap.querySelector(".f-full").value.trim();
+            o.alt = wrap.querySelector(".f-alt").value.trim();
+          } else {
+            o.video = wrap.querySelector(".f-video").value.trim();
+            o.poster = wrap.querySelector(".f-poster").value.trim();
+            o.alt = wrap.querySelector(".f-alt").value.trim();
+          }
+          out.push(o);
+        });
+        return out;
+      }
+
+      function renderNovEditor(items) {
+        novEditor.innerHTML = "";
+        items.forEach(function (it, i) {
+          novEditor.appendChild(novRowEl(it, i));
+        });
+      }
+
+      function novRowEl(it, index) {
+        var wrap = document.createElement("div");
+        wrap.className = "nov-item";
+        wrap.innerHTML =
+          "<h3>Novidade #" +
+          (index + 1) +
+          "</h3>" +
+          '<label>Título</label><input type="text" class="n-title" />' +
+          '<label>Data</label><input type="date" class="n-date" />' +
+          '<label>Texto</label><textarea class="n-body" rows="3"></textarea>' +
+          '<button type="button" class="secondary danger" style="margin-top:10px">Remover</button>';
+        wrap.querySelector(".n-title").value = it.title || "";
+        wrap.querySelector(".n-date").value = it.date || "";
+        wrap.querySelector(".n-body").value = it.body || "";
+        wrap.querySelector(".danger").addEventListener("click", function () {
+          wrap.remove();
+          renumberNov();
+        });
+        return wrap;
+      }
+
+      function renumberNov() {
+        novEditor.querySelectorAll(".nov-item").forEach(function (el, i) {
+          el.querySelector("h3").textContent = "Novidade #" + (i + 1);
+        });
+      }
+
+      document.getElementById("btnAddNov").addEventListener("click", function () {
+        novEditor.appendChild(novRowEl({ title: "", body: "", date: new Date().toISOString().slice(0, 10) }, novEditor.children.length));
+        renumberNov();
+      });
+
+      function collectNovFromEditor() {
+        var out = [];
+        novEditor.querySelectorAll(".nov-item").forEach(function (wrap) {
+          out.push({
+            title: wrap.querySelector(".n-title").value.trim(),
+            date: wrap.querySelector(".n-date").value.trim(),
+            body: wrap.querySelector(".n-body").value.trim(),
+          });
+        });
+        return out;
+      }
+
+      document.getElementById("btnLogin").addEventListener("click", async function () {
+        var err = document.getElementById("loginErr");
+        err.classList.add("hidden");
+        var r = await api("/api/admin/login", {
+          method: "POST",
+          body: {
+            username: document.getElementById("admUser").value.trim(),
+            password: document.getElementById("admPass").value,
+          },
+        });
+        var j = await r.json().catch(function () {
+          return {};
+        });
+        if (!r.ok) {
+          err.textContent = j.error || "Falha no login";
+          err.classList.remove("hidden");
+          return;
+        }
+        await loadSiteData();
+        showDash();
+      });
+
+      document.getElementById("btnLogout").addEventListener("click", async function () {
+        await api("/api/admin/logout", { method: "POST" });
+        showLogin();
+      });
+
+      document.getElementById("btnPreview").addEventListener("click", function () {
+        window.open(getPreviewHref(), "_blank");
+      });
+
+      async function loadSiteData() {
+        var r = await fetch(apiUrl(getSiteDataUrl()), { cache: "no-store", credentials: "include" });
+        siteData = await r.json();
+        fillForm(siteData);
+      }
+
+      document.getElementById("btnSave").addEventListener("click", async function () {
+        var st = document.getElementById("saveStatus");
+        st.textContent = "Salvando…";
+        st.className = "";
+        var data = collectData();
+        var r = await api("/api/admin/site-data", { method: "PUT", body: data });
+        var j = await r.json().catch(function () {
+          return {};
+        });
+        if (r.ok) {
+          st.textContent =
+            location.hostname.indexOf("vercel.app") !== -1
+              ? "Salvo no repositório GitHub. O site /vip pode levar ~1–2 min para atualizar (novo deploy)."
+              : "Salvo com sucesso.";
+          st.className = "ok";
+        } else {
+          st.textContent = j.error || "Erro ao salvar";
+          st.className = "err";
+        }
+      });
+
+      if (API_BASE) {
+        api("/api/admin/session").then(function (r) {
+          return r.json();
+        }).then(function (j) {
+          if (j.authenticated) {
+            loadSiteData().then(showDash);
+          } else {
+            showLogin();
+          }
+        });
+      } else {
+        showLogin();
+      }
+    })();
+  </script>
+</body>
+</html>
