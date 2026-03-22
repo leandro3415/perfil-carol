@@ -31,6 +31,7 @@
         "likes": "143",
         "hearts": "2.8K"
       },
+      "vipLocked": false,
       "full": "Feed teaser/teaser-1.jpg",
       "alt": "Conteúdo VIP Carolzinha"
     },
@@ -44,6 +45,7 @@
         "likes": "98",
         "hearts": "1.9K"
       },
+      "vipLocked": false,
       "full": "Feed teaser/teaser-2.jpg",
       "alt": "Conteúdo VIP Carolzinha"
     },
@@ -57,6 +59,7 @@
         "likes": "201",
         "hearts": "3.1K"
       },
+      "vipLocked": false,
       "video": "Feed teaser/teaser-3.mp4",
       "poster": "Feed teaser/teaser-3.jpg",
       "alt": ""
@@ -71,6 +74,7 @@
         "likes": "76",
         "hearts": "1.2K"
       },
+      "vipLocked": false,
       "video": "Feed teaser/teaser-4.mp4",
       "poster": "Feed teaser/teaser-4.jpg",
       "alt": ""
