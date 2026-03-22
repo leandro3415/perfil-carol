@@ -34,6 +34,20 @@
       "vipLocked": false,
       "full": "Feed teaser/teaser-1.jpg",
       "alt": "Conteúdo VIP Carolzinha"
+    },
+    {
+      "type": "image",
+      "thumb": "Feed teaser/teaser-2.jpg",
+      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-15%20220801.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTUgMjIwODAxLnBuZyIsImlhdCI6MTc3NDIwMzg0NiwiZXhwIjoxODA1NzM5ODQ2fQ.7IlWT0Wk-Buw0agScbXRVXGSsB-162uolP3hZYo4xRI",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "456",
+        "likes": "500",
+        "hearts": "2.5k"
+      },
+      "vipLocked": true,
+      "full": "",
+      "alt": ""
     }
   ],
   "fab": {
