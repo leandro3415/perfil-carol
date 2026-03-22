@@ -316,35 +316,43 @@
 
     .sub-bar {
       margin: 0 20px 24px;
-      padding: 18px 20px;
-      border-radius: var(--radius);
-      background: linear-gradient(90deg, #ff4500, #ffa500);
-      box-shadow: 0 8px 32px rgba(255, 107, 0, 0.25);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: none;
+      box-shadow: none;
+      border-radius: 0;
     }
 
     .sub-bar__btn {
-      width: 100%;
+      width: auto;
+      max-width: 100%;
       padding: 14px 24px;
       border-radius: 999px;
       font-weight: 700;
       font-size: 1.05rem;
       color: #fff;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      backdrop-filter: blur(8px);
-      transition: transform 0.15s, background 0.2s;
+      background: linear-gradient(90deg, #ff4500, #ffa500);
+      border: none;
+      box-shadow: 0 8px 28px rgba(255, 107, 0, 0.35);
+      transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
     }
 
     .sub-bar__btn:hover {
-      background: rgba(255, 255, 255, 0.28);
-      transform: scale(1.01);
+      filter: brightness(1.06);
+      transform: scale(1.02);
+      box-shadow: 0 10px 36px rgba(255, 107, 0, 0.45);
     }
 
     .sub-bar__hint {
-      margin: 12px 0 0;
+      margin: 0;
       font-size: 0.8rem;
       text-align: center;
-      opacity: 0.95;
+      color: var(--text-muted);
+      max-width: 22rem;
+      line-height: 1.45;
     }
 
     .stats {
