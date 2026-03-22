@@ -34,50 +34,6 @@
       "vipLocked": false,
       "full": "Feed teaser/teaser-1.jpg",
       "alt": "Conteúdo VIP Carolzinha"
-    },
-    {
-      "type": "image",
-      "thumb": "Feed teaser/teaser-2.jpg",
-      "thumbFallback": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f252?w=900&q=80",
-      "handle": "@carolzinha",
-      "metrics": {
-        "views": "412",
-        "likes": "98",
-        "hearts": "1.9K"
-      },
-      "vipLocked": false,
-      "full": "Feed teaser/teaser-2.jpg",
-      "alt": "Conteúdo VIP Carolzinha"
-    },
-    {
-      "type": "video",
-      "thumb": "Feed teaser/teaser-3.jpg",
-      "thumbFallback": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=900&q=80",
-      "handle": "@carolzinha",
-      "metrics": {
-        "views": "891",
-        "likes": "201",
-        "hearts": "3.1K"
-      },
-      "vipLocked": false,
-      "video": "Feed teaser/teaser-3.mp4",
-      "poster": "Feed teaser/teaser-3.jpg",
-      "alt": ""
-    },
-    {
-      "type": "video",
-      "thumb": "Feed teaser/teaser-4.jpg",
-      "thumbFallback": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900&q=80",
-      "handle": "@carolzinha",
-      "metrics": {
-        "views": "305",
-        "likes": "76",
-        "hearts": "1.2K"
-      },
-      "vipLocked": false,
-      "video": "Feed teaser/teaser-4.mp4",
-      "poster": "Feed teaser/teaser-4.jpg",
-      "alt": ""
     }
   ],
   "fab": {
