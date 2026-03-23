@@ -203,88 +203,27 @@
       line-height: 1.5;
     }
 
-    /* Seletor de método de pagamento — estilo anexo 3: ícone em cima + texto (Cartão de crédito | PIX) */
-    .payment-method-tabs {
+    /* Cabeçalho único: só PIX */
+    .pix-method-heading {
       display: flex;
-      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
       margin-bottom: 1.25rem;
-      align-items: stretch;
-    }
-
-    .payment-method-tab {
-      flex: 1 1 0;
-      min-width: 0;
-      min-height: 96px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 1rem 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      background: #f5f5f5;
-      border: 2px solid #e0e0e0;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .payment-method-tab .tab-icon {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      min-height: 40px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .payment-method-tab .tab-icon svg {
-      width: 32px;
-      height: 32px;
-      display: block;
-    }
-
-    .payment-method-tab:hover {
-      color: var(--text-primary);
-      background: #eeeeee;
-      border-color: #bdbdbd;
-    }
-
-    .payment-method-tab.selected {
-      color: var(--white);
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      border-color: var(--primary-dark);
-      box-shadow: 0 3px 12px rgba(13, 148, 136, 0.35);
-    }
-
-    .payment-method-tab.selected .tab-icon {
-      filter: brightness(0) invert(1);
-    }
-
-    /* Pix tab selecionado = estilo anexo 1: fundo azul-claro, borda azul, símbolo teal, texto azul escuro */
-    .payment-method-tab[data-method="pix"].selected {
+      padding: 1rem 1.1rem;
+      font-size: 0.9375rem;
+      font-weight: 700;
       color: #1e3a5f;
       background: #e8f0f8;
-      border-color: #0ea5e9;
+      border: 2px solid #0ea5e9;
+      border-radius: var(--radius);
       box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
     }
 
-    .payment-method-tab[data-method="pix"].selected .tab-icon {
-      filter: none;
-    }
-
-    .payment-method-panel {
-      display: none;
-    }
-
-    .payment-method-panel.active {
-      display: block;
+    .pix-method-heading .pix-logo-icon {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
     }
 
     /* Cards informativos PIX — design aprimorado */
@@ -400,14 +339,6 @@
       color: var(--text-secondary);
       display: block;
       margin-top: 0.15rem;
-    }
-
-    .card-hint {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      text-align: center;
-      margin: 0.75rem 0 0.5rem;
-      line-height: 1.4;
     }
 
     /* Resumo do pedido — taxa única R$ 10 e total (pode desligar) */
@@ -921,24 +852,12 @@
         <p>Este link é <strong>exclusivo para você</strong>. Você recebe o Acesso diretamente no <strong>WhatsApp</strong>.</p>
       </div>
 
-      <!-- Dois botões como no anexo 3: Cartão de crédito | PIX (logo abaixo da caixa FinLeve) -->
-      <div class="payment-method-tabs">
-        <button type="button" class="payment-method-tab" data-method="card" aria-pressed="false">
-          <span class="tab-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          </span>
-          <span>Cartão de crédito</span>
-        </button>
-        <button type="button" class="payment-method-tab selected" data-method="pix" aria-pressed="true">
-          <span class="tab-icon">
-            <img src="./assets/logo-pix.png?v=2" alt="Pix" class="pix-logo-icon">
-          </span>
-          <span>Pix</span>
-        </button>
+      <div class="pix-method-heading" role="status">
+        <img src="./assets/logo-pix.png?v=2" alt="" class="pix-logo-icon" width="36" height="36" />
+        <span>Pagamento via Pix</span>
       </div>
 
-      <!-- Painel PIX — tela como na Hotmart com cards informativos -->
-      <div id="panel-pix" class="payment-method-panel active">
+      <div id="panel-pix">
         <div class="pix-info-cards">
           <div class="pix-info-card">
             <span class="pix-icon">⏱</span>
@@ -969,39 +888,6 @@
           </div>
           <button class="generate-button" id="generate-pix-button"><strong>Gerar PIX</strong></button>
         </div>
-      </div>
-
-      <!-- Painel Cartão — valor fixo + dados do cartão -->
-      <div id="panel-card" class="payment-method-panel">
-        <div class="total-bar">
-          <span>Total</span>
-          <span class="amount" id="total-amount-card">R$ 10,00</span>
-        </div>
-        <form id="card-form" class="card-form" novalidate>
-          <div class="form-group">
-            <label class="form-label" for="card-number">Número do cartão</label>
-            <input type="text" id="card-number" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" autocomplete="cc-number">
-            <span class="form-error" id="card-number-error">Número do cartão é obrigatório.</span>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="card-expiry">Validade</label>
-              <input type="text" id="card-expiry" class="form-input" placeholder="MM/AA" maxlength="5" inputmode="numeric" autocomplete="cc-exp">
-              <span class="form-error" id="card-expiry-error">Validade é obrigatória.</span>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="card-cvv">CVV</label>
-              <input type="text" id="card-cvv" class="form-input" placeholder="3 ou 4 dígitos" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
-              <span class="form-error" id="card-cvv-error">CVV é obrigatório.</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="card-name">Nome do titular</label>
-            <input type="text" id="card-name" class="form-input" placeholder="Digite o nome impresso no cartão" autocomplete="cc-name">
-            <span class="form-error" id="card-name-error">Nome do titular é obrigatório.</span>
-          </div>
-          <button class="generate-button" id="subscribe-card-button" type="submit"><strong>Finalizar</strong></button>
-        </form>
       </div>
 
       <div id="pix-content" style="display: none;">
@@ -1050,45 +936,10 @@
       const profileImage = document.getElementById('profile-image');
       const headerBg = document.getElementById('header-bg');
       const generatePixButton = document.getElementById('generate-pix-button');
-      const subscribeCardButton = document.getElementById('subscribe-card-button');
       const pixContent = document.getElementById('pix-content');
       const loadingIndicator = document.getElementById('loading-indicator');
       const qrCodeImg = document.getElementById('qr-code-img');
-      const panelPix = document.getElementById('panel-pix');
-      const panelCard = document.getElementById('panel-card');
-      const methodTabs = document.querySelectorAll('.payment-method-tab');
 
-      // Webhook para criar assinatura e obter URL de checkout (configure no n8n ou backend)
-      const SUBSCRIPTION_WEBHOOK_URL = 'https://n8n-agente-n8n.vugtol.easypanel.host/webhook/subscription-checkout';
-
-      function formatBRL(cents) {
-        return 'R$ ' + (cents / 100).toFixed(2).replace('.', ',');
-      }
-
-      function getSelectedPlanValue(panel) {
-        return FIXED_VALUE;
-      }
-
-      function updateTotal(panel) {
-        const planValue = getSelectedPlanValue(panel);
-        const totalEl = document.getElementById(panel === 'pix' ? 'total-amount-pix' : 'total-amount-card');
-        if (totalEl) totalEl.textContent = formatBRL(planValue);
-      }
-
-      // Troca de método de pagamento: PIX | Cartão
-      methodTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          const method = tab.getAttribute('data-method');
-          methodTabs.forEach(t => t.classList.remove('selected'));
-          tab.classList.add('selected');
-          tab.setAttribute('aria-pressed', 'true');
-          methodTabs.forEach(t => { if (t !== tab) t.setAttribute('aria-pressed', 'false'); });
-          panelPix.classList.toggle('active', method === 'pix');
-          panelCard.classList.toggle('active', method === 'card');
-        });
-      });
-
-      // Seleção de valor no painel Cartão (sincroniza com PIX visualmente)
       // Load header background image
       const headerImage = new Image();
       headerImage.onload = function() {
@@ -1185,112 +1036,6 @@
           console.error('Erro:', error);
           alert(error.message || 'Ocorreu um erro ao gerar o PIX. Por favor, tente novamente.');
           loadingIndicator.style.display = 'none';
-        }
-      });
-
-      // Finalizar (modelo assinatura) — redireciona para checkout do gateway
-      const cardForm = document.getElementById('card-form');
-      const cardNumberInput = document.getElementById('card-number');
-      const cardExpiryInput = document.getElementById('card-expiry');
-      const cardCvvInput = document.getElementById('card-cvv');
-      const cardNameInput = document.getElementById('card-name');
-
-      // Máscara: número do cartão (espaços a cada 4 dígitos)
-      cardNumberInput.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '');
-        v = v.substring(0, 16);
-        e.target.value = v.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
-        e.target.classList.remove('error');
-        document.getElementById('card-number-error').classList.remove('visible');
-      });
-
-      // Máscara: validade MM/AA
-      cardExpiryInput.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '');
-        if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
-        else v = v.substring(0, 2);
-        e.target.value = v;
-        e.target.classList.remove('error');
-        document.getElementById('card-expiry-error').classList.remove('visible');
-      });
-
-      cardCvvInput.addEventListener('input', (e) => {
-        e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
-        e.target.classList.remove('error');
-        document.getElementById('card-cvv-error').classList.remove('visible');
-      });
-
-      cardNameInput.addEventListener('input', () => {
-        cardNameInput.classList.remove('error');
-        document.getElementById('card-name-error').classList.remove('visible');
-      });
-
-      function showCardError(id, show) {
-        const el = document.getElementById(id);
-        const err = document.getElementById(id + '-error');
-        if (show) { el.classList.add('error'); err.classList.add('visible'); }
-        else { el.classList.remove('error'); err.classList.remove('visible'); }
-      }
-
-      function validateCardForm() {
-        const number = (cardNumberInput.value || '').replace(/\D/g, '');
-        const expiry = cardExpiryInput.value.trim();
-        const cvv = (cardCvvInput.value || '').replace(/\D/g, '');
-        const name = (cardNameInput.value || '').trim();
-        let ok = true;
-        showCardError('card-number', number.length < 13);
-        if (number.length < 13) ok = false;
-        showCardError('card-expiry', expiry.length < 5);
-        if (expiry.length < 5) ok = false;
-        showCardError('card-cvv', cvv.length < 3);
-        if (cvv.length < 3) ok = false;
-        showCardError('card-name', !name);
-        if (!name) ok = false;
-        return ok;
-      }
-
-      cardForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (!validateCardForm()) return;
-
-        const value = FIXED_VALUE;
-        const id = getIdFromPath() || getUrlParam('id');
-
-        subscribeCardButton.disabled = true;
-        subscribeCardButton.innerHTML = '<strong>Aguarde...</strong>';
-
-        try {
-          const response = await fetch(SUBSCRIPTION_WEBHOOK_URL, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ value, id, type: 'subscription' })
-          });
-
-          const rawText = await response.text();
-          if (!response.ok) {
-            throw new Error('Falha ao criar assinatura (status ' + response.status + '). Configure o webhook de assinatura no n8n.');
-          }
-
-          let data;
-          try {
-            data = JSON.parse(rawText);
-          } catch (err) {
-            throw new Error('Resposta inválida do servidor. O webhook deve retornar JSON com checkout_url.');
-          }
-
-          const checkoutUrl = data.checkout_url || data.url;
-          if (checkoutUrl) {
-            window.location.href = checkoutUrl;
-            return;
-          }
-          throw new Error('Webhook não retornou checkout_url. Configure o n8n para criar assinatura (Stripe, Mercado Pago, etc.) e retornar { "checkout_url": "..." }.');
-        } catch (error) {
-          console.error('Erro assinatura:', error);
-          alert(error.message || 'Não foi possível abrir o checkout. Tente PIX ou configure o webhook de assinatura.');
-        } finally {
-          subscribeCardButton.disabled = false;
-          subscribeCardButton.innerHTML = '<strong>Finalizar</strong>';
         }
       });
 
