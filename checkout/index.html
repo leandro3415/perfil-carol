@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Finleve - Checkout</title>
+  <link rel="icon" type="image/jpeg" href="assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Pixel do Facebook -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '724620673521299');
+    fbq('track', 'Pageview');
+  </script>
+  <style>
+    /* Paleta FinLeve — Suas finanças, mais leves (finleve.vercel.app) */
+    :root {
+      --primary: #0D9488;
+      --primary-dark: #0F766E;
+      --secondary: #14B8A6;
+      --accent: #5EEAD4;
+      --success: #10B981;
+      --surface: #F0FDFA;
+      --surface-soft: #CCFBF1;
+      --white: #FFFFFF;
+      --text-primary: #134E4A;
+      --text-secondary: #5E7C7A;
+      --border: #99F6E4;
+      --shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.08), 0 2px 4px -2px rgba(13, 148, 136, 0.04);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, #F0FDFA 0%, #E6FFFA 50%, #F0FDFA 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem;
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      max-width: min(440px, calc(100vw - 1.5rem));
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(13, 148, 136, 0.06);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      z-index: 10;
+    }
+
+    /* Header — alta conversão: marca + benefício em uma linha */
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      padding: 2rem 1.5rem 2.25rem;
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
+      padding-top: max(2rem, env(safe-area-inset-top));
+      text-align: center;
+      position: relative;
+    }
+
+    .header-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.15);
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .header.loaded::before {
+      opacity: 1;
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      position: relative;
+      z-index: 2;
+      letter-spacing: -0.02em;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      opacity: 0.95;
+      position: relative;
+      z-index: 2;
+      font-weight: 500;
+    }
+
+    .content {
+      padding: 0 1.75rem 1.75rem;
+    }
+
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      margin-top: -38px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .profile-image-container {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--white);
+      margin-bottom: 0.75rem;
+      box-shadow: 0 8px 24px -4px rgba(13, 148, 136, 0.25);
+      overflow: hidden;
+      background: var(--surface-soft);
+    }
+
+    .profile-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .profile-bank {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      text-align: center;
+      max-width: 280px;
+    }
+
+    /* Bloco produto — estilo FinLeve, oferta clara */
+    .exclusive-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(13, 148, 136, 0.06);
+    }
+
+    .exclusive-preview h2 {
+      color: var(--primary);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .exclusive-preview p {
+      font-size: 0.9375rem;
+      color: var(--text-primary);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Seletor de método de pagamento — estilo anexo 3: ícone em cima + texto (Cartão de crédito | PIX) */
+    .payment-method-tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      align-items: stretch;
+    }
+
+    .payment-method-tab {
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: #f5f5f5;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .payment-method-tab .tab-icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      min-height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .payment-method-tab .tab-icon svg {
+      width: 32px;
+      height: 32px;
+      display: block;
+    }
+
+    .payment-method-tab:hover {
+      color: var(--text-primary);
+      background: #eeeeee;
+      border-color: #bdbdbd;
+    }
+
+    .payment-method-tab.selected {
+      color: var(--white);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-color: var(--primary-dark);
+      box-shadow: 0 3px 12px rgba(13, 148, 136, 0.35);
+    }
+
+    .payment-method-tab.selected .tab-icon {
+      filter: brightness(0) invert(1);
+    }
+
+    /* Pix tab selecionado = estilo anexo 1: fundo azul-claro, borda azul, símbolo teal, texto azul escuro */
+    .payment-method-tab[data-method="pix"].selected {
+      color: #1e3a5f;
+      background: #e8f0f8;
+      border-color: #0ea5e9;
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+    }
+
+    .payment-method-tab[data-method="pix"].selected .tab-icon {
+      filter: none;
+    }
+
+    .payment-method-panel {
+      display: none;
+    }
+
+    .payment-method-panel.active {
+      display: block;
+    }
+
+    /* Cards informativos PIX — design aprimorado */
+    .pix-info-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pix-info-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.1rem;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--white) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 6px rgba(13, 148, 136, 0.06);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .pix-info-card:hover {
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1);
+    }
+
+    .pix-info-card .pix-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
+    }
+
+    .pix-info-card .pix-card-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .pix-info-card .pix-card-desc {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Opções de valor — cards de alta conversão */
+    .payment-options {
+      margin-bottom: 0.5rem;
+    }
+
+    .payment-options h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .options-container {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .payment-option {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 52px;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .payment-option:hover {
+      border-color: var(--secondary);
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.12);
+    }
+
+    .payment-option.selected {
+      border-color: var(--primary);
+      background: var(--surface);
+      box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+    }
+
+    .option-value {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .option-period {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    .card-hint {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin: 0.75rem 0 0.5rem;
+      line-height: 1.4;
+    }
+
+    /* Resumo do pedido — taxa única R$ 10 e total (pode desligar) */
+    .order-summary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      margin: 1rem 0 1.25rem;
+      box-shadow: 0 1px 3px rgba(13, 148, 136, 0.06);
+    }
+
+    .fee-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .fee-toggle-label {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .fee-toggle {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      background: var(--border);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .fee-toggle.on {
+      background: var(--primary);
+    }
+
+    .fee-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 22px;
+      height: 22px;
+      background: var(--white);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .fee-toggle.on::after {
+      transform: translateX(22px);
+    }
+
+    .order-summary-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .order-summary-line.total {
+      margin-top: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 2px solid var(--border);
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .order-summary-line.total .amount {
+      color: var(--primary);
+      font-size: 1.125rem;
+    }
+
+    /* Barra única com total (R$ 10,00) */
+    .total-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.1rem;
+      margin: 1rem 0 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .total-bar .amount {
+      color: var(--primary);
+      font-size: 1.125rem;
+    }
+
+    .generate-button {
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      min-height: 48px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .generate-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(13, 148, 136, 0.4);
+    }
+
+    .generate-button:active {
+      transform: translateY(0);
+    }
+
+    /* Área PIX — código + QR */
+    .code-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .code-section h2 {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .code-container {
+      position: relative;
+      margin-bottom: 0.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .code-container:hover {
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.08);
+    }
+
+    .pix-code {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.875rem 1rem 0.875rem 2.75rem;
+      font-family: 'Inter', ui-monospace, monospace;
+      font-size: 0.8125rem;
+      color: var(--text-primary);
+      outline: none;
+      min-height: 120px;
+      line-height: 1.4;
+      resize: none;
+      white-space: pre-wrap;
+      word-break: break-all;
+      box-sizing: border-box;
+    }
+
+    .code-container::before {
+      content: '🔑';
+      position: absolute;
+      left: 12px;
+      top: 14px;
+      font-size: 1rem;
+      z-index: 2;
+      opacity: 0.8;
+    }
+
+    .copy-button {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      min-height: 48px;
+      height: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--white);
+      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .copy-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(13, 148, 136, 0.4);
+    }
+
+    .success-message {
+      display: none;
+      text-align: center;
+      color: var(--success);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .qr-code {
+      width: 200px;
+      height: 200px;
+      padding: 0.875rem;
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.08);
+    }
+
+    .qr-code img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--surface-soft);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      margin: 0 auto 0.75rem;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loading-indicator {
+      text-align: center;
+      margin: 1.5rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+    }
+
+    /* Selo segurança — confiança */
+    .secure-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 1rem 0 0.5rem;
+      padding: 0 0.5rem;
+    }
+
+    .secure-badge img {
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      display: block;
+      margin: 0 auto 0.5rem;
+    }
+
+    .secure-badge span {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--success);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      text-align: center;
+      padding: 0 0.5rem;
+    }
+
+    /* Rodapé estilo FinLeve */
+    .footer-msg {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      text-align: center;
+      border-radius: var(--radius);
+      margin: 0 1.2rem 1.25rem;
+      padding: 1rem 1rem;
+      line-height: 1.5;
+    }
+
+    .footer {
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      line-height: 1.5;
+    }
+
+    /* Mobile: telas pequenas */
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-top: env(safe-area-inset-top);
+        align-items: flex-start;
+      }
+
+      .container {
+        max-width: 100%;
+        border-radius: 0;
+      }
+
+      .container::after {
+        border-radius: 0;
+      }
+
+      .header {
+        padding: 1.5rem 1rem 1.75rem;
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .header p {
+        font-size: 0.85rem;
+      }
+
+      .content {
+        padding: 1rem 1rem 1.25rem;
+      }
+
+      .profile {
+        margin-top: -32px;
+        margin-bottom: 1rem;
+      }
+
+      .profile-image-container {
+        width: 72px;
+        height: 72px;
+      }
+
+      .profile-bank {
+        font-size: 0.8125rem;
+        max-width: 100%;
+      }
+
+      .exclusive-preview {
+        padding: 1rem 0.75rem;
+        margin-bottom: 1rem;
+      }
+
+      .exclusive-preview h2 {
+        font-size: 1.1rem;
+      }
+
+      .exclusive-preview p {
+        font-size: 0.875rem;
+      }
+
+      .payment-options h3 {
+        font-size: 0.9375rem;
+      }
+
+      .options-container {
+        gap: 0.5rem;
+      }
+
+      .payment-option {
+        min-width: 0;
+        padding: 0.65rem 0.35rem;
+        font-size: 0.9375rem;
+      }
+
+      .option-value {
+        font-size: 1rem;
+      }
+
+      .generate-button {
+        margin-top: 1rem;
+        padding: 0.875rem 1rem;
+        font-size: 0.9375rem;
+      }
+
+      .qr-code {
+        width: 180px;
+        height: 180px;
+      }
+
+      .pix-code {
+        font-size: 0.75rem;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        min-height: 100px;
+      }
+
+      .code-section h2 {
+        font-size: 0.8125rem;
+      }
+
+      .footer-msg {
+        margin-left: 1rem;
+        margin-right: 1rem;
+        padding: 0.875rem 0.75rem;
+        font-size: 0.8125rem;
+      }
+
+      .footer {
+        padding: 0.875rem 1rem;
+        font-size: 0.6875rem;
+      }
+    }
+
+    /* Mobile: telas muito pequenas (ex: 320px) */
+    @media (max-width: 360px) {
+      body {
+        padding: 0;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-top: env(safe-area-inset-top);
+      }
+
+      .header h1 {
+        font-size: 1.35rem;
+      }
+
+      .header p {
+        font-size: 0.8rem;
+      }
+
+      .content {
+        padding: 0.75rem 0.75rem 1rem;
+      }
+
+      .options-container {
+        flex-direction: row;
+        gap: 0.4rem;
+      }
+
+      .payment-option {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      .option-value {
+        font-size: 0.9375rem;
+      }
+
+      .qr-code {
+        width: 160px;
+        height: 160px;
+      }
+
+      .secure-badge img {
+        max-width: 100%;
+      }
+
+      .secure-badge span {
+        font-size: 0.8125rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+
+      <div class="header-bg" id="header-bg"></div>
+      <h1>FinLeve</h1>
+      <p>Suas finanças, mais leves</p>
+    </div>
+
+    <div class="content">
+      <div class="profile">
+        <div class="profile-image-container">
+
+          <img src="./assets/favicon.png" alt="Finleve" class="profile-image" id="profile-image">
+        </div>
+       
+       <p class="profile-bank">Acesso Imediato no WhatsApp após a confirmação do pagamento</p> 
+      </div>
+
+
+      <!-- Bloco de prévia do produto — estilo FinLeve, alta conversão -->
+      <div class="exclusive-preview">
+        <h2>FinLeve</h2>
+        <p>Este link é <strong>exclusivo para você</strong>. Você recebe o Acesso diretamente no <strong>WhatsApp</strong>.</p>
+      </div>
+
+      <!-- Dois botões como no anexo 3: Cartão de crédito | PIX (logo abaixo da caixa FinLeve) -->
+      <div class="payment-method-tabs">
+        <button type="button" class="payment-method-tab" data-method="card" aria-pressed="false">
+          <span class="tab-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </span>
+          <span>Cartão de crédito</span>
+        </button>
+        <button type="button" class="payment-method-tab selected" data-method="pix" aria-pressed="true">
+          <span class="tab-icon">
+            <img src="./assets/logo-pix.png?v=2" alt="Pix" class="pix-logo-icon">
+          </span>
+          <span>Pix</span>
+        </button>
+      </div>
+
+      <!-- Painel PIX — tela como na Hotmart com cards informativos -->
+      <div id="panel-pix" class="payment-method-panel active">
+        <div class="pix-info-cards">
+          <div class="pix-info-card">
+            <span class="pix-icon">⏱</span>
+            <div>
+              <div class="pix-card-title">Aprovação imediata</div>
+              <div class="pix-card-desc">O pagamento com Pix leva pouco tempo para ser processado.</div>
+            </div>
+          </div>
+          <div class="pix-info-card">
+            <span class="pix-icon">🛡</span>
+            <div>
+              <div class="pix-card-title">Transação segura</div>
+              <div class="pix-card-desc">O Pix foi desenvolvido pelo Banco Central para facilitar suas compras, garantindo a proteção dos seus dados.</div>
+            </div>
+          </div>
+          <div class="pix-info-card">
+            <span class="pix-icon">▦</span>
+            <div>
+              <div class="pix-card-title">Finalize sua compra com facilidade</div>
+              <div class="pix-card-desc">É só acessar a área Pix no aplicativo do seu banco e escanear o QR code ou digitar o código.</div>
+            </div>
+          </div>
+        </div>
+        <div class="payment-options" style="margin-bottom: 0.5rem;">
+          <div class="total-bar">
+            <span>Total</span>
+            <span class="amount" id="total-amount-pix">R$ 10,00</span>
+          </div>
+          <button class="generate-button" id="generate-pix-button"><strong>Gerar PIX</strong></button>
+        </div>
+      </div>
+
+      <!-- Painel Cartão — valor fixo + dados do cartão -->
+      <div id="panel-card" class="payment-method-panel">
+        <div class="total-bar">
+          <span>Total</span>
+          <span class="amount" id="total-amount-card">R$ 10,00</span>
+        </div>
+        <form id="card-form" class="card-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="card-number">Número do cartão</label>
+            <input type="text" id="card-number" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" autocomplete="cc-number">
+            <span class="form-error" id="card-number-error">Número do cartão é obrigatório.</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="card-expiry">Validade</label>
+              <input type="text" id="card-expiry" class="form-input" placeholder="MM/AA" maxlength="5" inputmode="numeric" autocomplete="cc-exp">
+              <span class="form-error" id="card-expiry-error">Validade é obrigatória.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="card-cvv">CVV</label>
+              <input type="text" id="card-cvv" class="form-input" placeholder="3 ou 4 dígitos" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+              <span class="form-error" id="card-cvv-error">CVV é obrigatório.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="card-name">Nome do titular</label>
+            <input type="text" id="card-name" class="form-input" placeholder="Digite o nome impresso no cartão" autocomplete="cc-name">
+            <span class="form-error" id="card-name-error">Nome do titular é obrigatório.</span>
+          </div>
+          <button class="generate-button" id="subscribe-card-button" type="submit"><strong>Finalizar</strong></button>
+        </form>
+      </div>
+
+      <div id="pix-content" style="display: none;">
+        <div class="code-section">
+          <h2>Só Copiar o Código PIX e Colar no seu Banco:</h2>
+          <div class="code-container">
+            <textarea class="pix-code" id="pix-code" readonly></textarea>
+          </div>
+          <button class="copy-button" id="copy-button"><strong>Copiar Chave Pix</strong></button>
+          <div class="success-message" id="success-message">
+            Código copiado com sucesso!
+          </div>
+        </div>
+        
+        <div class="qr-section">
+          <div class="qr-code">
+            <img id="qr-code-img" src="" alt="QR Code PIX">
+          </div>
+        </div>
+      </div>
+      <div id="loading-indicator" style="display: none; margin-bottom: 0.5rem;">
+        <div class="loading-spinner"></div>
+        <p>Gerando código PIX...</p>
+      </div>
+    </div>
+    <!-- Selo de segurança — confiança (estilo FinLeve) -->
+    <div class="secure-badge">
+      <img src="./assets/seguro.png" alt="Selo de Segurança">
+      <span><span style="font-size:1.2em;">🔒</span> Ambiente 100% Seguro e Criptografado</span>
+    </div>
+    <div class="footer-msg">
+      <strong>FinLeve</strong> — Seus dados estão protegidos. Após o pagamento confirmado, a entrega do produto é feita no WhatsApp.<br>
+      Pagamento processado via <strong>AbacatePay</strong>.
+    </div>
+    <div class="footer">
+      <p>Este pagamento é processado pelo sistema PIX do Banco Central do Brasil.<br>Rápido, Seguro e Disponível 24 horas por dia, 7 dias por semana.<br><strong>AbacatePay</strong> — gateway de pagamento.</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyButton = document.getElementById('copy-button');
+      const pixCode = document.getElementById('pix-code');
+      const successMessage = document.getElementById('success-message');
+      const FIXED_VALUE = 1000; // R$ 10,00 fixo (em centavos)
+      const profileImage = document.getElementById('profile-image');
+      const headerBg = document.getElementById('header-bg');
+      const generatePixButton = document.getElementById('generate-pix-button');
+      const subscribeCardButton = document.getElementById('subscribe-card-button');
+      const pixContent = document.getElementById('pix-content');
+      const loadingIndicator = document.getElementById('loading-indicator');
+      const qrCodeImg = document.getElementById('qr-code-img');
+      const panelPix = document.getElementById('panel-pix');
+      const panelCard = document.getElementById('panel-card');
+      const methodTabs = document.querySelectorAll('.payment-method-tab');
+
+      // Webhook para criar assinatura e obter URL de checkout (configure no n8n ou backend)
+      const SUBSCRIPTION_WEBHOOK_URL = 'https://n8n-agente-n8n.vugtol.easypanel.host/webhook/subscription-checkout';
+
+      function formatBRL(cents) {
+        return 'R$ ' + (cents / 100).toFixed(2).replace('.', ',');
+      }
+
+      function getSelectedPlanValue(panel) {
+        return FIXED_VALUE;
+      }
+
+      function updateTotal(panel) {
+        const planValue = getSelectedPlanValue(panel);
+        const totalEl = document.getElementById(panel === 'pix' ? 'total-amount-pix' : 'total-amount-card');
+        if (totalEl) totalEl.textContent = formatBRL(planValue);
+      }
+
+      // Troca de método de pagamento: PIX | Cartão
+      methodTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const method = tab.getAttribute('data-method');
+          methodTabs.forEach(t => t.classList.remove('selected'));
+          tab.classList.add('selected');
+          tab.setAttribute('aria-pressed', 'true');
+          methodTabs.forEach(t => { if (t !== tab) t.setAttribute('aria-pressed', 'false'); });
+          panelPix.classList.toggle('active', method === 'pix');
+          panelCard.classList.toggle('active', method === 'card');
+        });
+      });
+
+      // Seleção de valor no painel Cartão (sincroniza com PIX visualmente)
+      // Load header background image
+      const headerImage = new Image();
+      headerImage.onload = function() {
+        headerBg.style.backgroundImage = `url('${headerImage.src}')`;
+        headerBg.style.opacity = '1';
+        // We can't directly access pseudo-elements with querySelector
+        // Instead, add a class to the header element
+        document.querySelector('.header').classList.add('loaded');
+      };
+      headerImage.src = 'assets/bg-2.jpg';
+      
+      // Handle profile image loading
+      function showProfileImage() {
+        profileImage.style.opacity = '1';
+      }
+      // Attach listener
+      profileImage.addEventListener('load', showProfileImage);
+      // If the image was cached and has already loaded, ensure visibility
+      if (profileImage.complete) {
+        showProfileImage();
+      }
+      
+      // Function to get URL parameters
+      function getUrlParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      // Function to extract ID from path (like /123)
+      function getIdFromPath() {
+        const path = window.location.pathname;
+        const pathParts = path.split('/');
+        // Get the last part of the path if it exists
+        return pathParts.length > 1 ? pathParts[pathParts.length - 1] : null;
+      }
+
+      generatePixButton.addEventListener('click', async () => {
+        const value = FIXED_VALUE;
+        const id = getIdFromPath() || getUrlParam('id');
+        
+        // Show loading indicator
+        pixContent.style.display = 'none';
+        loadingIndicator.style.display = 'block';
+        
+        try {
+          // CORS: use este checkout por uma URL (https://...), não abrindo o arquivo direto (file://), senão o navegador bloqueia.
+          const response = await fetch('https://n8n-agente-n8n.vugtol.easypanel.host/webhook/pix-push', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ value, id }) // id = lead (URL ?id= ou /id) — vincula PIX ao lead para entrega no WhatsApp
+          });
+          
+          const rawText = await response.text();
+          
+          if (!response.ok) {
+            console.error('Webhook status:', response.status, 'Resposta:', rawText);
+            throw new Error('Falha ao gerar o PIX (status ' + response.status + '). Verifique o console.');
+          }
+          
+          if (!rawText || rawText.trim() === '') {
+            console.error('Webhook retornou corpo vazio. Verifique se o workflow n8n está ativo e o node "Responde Pix" está respondendo.');
+            throw new Error('O servidor retornou resposta vazia. Verifique se o workflow n8n está ativo.');
+          }
+          
+          let data;
+          try {
+            data = JSON.parse(rawText);
+          } catch (e) {
+            console.error('Resposta do webhook (não é JSON):', rawText);
+            throw new Error('Resposta inválida do servidor. Veja o console para detalhes.');
+          }
+          
+          if (!data.qr_code || !data.qr_code_base64) {
+            console.error('Resposta sem qr_code/qr_code_base64:', data);
+            throw new Error('Resposta do servidor sem código PIX. Verifique o workflow n8n.');
+          }
+          
+          // Update PIX code and QR code
+          pixCode.value = data.qr_code;
+          qrCodeImg.src = data.qr_code_base64;
+          
+          // Hide loading indicator, payment options, and show PIX content
+          loadingIndicator.style.display = 'none';
+          const pixOptions = document.querySelector('#panel-pix .payment-options');
+          if (pixOptions) pixOptions.style.display = 'none';
+          const totalBarPix = document.querySelector('#panel-pix .total-bar');
+          if (totalBarPix) totalBarPix.style.display = 'none';
+          pixContent.style.display = 'block';
+          
+        } catch (error) {
+          console.error('Erro:', error);
+          alert(error.message || 'Ocorreu um erro ao gerar o PIX. Por favor, tente novamente.');
+          loadingIndicator.style.display = 'none';
+        }
+      });
+
+      // Finalizar (modelo assinatura) — redireciona para checkout do gateway
+      const cardForm = document.getElementById('card-form');
+      const cardNumberInput = document.getElementById('card-number');
+      const cardExpiryInput = document.getElementById('card-expiry');
+      const cardCvvInput = document.getElementById('card-cvv');
+      const cardNameInput = document.getElementById('card-name');
+
+      // Máscara: número do cartão (espaços a cada 4 dígitos)
+      cardNumberInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        v = v.substring(0, 16);
+        e.target.value = v.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+        e.target.classList.remove('error');
+        document.getElementById('card-number-error').classList.remove('visible');
+      });
+
+      // Máscara: validade MM/AA
+      cardExpiryInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
+        else v = v.substring(0, 2);
+        e.target.value = v;
+        e.target.classList.remove('error');
+        document.getElementById('card-expiry-error').classList.remove('visible');
+      });
+
+      cardCvvInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        e.target.classList.remove('error');
+        document.getElementById('card-cvv-error').classList.remove('visible');
+      });
+
+      cardNameInput.addEventListener('input', () => {
+        cardNameInput.classList.remove('error');
+        document.getElementById('card-name-error').classList.remove('visible');
+      });
+
+      function showCardError(id, show) {
+        const el = document.getElementById(id);
+        const err = document.getElementById(id + '-error');
+        if (show) { el.classList.add('error'); err.classList.add('visible'); }
+        else { el.classList.remove('error'); err.classList.remove('visible'); }
+      }
+
+      function validateCardForm() {
+        const number = (cardNumberInput.value || '').replace(/\D/g, '');
+        const expiry = cardExpiryInput.value.trim();
+        const cvv = (cardCvvInput.value || '').replace(/\D/g, '');
+        const name = (cardNameInput.value || '').trim();
+        let ok = true;
+        showCardError('card-number', number.length < 13);
+        if (number.length < 13) ok = false;
+        showCardError('card-expiry', expiry.length < 5);
+        if (expiry.length < 5) ok = false;
+        showCardError('card-cvv', cvv.length < 3);
+        if (cvv.length < 3) ok = false;
+        showCardError('card-name', !name);
+        if (!name) ok = false;
+        return ok;
+      }
+
+      cardForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!validateCardForm()) return;
+
+        const value = FIXED_VALUE;
+        const id = getIdFromPath() || getUrlParam('id');
+
+        subscribeCardButton.disabled = true;
+        subscribeCardButton.innerHTML = '<strong>Aguarde...</strong>';
+
+        try {
+          const response = await fetch(SUBSCRIPTION_WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ value, id, type: 'subscription' })
+          });
+
+          const rawText = await response.text();
+          if (!response.ok) {
+            throw new Error('Falha ao criar assinatura (status ' + response.status + '). Configure o webhook de assinatura no n8n.');
+          }
+
+          let data;
+          try {
+            data = JSON.parse(rawText);
+          } catch (err) {
+            throw new Error('Resposta inválida do servidor. O webhook deve retornar JSON com checkout_url.');
+          }
+
+          const checkoutUrl = data.checkout_url || data.url;
+          if (checkoutUrl) {
+            window.location.href = checkoutUrl;
+            return;
+          }
+          throw new Error('Webhook não retornou checkout_url. Configure o n8n para criar assinatura (Stripe, Mercado Pago, etc.) e retornar { "checkout_url": "..." }.');
+        } catch (error) {
+          console.error('Erro assinatura:', error);
+          alert(error.message || 'Não foi possível abrir o checkout. Tente PIX ou configure o webhook de assinatura.');
+        } finally {
+          subscribeCardButton.disabled = false;
+          subscribeCardButton.innerHTML = '<strong>Finalizar</strong>';
+        }
+      });
+
+      copyButton.addEventListener('click', () => {
+        pixCode.select();
+        document.execCommand('copy');
+        
+        // Show success message
+        successMessage.style.display = 'block';
+        
+        // Change button text and color
+        copyButton.innerHTML = '<strong>Copiado!</strong>';
+        copyButton.style.background = 'var(--success)';
+        
+        // Reset after 3 seconds
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+          copyButton.innerHTML = '<strong>Copiar Chave Pix</strong>';
+          copyButton.style.background = '';
+        }, 3000);
+      });
+    });
+  </script>
+</body>
+</html>
