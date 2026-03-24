@@ -85,14 +85,15 @@
       z-index: 10;
     }
 
-    /* Header — alta conversão: marca + benefício em uma linha */
+    /* Faixa superior: só imagem de fundo + overlay (sem texto) */
     .header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: var(--white);
-      padding: 2rem 1.5rem 2.25rem;
+      min-height: clamp(96px, 24vw, 140px);
+      padding: 1rem 1.5rem 2.75rem;
       padding-left: max(1.5rem, env(safe-area-inset-left));
       padding-right: max(1.5rem, env(safe-area-inset-right));
-      padding-top: max(2rem, env(safe-area-inset-top));
+      padding-top: max(1rem, env(safe-area-inset-top));
       text-align: center;
       position: relative;
     }
@@ -119,23 +120,6 @@
 
     .header.loaded::before {
       opacity: 1;
-    }
-
-    .header h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 0.35rem;
-      position: relative;
-      z-index: 2;
-      letter-spacing: -0.02em;
-    }
-
-    .header p {
-      font-size: 0.9rem;
-      opacity: 0.95;
-      position: relative;
-      z-index: 2;
-      font-weight: 500;
     }
 
     .content {
@@ -678,17 +662,10 @@
       }
 
       .header {
-        padding: 1.5rem 1rem 1.75rem;
+        min-height: clamp(88px, 22vw, 120px);
+        padding: 0.75rem 1rem 2.25rem;
         padding-left: max(1rem, env(safe-area-inset-left));
         padding-right: max(1rem, env(safe-area-inset-right));
-      }
-
-      .header h1 {
-        font-size: 1.5rem;
-      }
-
-      .header p {
-        font-size: 0.85rem;
       }
 
       .content {
@@ -785,14 +762,6 @@
         padding-top: env(safe-area-inset-top);
       }
 
-      .header h1 {
-        font-size: 1.35rem;
-      }
-
-      .header p {
-        font-size: 0.8rem;
-      }
-
       .content {
         padding: 0.75rem 0.75rem 1rem;
       }
@@ -828,11 +797,8 @@
 </head>
 <body>
   <div class="container">
-    <div class="header">
-
+    <div class="header" aria-hidden="true">
       <div class="header-bg" id="header-bg"></div>
-      <h1>FinLeve</h1>
-      <p>Suas finanças, mais leves</p>
     </div>
 
     <div class="content">
@@ -848,7 +814,7 @@
 
       <!-- Bloco de prévia do produto — estilo FinLeve, alta conversão -->
       <div class="exclusive-preview">
-        <h2>FinLeve</h2>
+        <h2>CAROLZINHA VIP 🔥</h2>
         <p>Este link é <strong>exclusivo para você</strong>. Você recebe o Acesso diretamente no <strong>site anterior</strong>.</p>
       </div>
 
