@@ -5,6 +5,8 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import busboy from "busboy";
 import { getStats } from "./scripts/count-media.mjs";
+import vipGrantHandler from "./api/vip/grant.js";
+import vipStatusHandler from "./api/vip/status.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -276,6 +278,16 @@ const server = http.createServer(async (req, res) => {
     } catch (e) {
       json(res, 400, { ok: false, error: String(e.message || e) });
     }
+    return;
+  }
+
+  if (url.pathname === "/api/vip/status" && method === "GET") {
+    await vipStatusHandler(req, res);
+    return;
+  }
+
+  if (url.pathname === "/api/vip/grant" && method === "GET") {
+    await vipGrantHandler(req, res);
     return;
   }
 

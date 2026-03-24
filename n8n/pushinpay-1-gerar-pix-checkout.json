@@ -1,0 +1,118 @@
+{
+  "name": "PushinPay — Gerar PIX (checkout)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pix-push",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "a1b2c3d0-1111-4aaa-8bbb-000000000001",
+      "name": "Webhook Chamar Pix",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "pix-push-checkout-pushinpay"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "v1",
+              "name": "id_lead",
+              "value": "={{ $json.body?.id != null ? String($json.body.id) : '' }}",
+              "type": "string"
+            },
+            {
+              "id": "v2",
+              "name": "value",
+              "value": "={{ $json.body?.value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d0-1111-4aaa-8bbb-000000000002",
+      "name": "Variáveis",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pushinpay.com.br/api/pix/cashIn",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.PUSHINPAY_BEARER_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ value: Number($('Variáveis').item.json.value) || 1000, webhook_url: $env.N8N_WEBHOOK_PUSHINPAY_PAID }) }}",
+        "options": {}
+      },
+      "id": "a1b2c3d0-1111-4aaa-8bbb-000000000003",
+      "name": "GerarPix PushinPay",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ qr_code: $json.qr_code, qr_code_base64: $json.qr_code_base64 }) }}",
+        "options": {}
+      },
+      "id": "a1b2c3d0-1111-4aaa-8bbb-000000000004",
+      "name": "Responde Pix",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 0]
+    },
+    {
+      "parameters": {
+        "content": "## PushinPay — PIX no checkout\n\n### Variáveis de ambiente (n8n)\n- `PUSHINPAY_BEARER_TOKEN` — token completo do painel Pushin Pay (ex.: `64287|xxxx...`).\n- `N8N_WEBHOOK_PUSHINPAY_PAID` — URL **pública** do workflow 2 (ex.: `https://SEU-N8N/webhook/pushinpay-pix-paid`).\n\nSem a segunda URL, o PIX gera mas **não** notifica pagamento.\n\n### API\n`POST https://api.pushinpay.com.br/api/pix/cashIn` — valor em **centavos**.\n\n### Checkout\nO site envia `POST { \"value\", \"id\" }` para `/webhook/pix-push` (mesmo path que antes).",
+        "height": 420,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [960, -120],
+      "typeVersion": 1,
+      "id": "a1b2c3d0-1111-4aaa-8bbb-000000000005",
+      "name": "Notas"
+    }
+  ],
+  "connections": {
+    "Webhook Chamar Pix": {
+      "main": [[{ "node": "Variáveis", "type": "main", "index": 0 }]]
+    },
+    "Variáveis": {
+      "main": [[{ "node": "GerarPix PushinPay", "type": "main", "index": 0 }]]
+    },
+    "GerarPix PushinPay": {
+      "main": [[{ "node": "Responde Pix", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": false },
+  "tags": []
+}

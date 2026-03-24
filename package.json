@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "stats": "node scripts/update-stats.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "vip:grant-link": "node scripts/vip-make-grant-link.mjs"
   },
   "dependencies": {
     "@octokit/rest": "^21.0.2",

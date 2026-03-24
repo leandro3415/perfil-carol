@@ -620,6 +620,16 @@
       opacity: 0.35;
     }
 
+    /* Pagamento confirmado: mantém blur + selo VIP, mas abre lightbox */
+    .card--vip-subscriber.card--vip-locked:focus-visible {
+      outline: 2px solid var(--orange-soft);
+      outline-offset: 2px;
+    }
+
+    .card--vip-subscriber.card--vip-locked .card__play {
+      opacity: 0.85;
+    }
+
     /* Prévia liberada (vipLocked: false): imagem nítida no grid */
     .card--preview-open .card__img {
       filter: none;
@@ -987,6 +997,9 @@
 
   <script>
     (function () {
+      /** true quando cookie VIP válido (via GET /api/vip/grant após pagamento) */
+      var vipUnlockedFlag = false;
+
       function esc(s) {
         return String(s == null ? "" : s)
           .replace(/&/g, "&amp;")
@@ -1142,14 +1155,28 @@
           .map(function (it) {
             var isVid = it.type === "video";
             var locked = isFeedItemVipLocked(it);
+            var paidVip = vipUnlockedFlag === true;
+            var subscriber = locked && paidVip;
+
             var cls = isVid ? "card card--video" : "card";
-            if (locked) cls += " card--vip-locked";
-            else cls += " card--preview-open";
-            var label = locked
-              ? "Conteúdo VIP bloqueado"
-              : isVid
-                ? "Reproduzir vídeo em tela cheia"
-                : "Ver foto em tela cheia";
+            if (locked) {
+              cls += " card--vip-locked";
+              if (subscriber) cls += " card--vip-subscriber";
+            } else {
+              cls += " card--preview-open";
+            }
+
+            var label;
+            if (locked && !paidVip) {
+              label = "Conteúdo VIP bloqueado";
+            } else if (subscriber) {
+              label = isVid
+                ? "Conteúdo VIP — reproduzir vídeo em tela cheia"
+                : "Conteúdo VIP — ver foto em tela cheia";
+            } else {
+              label = isVid ? "Reproduzir vídeo em tela cheia" : "Ver foto em tela cheia";
+            }
+
             var play = isVid
               ? '<div class="card__play-wrap" aria-hidden="true"><span class="card__play">▶</span></div>'
               : "";
@@ -1164,7 +1191,7 @@
                     return String((it && it.thumb) || "").trim();
                   })()
                 : String((it && it.thumb) || "").trim());
-            if (locked) {
+            if (locked && !paidVip) {
               attrs += ' tabindex="-1" data-vip-locked="1"';
             } else {
               attrs +=
@@ -1474,12 +1501,23 @@
         if (e.key === "Escape" && vipLightbox.classList.contains("is-open")) closeVipLightbox();
       });
 
+      var statusUrl = new URL("/api/vip/status", window.location.origin).href;
       fetch("site-data.json", { cache: "no-store" })
         .then(function (r) {
           return r.ok ? r.json() : Promise.reject();
         })
         .then(function (data) {
-          if (!applySiteData(data)) fetchStatsFromFiles();
+          return fetch(statusUrl, { credentials: "include", cache: "no-store" })
+            .then(function (r) {
+              return r.ok ? r.json() : { unlocked: false };
+            })
+            .catch(function () {
+              return { unlocked: false };
+            })
+            .then(function (st) {
+              vipUnlockedFlag = !!st.unlocked;
+              if (!applySiteData(data)) fetchStatsFromFiles();
+            });
         })
         .catch(function () {
           fetchStatsFromFiles();
