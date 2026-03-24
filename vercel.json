@@ -4,6 +4,9 @@
       "maxDuration": 60
     }
   },
+  "redirects": [
+    { "source": "/checkout", "destination": "/checkout/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/", "destination": "/admin/index.html" },
