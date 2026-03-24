@@ -78,7 +78,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ qr_code: $json.qr_code, qr_code_base64: $json.qr_code_base64 }) }}",
+        "responseBody": "={{ JSON.stringify({ qr_code: $json.qr_code, qr_code_base64: $json.qr_code_base64, id: $json.id }) }}",
         "options": {}
       },
       "id": "a1b2c3d0-1111-4aaa-8bbb-000000000004",
@@ -89,7 +89,7 @@
     },
     {
       "parameters": {
-        "content": "## PushinPay — PIX no checkout\n\n### Variáveis de ambiente (n8n)\n- `PUSHINPAY_BEARER_TOKEN` — token completo do painel Pushin Pay (ex.: `64287|xxxx...`).\n- `N8N_WEBHOOK_PUSHINPAY_PAID` — URL **pública** do workflow 2 (ex.: `https://SEU-N8N/webhook/pushinpay-pix-paid`).\n\nSem a segunda URL, o PIX gera mas **não** notifica pagamento.\n\n### API\n`POST https://api.pushinpay.com.br/api/pix/cashIn` — valor em **centavos**.\n\n### Checkout\nO site envia `POST { \"value\", \"id\" }` para `/webhook/pix-push` (mesmo path que antes).",
+        "content": "## PushinPay — PIX no checkout\n\n### Resposta JSON\nInclui `id` da transação — **obrigatório** para o site consultar pagamento e redirecionar ao /vip.\n\n### Variáveis de ambiente (n8n)\n- `PUSHINPAY_BEARER_TOKEN`\n- `N8N_WEBHOOK_PUSHINPAY_PAID` — opcional se só usar polling no site; útil para automações extra.\n\n### Site (Vercel)\n- `PUSHINPAY_BEARER_TOKEN` — igual ao n8n (consulta GET transação)\n- `VIP_UNLOCK_SECRET`\n\nPolling no checkout ~61s (limite Pushin Pay).",
         "height": 420,
         "width": 460
       },

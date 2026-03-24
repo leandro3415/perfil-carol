@@ -7,6 +7,7 @@ import busboy from "busboy";
 import { getStats } from "./scripts/count-media.mjs";
 import vipGrantHandler from "./api/vip/grant.js";
 import vipStatusHandler from "./api/vip/status.js";
+import vipCheckPixHandler from "./api/vip/check-pix.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -288,6 +289,11 @@ const server = http.createServer(async (req, res) => {
 
   if (url.pathname === "/api/vip/grant" && method === "GET") {
     await vipGrantHandler(req, res);
+    return;
+  }
+
+  if (url.pathname === "/api/vip/check-pix" && method === "GET") {
+    await vipCheckPixHandler(req, res);
     return;
   }
 

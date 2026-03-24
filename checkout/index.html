@@ -566,6 +566,23 @@
       display: block;
     }
 
+    .pix-vip-wait {
+      margin: 1rem 0 0;
+      padding: 0.85rem 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: 100%;
+    }
+
+    .pix-vip-wait strong {
+      color: var(--primary-dark);
+    }
+
     .loading-spinner {
       width: 40px;
       height: 40px;
@@ -873,6 +890,9 @@
             <img id="qr-code-img" src="" alt="QR Code PIX">
           </div>
         </div>
+        <p id="pix-vip-wait" class="pix-vip-wait" hidden>
+          Após pagar no app do banco, <strong>mantenha esta página aberta</strong>. A cada ~1 minuto verificamos o pagamento (limite da Pushin Pay). Quando confirmar, você será enviado ao <strong>VIP</strong> com o conteúdo liberado.
+        </p>
       </div>
       <div id="loading-indicator" style="display: none; margin-bottom: 0.5rem;">
         <div class="loading-spinner"></div>
@@ -885,7 +905,7 @@
       <span><span style="font-size:1.2em;">🔒</span> Ambiente 100% Seguro e Criptografado</span>
     </div>
     <div class="footer-msg">
-      <strong>FinLeve</strong> — Seus dados estão protegidos. Após o pagamento confirmado te mando os conteudos EXTRA VIP.<br>
+      <strong>FinLeve</strong> — Seus dados estão protegidos. Após o pagamento, se esta página estiver aberta, você será levado ao perfil <strong>VIP</strong> com o conteúdo liberado.<br>
       Pagamento processado via <strong>Pushin Pay</strong>. A PUSHIN PAY atua como processadora de pagamentos; a entrega do conteúdo é de responsabilidade do vendedor.
     </div>
     <div class="footer">
@@ -911,6 +931,63 @@
       const pixContent = document.getElementById('pix-content');
       const loadingIndicator = document.getElementById('loading-indicator');
       const qrCodeImg = document.getElementById('qr-code-img');
+      const pixVipWaitEl = document.getElementById('pix-vip-wait');
+      const LS_PENDING_PIX = 'pc_pushinpay_pending_id';
+      const VIP_CHECK_POLL_MS = 61000;
+      const VIP_CHECK_MAX_ROUNDS = 100;
+
+      let pixPollTimer = null;
+
+      function stopPixPolling() {
+        if (pixPollTimer != null) {
+          clearTimeout(pixPollTimer);
+          pixPollTimer = null;
+        }
+      }
+
+      /** Consulta Pushin Pay via /api/vip/check-pix e grava cookie VIP quando status = paid */
+      function startPixPollingToVip(txId) {
+        stopPixPolling();
+        if (!txId) return;
+        try {
+          localStorage.setItem(LS_PENDING_PIX, txId);
+        } catch (e) {}
+        if (pixVipWaitEl) pixVipWaitEl.hidden = false;
+
+        const checkUrl = new URL('/api/vip/check-pix', window.location.origin);
+        checkUrl.searchParams.set('id', txId);
+        let round = 0;
+
+        function scheduleNext() {
+          if (round >= VIP_CHECK_MAX_ROUNDS) return;
+          pixPollTimer = setTimeout(tick, VIP_CHECK_POLL_MS);
+        }
+
+        function tick() {
+          pixPollTimer = null;
+          round += 1;
+          fetch(checkUrl.href, { credentials: 'include', cache: 'no-store' })
+            .then(function (r) {
+              return r.json();
+            })
+            .then(function (j) {
+              if (j && j.unlocked) {
+                try {
+                  localStorage.removeItem(LS_PENDING_PIX);
+                } catch (e) {}
+                stopPixPolling();
+                window.location.replace('/vip/');
+                return;
+              }
+              scheduleNext();
+            })
+            .catch(function () {
+              scheduleNext();
+            });
+        }
+
+        scheduleNext();
+      }
 
       // Load header background image
       const headerImage = new Image();
@@ -991,6 +1068,11 @@
             console.error('Resposta sem qr_code/qr_code_base64:', data);
             throw new Error('Resposta do servidor sem código PIX. Verifique o workflow n8n.');
           }
+
+          const txId = (data.id != null && String(data.id).trim()) || (data.pix_transaction_id != null && String(data.pix_transaction_id).trim()) || '';
+          if (!txId) {
+            console.warn('Resposta sem id da transação Pushin Pay — redirecionamento automático ao VIP não funcionará. Inclua "id" no JSON do n8n (Responde Pix).');
+          }
           
           // Update PIX code and QR code
           pixCode.value = data.qr_code;
@@ -1003,6 +1085,12 @@
           const totalBarPix = document.querySelector('#panel-pix .total-bar');
           if (totalBarPix) totalBarPix.style.display = 'none';
           pixContent.style.display = 'block';
+
+          if (txId) {
+            startPixPollingToVip(txId);
+          } else if (pixVipWaitEl) {
+            pixVipWaitEl.hidden = true;
+          }
           
         } catch (error) {
           console.error('Erro:', error);

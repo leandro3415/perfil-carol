@@ -1501,6 +1501,57 @@
         if (e.key === "Escape" && vipLightbox.classList.contains("is-open")) closeVipLightbox();
       });
 
+      var LS_PENDING_PIX = "pc_pushinpay_pending_id";
+      var VIP_CHECK_POLL_MS = 61000;
+      var VIP_CHECK_MAX_ROUNDS = 100;
+      var vipPixPollTimer = null;
+
+      function stopVipPixPoll() {
+        if (vipPixPollTimer != null) {
+          clearTimeout(vipPixPollTimer);
+          vipPixPollTimer = null;
+        }
+      }
+
+      /** Retoma verificação se o cliente pagou no celular e abriu /vip/ sem voltar ao checkout */
+      function startPushinPayPollOnVipPage(txId) {
+        stopVipPixPoll();
+        if (!txId) return;
+        var checkUrl = new URL("/api/vip/check-pix", window.location.origin);
+        checkUrl.searchParams.set("id", txId);
+        var round = 0;
+
+        function scheduleNext() {
+          if (round >= VIP_CHECK_MAX_ROUNDS) return;
+          vipPixPollTimer = setTimeout(tick, VIP_CHECK_POLL_MS);
+        }
+
+        function tick() {
+          vipPixPollTimer = null;
+          round += 1;
+          fetch(checkUrl.href, { credentials: "include", cache: "no-store" })
+            .then(function (r) {
+              return r.json();
+            })
+            .then(function (j) {
+              if (j && j.unlocked) {
+                try {
+                  localStorage.removeItem(LS_PENDING_PIX);
+                } catch (e) {}
+                stopVipPixPoll();
+                location.reload();
+                return;
+              }
+              scheduleNext();
+            })
+            .catch(function () {
+              scheduleNext();
+            });
+        }
+
+        scheduleNext();
+      }
+
       var statusUrl = new URL("/api/vip/status", window.location.origin).href;
       fetch("site-data.json", { cache: "no-store" })
         .then(function (r) {
@@ -1516,7 +1567,17 @@
             })
             .then(function (st) {
               vipUnlockedFlag = !!st.unlocked;
+              try {
+                if (vipUnlockedFlag) localStorage.removeItem(LS_PENDING_PIX);
+              } catch (e) {}
               if (!applySiteData(data)) fetchStatsFromFiles();
+              if (!vipUnlockedFlag) {
+                var pend = null;
+                try {
+                  pend = localStorage.getItem(LS_PENDING_PIX);
+                } catch (e2) {}
+                if (pend) startPushinPayPollOnVipPage(pend);
+              }
             });
         })
         .catch(function () {
