@@ -1052,8 +1052,10 @@
           }
           
           if (!rawText || rawText.trim() === '') {
-            console.error('Webhook retornou corpo vazio. Verifique se o workflow n8n está ativo e o node "Responde Pix" está respondendo.');
-            throw new Error('O servidor retornou resposta vazia. Verifique se o workflow n8n está ativo.');
+            console.error('Webhook retornou corpo vazio. n8n: workflow Active? token Pushin Pay? node "Responde Pix" ligado após "GerarPix"? Ver Executions.');
+            throw new Error(
+              'Resposta vazia do n8n. No Easypanel: variável PUSHINPAY_BEARER_TOKEN com o token completo. No node HTTP: Authorization = Expression "Bearer {{ $env.PUSHINPAY_BEARER_TOKEN }}". Ative o workflow e veja Executions se falhou antes de "Responde Pix".'
+            );
           }
           
           let data;

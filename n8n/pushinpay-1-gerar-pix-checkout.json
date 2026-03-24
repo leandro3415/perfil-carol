@@ -66,7 +66,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ value: Number($('Variáveis').item.json.value) || 1000, webhook_url: $env.N8N_WEBHOOK_PUSHINPAY_PAID }) }}",
+        "jsonBody": "={{ JSON.stringify($env.N8N_WEBHOOK_PUSHINPAY_PAID && String($env.N8N_WEBHOOK_PUSHINPAY_PAID).trim() !== '' ? { value: Number($('Variáveis').item.json.value) || 1000, webhook_url: String($env.N8N_WEBHOOK_PUSHINPAY_PAID).trim() } : { value: Number($('Variáveis').item.json.value) || 1000 }) }}",
         "options": {}
       },
       "id": "a1b2c3d0-1111-4aaa-8bbb-000000000003",
@@ -89,9 +89,9 @@
     },
     {
       "parameters": {
-        "content": "## PushinPay — PIX no checkout\n\n### Resposta JSON\nInclui `id` da transação — **obrigatório** para o site consultar pagamento e redirecionar ao /vip.\n\n### Variáveis de ambiente (n8n)\n- `PUSHINPAY_BEARER_TOKEN`\n- `N8N_WEBHOOK_PUSHINPAY_PAID` — opcional se só usar polling no site; útil para automações extra.\n\n### Site (Vercel)\n- `PUSHINPAY_BEARER_TOKEN` — igual ao n8n (consulta GET transação)\n- `VIP_UNLOCK_SECRET`\n\nPolling no checkout ~61s (limite Pushin Pay).",
-        "height": 420,
-        "width": 460
+        "content": "## PushinPay — Gerar PIX (checkout)\n\n### 1) Variável PUSHINPAY_BEARER_TOKEN (Easypanel / Docker n8n)\n- **Nome da variável:** exatamente `PUSHINPAY_BEARER_TOKEN`\n- **Valor:** o token **inteiro** da Pushin Pay (ex.: `12345|abcdef...`), **sem** a palavra `Bearer`.\n\n### 2) Header Authorization neste node (Expression)\nUse **só**:\n`Bearer {{ $env.PUSHINPAY_BEARER_TOKEN }}`\n\n**ERRADO** (dá invalid syntax):\n- `Bearer {{ $env.64287|... }}` — não existe variável com nome `64287|...`\n- Colar o token dentro de `{{ }}`\n\n**Certo:** o token fica **só** no valor da env; aqui só referencias o **nome** `PUSHINPAY_BEARER_TOKEN`.\n\n### 3) Não confundir com VIP_UNLOCK_SECRET\n- `PUSHINPAY_BEARER_TOKEN` = API Pushin Pay (este fluxo + Vercel check-pix).\n- `VIP_UNLOCK_SECRET` = cookie VIP no **site** (Vercel); no n8n só no fluxo «PIX pago → link».\n\n### 4) N8N_WEBHOOK_PUSHINPAY_PAID\nOpcional. Se vazio, o body só envia `value` (ok para polling no checkout).\n\n### 5) Workflow **Active** + node Responde Pix\nSem token ou com erro na API, o fluxo não chega ao Respond → checkout mostra «resposta vazia».\n\n### Vercel\n`PUSHINPAY_BEARER_TOKEN`, `VIP_UNLOCK_SECRET`. Polling ~61s.",
+        "height": 560,
+        "width": 520
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [960, -120],

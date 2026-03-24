@@ -1,0 +1,44 @@
+================================================================================
+Pushin Pay + n8n + checkout (perfil-carol) — configuração rápida
+================================================================================
+
+FLUXO 1 — Gerar PIX (importar: pushinpay-1-gerar-pix-checkout.json)
+--------------------------------------------------------------------------------
+Webhook de produção: .../webhook/pix-push
+
+Variáveis de ambiente no n8n (Easypanel / Docker):
+  PUSHINPAY_BEARER_TOKEN
+    Nome EXATO da variável (não use números ou | no nome).
+    Valor = token INTEIRO da Pushin Pay (ex.: 12345|abc...), SEM a palavra "Bearer".
+
+  N8N_WEBHOOK_PUSHINPAY_PAID (opcional)
+    URL do fluxo 2, se quiseres webhook da Pushin Pay ao pagar.
+    Se não definires, o JSON de criação do PIX só envia "value" (ok para o site).
+
+Node "GerarPix PushinPay" — Headers:
+  Authorization  → modo Expression:
+    Bearer {{ $env.PUSHINPAY_BEARER_TOKEN }}
+
+  ERRADO (invalid syntax):
+    Bearer {{ $env.64287|xxxxx }}
+    (o token não vai dentro do nome da variável)
+
+  Content-Type: application/json
+  Accept: application/json
+
+Ativar o workflow (toggle Active). Se a Pushin Pay falhar, o fluxo não chega ao
+"Responde Pix" e o checkout mostra "resposta vazia" — vê Executions no n8n.
+
+
+FLUXO 2 — PIX pago → link VIP (opcional): pushinpay-2-pix-pago-libera-vip.json
+--------------------------------------------------------------------------------
+  VIP_UNLOCK_SECRET = o mesmo valor que na Vercel (nome de variável válido).
+  VIP_SITE_BASE = opcional (ex.: https://perfilcarol.vercel.app)
+
+
+VERCEL
+--------------------------------------------------------------------------------
+  PUSHINPAY_BEARER_TOKEN  (igual ao n8n — para /api/vip/check-pix)
+  VIP_UNLOCK_SECRET       (cookie VIP e /api/vip/grant)
+
+================================================================================
