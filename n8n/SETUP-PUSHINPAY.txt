@@ -11,13 +11,13 @@ Variáveis de ambiente no n8n (Easypanel / Docker):
     Nome EXATO da variável (não use números ou | no nome).
     Valor = token INTEIRO da Pushin Pay (ex.: 12345|abc...), SEM a palavra "Bearer".
 
-  N8N_WEBHOOK_PUSHINPAY_PAID (opcional)
-    URL do fluxo 2, se quiseres webhook da Pushin Pay ao pagar.
-    Se não definires, o JSON de criação do PIX só envia "value" (ok para o site).
+  Body do HTTP: só { "value" } (sem webhook_url) — compatível com sites que usam
+  só polling no checkout. Fluxo 2 no n8n continua opcional.
 
 Node "GerarPix PushinPay" — Headers:
-  Authorization  → modo Expression:
+  Authorization  → Expression (se N8N_BLOCK_ENV_ACCESS_IN_NODE=false):
     Bearer {{ $env.PUSHINPAY_BEARER_TOKEN }}
+  Se aparecer "access to env vars denied", vê secção abaixo ou usa Bearer FIXO.
 
   ERRADO (invalid syntax):
     Bearer {{ $env.64287|xxxxx }}
@@ -40,5 +40,16 @@ VERCEL
 --------------------------------------------------------------------------------
   PUSHINPAY_BEARER_TOKEN  (igual ao n8n — para /api/vip/check-pix)
   VIP_UNLOCK_SECRET       (cookie VIP e /api/vip/grant)
+
+
+N8N 2.x — "access to env vars denied"
+--------------------------------------------------------------------------------
+Se o servidor tiver N8N_BLOCK_ENV_ACCESS_IN_NODE ativo, $env nos nodes falha.
+
+No Easypanel → n8n → Ambiente, adiciona:
+  N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+Implantar / reiniciar o n8n.
+
+O JSON pushinpay-1-gerar-pix-checkout.json já NÃO usa $env no jsonBody.
 
 ================================================================================
