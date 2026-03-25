@@ -52,4 +52,47 @@ Implantar / reiniciar o n8n.
 
 O JSON pushinpay-1-gerar-pix-checkout.json já NÃO usa $env no jsonBody.
 
+
+================================================================================
+DOCUMENTAÇÃO API PUSHIN PAY — Criar cobrança PIX (cashIn)
+================================================================================
+Base: https://api.pushinpay.com.br/api
+
+Endpoint: POST /pix/cashIn  →  URL completa:
+  https://api.pushinpay.com.br/api/pix/cashIn
+
+Headers obrigatórios:
+  Authorization: Bearer <SEU_TOKEN_COMPLETO>
+                 ↑ o token vai DEPOIS de "Bearer " (um espaço + token).
+                 Ex.: Bearer 64287|xxxxxxxx
+  Accept: application/json
+  Content-Type: application/json
+
+Body (JSON):
+  value        number  obrigatório — valor em CENTAVOS (mín. 50 centavos na doc).
+  webhook_url  string  opcional — URL que recebe POST quando status mudar.
+  split_rules  array   opcional — regras de split entre contas.
+
+Exemplo cURL (substitua <TOKEN> e ajuste value / webhook_url):
+
+  curl --location 'https://api.pushinpay.com.br/api/pix/cashIn' \
+    --header 'Authorization: Bearer <TOKEN>' \
+    --header 'Accept: application/json' \
+    --header 'Content-Type: application/json' \
+    --data '{
+      "value": 1000,
+      "webhook_url": "https://seu-dominio.com/webhook-pushinpay",
+      "split_rules": []
+    }'
+
+Resposta típica (200): id, qr_code, qr_code_base64, status, value, ...
+
+Consultar status (doc oficial):
+  GET https://api.pushinpay.com.br/api/transaction/<id>
+  Mesmos headers Authorization / Accept / Content-Type.
+
+Doc detalhada (Theneo):
+  https://app.theneo.io/pushinpay/pix/pix/criar-pix
+  https://app.theneo.io/pushinpay/pix/pix/consultar-pix
+
 ================================================================================
