@@ -489,6 +489,19 @@
       transition: filter 0.35s ease, transform 0.35s ease;
     }
 
+    /* Long-press / menu de contexto: reduz vazamento de mídia (não é proteção absoluta) */
+    .hero__img,
+    .profile-head .avatar,
+    #feedRoot .card__img,
+    #feedRoot video.card__preview-video,
+    .lightbox__img,
+    .lightbox__video {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
     /* Prévia de vídeo no grid: primeiro frame / poster — sem roubar clique do card */
     .card__img.card__preview-video {
       pointer-events: none;
@@ -897,6 +910,7 @@
       alt="Capa do perfil"
       width="1920"
       height="1080"
+      draggable="false"
     />
     <div class="hero__overlay" aria-hidden="true"></div>
     <div class="hero__bar">
@@ -922,6 +936,7 @@
         alt="Foto de perfil de Carolzinha"
         width="512"
         height="512"
+        draggable="false"
       />
     </div>
     <div class="profile-head__body">
@@ -989,8 +1004,8 @@
     <div class="lightbox__backdrop" data-lightbox-close tabindex="-1"></div>
     <div class="lightbox__panel">
       <button type="button" class="lightbox__close icon-btn" data-lightbox-close aria-label="Fechar">×</button>
-      <img class="lightbox__img" alt="" hidden />
-      <video class="lightbox__video" controls playsinline preload="metadata" hidden></video>
+      <img class="lightbox__img" alt="" hidden draggable="false" />
+      <video class="lightbox__video" controls playsinline preload="metadata" hidden draggable="false"></video>
       <p class="lightbox__hint">Toque fora ou em Fechar para sair</p>
     </div>
   </div>
@@ -1088,7 +1103,7 @@
             esc(it.thumb || "") +
             '" width="900" height="1200" alt="' +
             esc(alt || "Post") +
-            '" loading="lazy" decoding="async"/>'
+            '" loading="lazy" decoding="async" draggable="false"/>'
           );
         }
         var imgSrc = firstImagePreviewUrl(it);
@@ -1100,7 +1115,7 @@
             esc(imgSrc) +
             '" width="900" height="1200" alt="' +
             esc(alt || "Post") +
-            '" loading="lazy" decoding="async"/>'
+            '" loading="lazy" decoding="async" draggable="false"/>'
           );
         }
         if (vidUrl) {
@@ -1109,7 +1124,7 @@
             imgCls +
             ' card__preview-video" src="' +
             esc(videoUrlWithSeekFragment(vidUrl)) +
-            '" muted playsinline preload="auto" aria-label="' +
+            '" muted playsinline preload="auto" draggable="false" aria-label="' +
             esc(alt || "Prévia do vídeo") +
             '"></video>'
           );
@@ -1119,7 +1134,7 @@
           imgCls +
           '" src="" width="900" height="1200" alt="' +
           esc(alt || "Post") +
-          '" loading="lazy" decoding="async"/>'
+          '" loading="lazy" decoding="async" draggable="false"/>'
         );
       }
 
@@ -1491,6 +1506,42 @@
           e.preventDefault();
           openVipLightbox(card);
         });
+      })();
+
+      (function bindVipMediaContextLock() {
+        function preventLeak(e) {
+          e.preventDefault();
+        }
+        var feedRoot = document.getElementById("feedRoot");
+        if (feedRoot) {
+          feedRoot.addEventListener(
+            "contextmenu",
+            function (e) {
+              if (e.target.closest("article.card")) preventLeak(e);
+            },
+            true
+          );
+          feedRoot.addEventListener(
+            "dragstart",
+            function (e) {
+              var t = e.target;
+              if (!t || !t.closest || !t.closest("article.card")) return;
+              if (t.tagName === "IMG" || t.tagName === "VIDEO") preventLeak(e);
+            },
+            true
+          );
+        }
+        var hero = document.getElementById("heroCover");
+        var av = document.getElementById("avatarImg");
+        [hero, av].forEach(function (el) {
+          if (!el) return;
+          el.addEventListener("contextmenu", preventLeak, true);
+          el.addEventListener("dragstart", preventLeak, true);
+        });
+        if (vipLightbox) {
+          vipLightbox.addEventListener("contextmenu", preventLeak, true);
+          vipLightbox.addEventListener("dragstart", preventLeak, true);
+        }
       })();
 
       vipLightbox.addEventListener("click", function (e) {
