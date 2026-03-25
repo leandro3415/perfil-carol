@@ -131,7 +131,10 @@ export default async function handler(req, res) {
     }
     setVipPassCookie(res, cookieToken, 30 * 24 * 60 * 60);
     res.statusCode = 200;
-    return res.end(JSON.stringify({ ok: true, unlocked: true }));
+    /* vipPass: alguns browsers ignoram Set-Cookie em resposta a fetch — o cliente grava também via document.cookie */
+    return res.end(
+      JSON.stringify({ ok: true, unlocked: true, vipPass: cookieToken })
+    );
   }
 
   res.statusCode = 200;

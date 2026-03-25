@@ -1572,6 +1572,20 @@
         }
       }
 
+      function persistVipPassClient(token) {
+        if (!token || typeof token !== "string") return;
+        var maxAge = 30 * 24 * 60 * 60;
+        var secure = window.location.protocol === "https:";
+        var parts = [
+          "pc_vip=" + encodeURIComponent(token),
+          "path=/",
+          "max-age=" + String(maxAge),
+          "samesite=lax",
+        ];
+        if (secure) parts.push("secure");
+        document.cookie = parts.join("; ");
+      }
+
       /** Retoma verificação se o cliente pagou no celular e abriu /vip/ sem voltar ao checkout */
       function startPushinPayPollOnVipPage(txId) {
         stopVipPixPoll();
@@ -1598,6 +1612,7 @@
                   localStorage.removeItem(LS_PENDING_PIX);
                 } catch (e) {}
                 stopVipPixPoll();
+                if (j.vipPass) persistVipPassClient(j.vipPass);
                 setTimeout(function () {
                   location.reload();
                 }, 300);

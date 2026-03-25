@@ -1035,6 +1035,21 @@
         }
       }
 
+      /** Reforço: grava pc_vip no browser (Set-Cookie em fetch nem sempre persiste). */
+      function persistVipPassClient(token) {
+        if (!token || typeof token !== 'string') return;
+        var maxAge = 30 * 24 * 60 * 60;
+        var secure = window.location.protocol === 'https:';
+        var parts = [
+          'pc_vip=' + encodeURIComponent(token),
+          'path=/',
+          'max-age=' + String(maxAge),
+          'samesite=lax'
+        ];
+        if (secure) parts.push('secure');
+        document.cookie = parts.join('; ');
+      }
+
       /** Consulta Pushin Pay via /api/vip/check-pix e grava cookie VIP quando status = paid */
       function startPixPollingToVip(txId) {
         stopPixPolling();
@@ -1066,8 +1081,9 @@
                   localStorage.removeItem(LS_PENDING_PIX);
                 } catch (e) {}
                 stopPixPolling();
+                if (j.vipPass) persistVipPassClient(j.vipPass);
                 fireFbqPurchasePixConfirmed();
-                /* Dar tempo ao browser de persistir Set-Cookie antes do redirect (evita /api/vip/status false). */
+                /* Dar tempo ao browser de persistir cookie antes do redirect. */
                 setTimeout(function () {
                   window.location.replace('/vip/');
                 }, 300);
