@@ -325,7 +325,7 @@
       margin-top: 0.15rem;
     }
 
-    /* Resumo do pedido — taxa única R$ 10 e total (pode desligar) */
+    /* Resumo do pedido — taxa única / total (FIXED_VALUE no script) */
     .order-summary {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -408,7 +408,7 @@
       font-size: 1.125rem;
     }
 
-    /* Barra única com total (R$ 10,00) */
+    /* Barra única com total (#total-amount-pix) */
     .total-bar {
       display: flex;
       justify-content: space-between;
@@ -879,7 +879,7 @@
         <div class="payment-options" style="margin-bottom: 0.5rem;">
           <div class="total-bar">
             <span>Total</span>
-            <span class="amount" id="total-amount-pix">R$ 10,00</span>
+            <span class="amount" id="total-amount-pix">R$ 9,90</span>
           </div>
           <button class="generate-button" id="generate-pix-button"><strong>Gerar PIX</strong></button>
         </div>
@@ -931,7 +931,7 @@
       const copyButton = document.getElementById('copy-button');
       const pixCode = document.getElementById('pix-code');
       const successMessage = document.getElementById('success-message');
-      const FIXED_VALUE = 100; // R$ 10,00 fixo (em centavos)
+      const FIXED_VALUE = 990; // R$ 9,90 fixo (em centavos) — alinhado ao #valor-vip na landing
 
       /**
        * Webhook do fluxo n8n «Gerar PIX» (POST JSON: { value, id }).

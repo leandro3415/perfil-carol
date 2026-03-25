@@ -119,11 +119,114 @@
       border-radius: 4px;
       font-size: 0.85em;
     }
+    /* Âncora de valor — promoção (de/para) */
+    .price-anchor {
+      width: min(92vw, 420px);
+      margin: 0 auto 1.5rem;
+      padding: 1rem 1.15rem;
+      background: var(--card);
+      border: 1px solid rgba(108, 158, 255, 0.28);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+      scroll-margin-top: 1rem;
+    }
+    .price-anchor__title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 0.65rem;
+      text-align: center;
+    }
+    .price-anchor__row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+    .price-anchor__was {
+      font-size: 1.05rem;
+      color: var(--muted);
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+    .price-anchor__now {
+      font-size: clamp(1.65rem, 5vw, 2rem);
+      font-weight: 700;
+      color: #9ed65c;
+      letter-spacing: -0.02em;
+    }
+    .price-anchor__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(108, 158, 255, 0.12);
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
+      margin: 0 auto 0.65rem;
+      width: fit-content;
+    }
+    .price-anchor__ticks {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .price-anchor__ticks li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.45rem;
+      margin: 0.35rem 0 0;
+    }
+    .price-anchor__ticks .tick {
+      flex-shrink: 0;
+      color: #9ed65c;
+      font-weight: 800;
+    }
+    .price-anchor__cta {
+      display: block;
+      text-align: center;
+      margin-top: 0.9rem;
+    }
+    .price-anchor__cta a {
+      display: inline-block;
+      padding: 0.65rem 1.35rem;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #0a0e14;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .price-anchor__cta a:hover {
+      filter: brightness(1.08);
+    }
   </style>
 </head>
 <body>
   <h1>Foto aleatória</h1>
   <p class="sub">A cada acesso ou atualização da página, uma imagem do banco é escolhida ao acaso.</p>
+
+  <section id="valor-vip" class="price-anchor" aria-labelledby="valor-vip-heading">
+    <p id="valor-vip-heading" class="price-anchor__title">CAROLZINHA VIP — valor no checkout</p>
+    <div class="price-anchor__row">
+      <span class="price-anchor__was" aria-label="Preço anterior">R$ 29,90</span>
+      <span class="price-anchor__now" aria-label="Preço promocional atual">R$ 9,90</span>
+    </div>
+    <p class="price-anchor__badge" role="status"><span aria-hidden="true">✓</span> Promoção ativa</p>
+    <ul class="price-anchor__ticks">
+      <li><span class="tick" aria-hidden="true">✓</span><span>Indicação promocional: preço vigente <strong>R$ 9,90</strong> (valor aplicado no PIX).</span></li>
+      <li><span class="tick" aria-hidden="true">✓</span><span>Referência do preço mais alto: <strong>R$ 29,90</strong> (somente comparativo).</span></li>
+    </ul>
+    <p class="price-anchor__cta"><a href="/checkout/">Ir para o checkout PIX</a></p>
+  </section>
 
   <div class="viewer">
     <div class="frame" id="frame">
@@ -141,6 +244,8 @@
   </div>
 
   <p class="hint" style="margin-top: 1.25rem; text-align: center;">
+    <a href="#valor-vip" style="color: var(--muted); font-weight: 500;">Ver valor VIP</a>
+    <span style="color: var(--muted);"> · </span>
     <a href="/vip/" style="color: var(--accent); font-weight: 600;">Abrir perfil VIP</a>
   </p>
 
