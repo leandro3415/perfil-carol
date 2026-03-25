@@ -641,7 +641,7 @@
       opacity: 0.35;
     }
 
-    /* Pagamento confirmado: mantém blur + selo VIP, mas abre lightbox */
+    /* Pagamento confirmado: selo VIP mantido; imagem nítida + lightbox */
     .card--vip-subscriber.card--vip-locked:focus-visible {
       outline: 2px solid var(--orange-soft);
       outline-offset: 2px;
@@ -649,6 +649,25 @@
 
     .card--vip-subscriber.card--vip-locked .card__play {
       opacity: 0.85;
+    }
+
+    .card--vip-subscriber.card--vip-locked .card__img,
+    .card--vip-subscriber.card--vip-locked .card__img.card__blur {
+      filter: none;
+      transform: none;
+    }
+
+    .card--vip-subscriber.card--vip-locked:hover .card__img,
+    .card--vip-subscriber.card--vip-locked:hover .card__img.card__blur {
+      filter: none;
+      transform: scale(1.02);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card--vip-subscriber.card--vip-locked:hover .card__img,
+      .card--vip-subscriber.card--vip-locked:hover .card__img.card__blur {
+        transform: none;
+      }
     }
 
     /* Prévia liberada (vipLocked: false): imagem nítida no grid */
