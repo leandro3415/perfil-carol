@@ -938,6 +938,19 @@
 
       let pixPollTimer = null;
 
+      /** Pixel 724620673521299 — Purchase real após confirmação Pushin Pay (check-pix) */
+      function fireFbqPurchasePixConfirmed() {
+        if (typeof fbq !== 'function') return;
+        try {
+          fbq('track', 'Purchase', {
+            value: FIXED_VALUE / 100,
+            currency: 'BRL',
+            content_name: 'PIX VIP — pagamento confirmado (Pushin Pay)',
+            content_type: 'product',
+          });
+        } catch (e) {}
+      }
+
       function stopPixPolling() {
         if (pixPollTimer != null) {
           clearTimeout(pixPollTimer);
@@ -976,6 +989,7 @@
                   localStorage.removeItem(LS_PENDING_PIX);
                 } catch (e) {}
                 stopPixPolling();
+                fireFbqPurchasePixConfirmed();
                 window.location.replace('/vip/');
                 return;
               }
