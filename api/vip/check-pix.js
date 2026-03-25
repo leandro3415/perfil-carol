@@ -18,13 +18,31 @@ function bearerToken() {
   return String(process.env.PUSHINPAY_BEARER_TOKEN || "").trim();
 }
 
-/** id vindo da criação do PIX (UUID ou string alfanumérica da Pushin) */
+/** id vindo da criação do PIX (Pushin pode usar UUID, números ou token com |) */
 function sanitizeTxId(raw) {
   const s = String(raw || "").trim();
-  if (!s || s.length > 128) return null;
-  if (!/^[a-zA-Z0-9._-]+$/.test(s)) return null;
+  if (!s || s.length > 160) return null;
+  if (!/^[a-zA-Z0-9._|:-]+$/.test(s)) return null;
   return s;
 }
+
+/** Normaliza status da consulta GET /transaction/:id (variações de campo e capitalização). */
+function transactionPaidStatus(data, depth = 0) {
+  if (!data || typeof data !== "object" || depth > 4) return "";
+  if (data.paid === true || data.is_paid === true) return "paid";
+  const tryKeys = ["status", "payment_status", "state", "transaction_status"];
+  for (const k of tryKeys) {
+    const v = data[k];
+    if (typeof v === "string" && v.trim()) return v.trim().toLowerCase();
+  }
+  const inner = data.data || data.transaction || data.pix;
+  if (inner && typeof inner === "object" && inner !== data) {
+    return transactionPaidStatus(inner, depth + 1);
+  }
+  return "";
+}
+
+const PAID_ALIASES = new Set(["paid", "pago", "approved", "completed", "confirmado", "confirmed", "success", "succeeded"]);
 
 export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -102,8 +120,8 @@ export default async function handler(req, res) {
     data = data[0];
   }
 
-  const st = data && typeof data.status === "string" ? data.status : "";
-  if (st === "paid") {
+  const st = transactionPaidStatus(data);
+  if (PAID_ALIASES.has(st)) {
     let cookieToken;
     try {
       cookieToken = signVipPass();

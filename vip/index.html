@@ -88,6 +88,14 @@
       padding-bottom: calc(88px + var(--safe-bottom));
     }
 
+    body.vip-unlocked {
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+
+    body.vip-unlocked .fab {
+      display: none !important;
+    }
+
     img {
       max-width: 100%;
       display: block;
@@ -1622,6 +1630,15 @@
                 if (vipUnlockedFlag) localStorage.removeItem(LS_PENDING_PIX);
               } catch (e) {}
               if (!applySiteData(data)) fetchStatsFromFiles();
+              if (vipUnlockedFlag) {
+                document.body.classList.add("vip-unlocked");
+                var sbl = document.getElementById("subBarBtnLabel");
+                var sh = document.getElementById("subBarHint");
+                if (sbl) sbl.textContent = "VIP ativo ✓";
+                if (sh)
+                  sh.textContent =
+                    "Acesso liberado — abra fotos e vídeos bloqueados tocando nos cards (tela cheia).";
+              }
               if (!vipUnlockedFlag) {
                 var pend = null;
                 try {
