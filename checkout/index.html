@@ -1067,7 +1067,10 @@
                 } catch (e) {}
                 stopPixPolling();
                 fireFbqPurchasePixConfirmed();
-                window.location.replace('/vip/');
+                /* Dar tempo ao browser de persistir Set-Cookie antes do redirect (evita /api/vip/status false). */
+                setTimeout(function () {
+                  window.location.replace('/vip/');
+                }, 300);
                 return;
               }
               scheduleNext();
