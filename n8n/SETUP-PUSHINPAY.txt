@@ -87,9 +87,12 @@ Exemplo cURL (substitua <TOKEN> e ajuste value / webhook_url):
 
 Resposta típica (200): id, qr_code, qr_code_base64, status, value, ...
 
-Consultar status (doc oficial):
-  GET https://api.pushinpay.com.br/api/transaction/<id>
+Consultar status (API real — SDK Python usa plural):
+  GET https://api.pushinpay.com.br/api/transactions/<id>
+  Fallback legado: GET .../api/transaction/<id>
   Mesmos headers Authorization / Accept / Content-Type.
+
+  O /api/vip/check-pix na Vercel tenta /transactions/ primeiro, depois /transaction/.
 
 Doc detalhada (Theneo):
   https://app.theneo.io/pushinpay/pix/pix/criar-pix

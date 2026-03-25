@@ -6,7 +6,10 @@
  *   VIP_UNLOCK_SECRET — obrigatório para assinar o cookie
  *   PUSHINPAY_API_BASE — opcional, padrão https://api.pushinpay.com.br/api
  *
- * A documentação Pushin Pay pede no máximo 1 consulta por minuto por transação; o checkout faz polling a ~61s.
+ * A documentação pública às vezes cita `/transaction/{id}`; o SDK oficial usa `/transactions/{id}` (plural).
+ * Consultamos o plural primeiro; se 404, tentamos o singular.
+ *
+ * No máximo 1 consulta por minuto por transação na Pushin; o checkout faz polling a ~61s.
  */
 import { getVipSecret, signVipPass, setVipPassCookie } from "../../lib/vip-access.js";
 
@@ -74,23 +77,29 @@ export default async function handler(req, res) {
     return res.end(JSON.stringify({ ok: false, error: "Parâmetro id inválido" }));
   }
 
-  const consultUrl = `${pushinPayBase()}/transaction/${encodeURIComponent(id)}`;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  };
+  const base = pushinPayBase();
+  const paths = [
+    `${base}/transactions/${encodeURIComponent(id)}`,
+    `${base}/transaction/${encodeURIComponent(id)}`,
+  ];
+
   let r;
+  let text = "";
   try {
-    r = await fetch(consultUrl, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    for (let i = 0; i < paths.length; i++) {
+      r = await fetch(paths[i], { method: "GET", headers });
+      text = await r.text();
+      if (r.status !== 404 || i === paths.length - 1) break;
+    }
   } catch (e) {
     res.statusCode = 502;
     return res.end(JSON.stringify({ ok: false, error: "Falha ao consultar Pushin Pay" }));
   }
-
-  const text = await r.text();
   let data;
   try {
     data = text ? JSON.parse(text) : null;
