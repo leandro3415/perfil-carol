@@ -66,7 +66,7 @@
     }
 
     .admin-shell {
-      max-width: 920px;
+      max-width: min(960px, 100vw - 24px);
       margin: 0 auto;
       padding: 16px 20px 32px;
     }
@@ -127,7 +127,7 @@
     }
 
     .panel {
-      max-width: 920px;
+      max-width: min(960px, 100vw - 24px);
       margin: 0 auto;
       padding: 0;
       background: transparent;
@@ -316,27 +316,266 @@
       background: rgba(248, 113, 113, 0.1);
     }
 
-    .feed-item {
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 14px;
-      background: rgba(10, 10, 10, 0.5);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-      transition: border-color 0.2s;
+    /* Grelha de posts — visual alinhado ao /vip */
+    .admin-feed-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 16px 0 20px;
     }
 
-    .feed-item:hover {
-      border-color: rgba(255, 140, 66, 0.22);
+    @media (min-width: 640px) {
+      .admin-feed-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
     }
 
-    .feed-item h3 {
-      margin: 0 0 12px;
+    .admin-feed-bundle {
+      min-width: 0;
+    }
+
+    .admin-feed-tile {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 3 / 4;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 140, 66, 0.12);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .admin-feed-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+      border-color: rgba(255, 140, 66, 0.35);
+    }
+
+    .admin-feed-tile:focus-visible {
+      outline: 2px solid var(--orange-soft);
+      outline-offset: 3px;
+    }
+
+    .admin-feed-tile__media {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: filter 0.25s ease, transform 0.25s ease;
+    }
+
+    .admin-feed-tile__media--blur {
+      filter: blur(14px) brightness(0.75);
+      transform: scale(1.06);
+    }
+
+    .admin-feed-tile__grad {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.35) 42%, transparent 68%);
+    }
+
+    .admin-feed-tile__vip {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, #ff6b00, #ff4500);
+      box-shadow: 0 2px 10px rgba(255, 80, 0, 0.4);
+    }
+
+    .admin-feed-tile__vip[hidden] {
+      display: none !important;
+    }
+
+    .admin-feed-tile__play {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.8);
+      opacity: 0.9;
+    }
+
+    .admin-feed-tile__play[hidden] {
+      display: none !important;
+    }
+
+    .admin-feed-tile__footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+      padding: 10px 8px 10px;
+      pointer-events: none;
+    }
+
+    .admin-feed-tile__handle {
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.95);
+    }
+
+    .admin-feed-tile__metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.65rem;
+      color: #e8e8e8;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+    }
+
+    .admin-feed-tile__hint {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #0a0a0a;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .admin-feed-fields {
+      padding: 0;
+    }
+
+    .admin-feed-fields__title {
+      margin: 0 0 14px;
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-muted);
+    }
+
+    /* Modal edição post */
+    .admin-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 640px) {
+      .admin-modal {
+        align-items: center;
+        padding: 24px;
+      }
+    }
+
+    .admin-modal[hidden] {
+      display: none !important;
+    }
+
+    .admin-modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      cursor: pointer;
+    }
+
+    .admin-modal__panel {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      max-height: min(92vh, 880px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border-radius: 16px 16px 0 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 -8px 48px rgba(0, 0, 0, 0.55);
+    }
+
+    @media (min-width: 640px) {
+      .admin-modal__panel {
+        border-radius: var(--radius);
+        max-height: min(88vh, 900px);
+      }
+    }
+
+    .admin-modal__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: linear-gradient(125deg, rgba(255, 69, 0, 0.12), rgba(20, 20, 20, 0.98));
+      flex-shrink: 0;
+    }
+
+    .admin-modal__head h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .admin-modal__close {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .admin-modal__close:hover {
+      background: rgba(255, 107, 0, 0.2);
+    }
+
+    .admin-modal__body {
+      overflow-y: auto;
+      padding: 18px 18px 28px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-modal__body label:first-of-type {
+      margin-top: 0;
     }
 
     .admin-vip-toggle {
@@ -655,10 +894,21 @@
 
     <section class="admin-card">
     <h2>Feed VIP (posts)</h2>
-    <p class="admin-help">Cada post aparece no /vip após <strong>Salvar tudo</strong>. Use <strong>Remover este post</strong> para excluir do feed (não apaga arquivo do disco). Prévia usa o caminho da miniatura.<br /><strong>VIP bloqueado</strong> (caixa marcada): miniatura borrada + selo VIP; o visitante <strong>não</strong> abre o foco/lightbox (assinatura VIP virá depois). <strong>Comum</strong> (desmarcada): miniatura <strong>nítida</strong> no grid; toque abre tela cheia. Em <strong>foto</strong>, se “imagem em alta” estiver vazio, a tela cheia usa a mesma URL da miniatura.</p>
-    <div id="feedEditor"></div>
+    <p class="admin-help">Visual igual ao grid do <strong>/vip</strong>: <strong>toque ou clique no card</strong> para abrir o formulário de edição. Salve com <strong>Salvar tudo</strong> no fim da página. <strong>Remover este post</strong> (dentro da edição) só tira do JSON — não apaga arquivo. <strong>VIP bloqueado</strong>: miniatura borrada + selo; sem pagamento não abre lightbox.</p>
+    <div id="feedEditor" class="admin-feed-grid" role="list"></div>
     <button type="button" class="secondary" id="btnAddFeed">+ Adicionar post</button>
     </section>
+
+    <div id="adminFeedModal" class="admin-modal hidden" role="dialog" aria-modal="true" aria-labelledby="adminFeedModalTitle" aria-hidden="true">
+      <div class="admin-modal__backdrop" id="adminFeedModalBackdrop" tabindex="-1"></div>
+      <div class="admin-modal__panel">
+        <div class="admin-modal__head">
+          <h2 id="adminFeedModalTitle">Editar post</h2>
+          <button type="button" class="admin-modal__close" id="adminFeedModalClose" aria-label="Fechar">×</button>
+        </div>
+        <div class="admin-modal__body" id="adminFeedModalBody"></div>
+      </div>
+    </div>
 
     <div class="admin-save-bar">
       <button type="button" class="primary" id="btnSave">Salvar tudo</button>
@@ -846,6 +1096,50 @@
       }
 
       var feedEditor = document.getElementById("feedEditor");
+      var adminFeedModal = document.getElementById("adminFeedModal");
+      var adminFeedModalBody = document.getElementById("adminFeedModalBody");
+      var adminFeedModalTitle = document.getElementById("adminFeedModalTitle");
+      var adminFeedModalBackdrop = document.getElementById("adminFeedModalBackdrop");
+      var adminFeedModalClose = document.getElementById("adminFeedModalClose");
+      var adminFeedModalBundle = null;
+
+      function closeFeedModal() {
+        if (adminFeedModalBundle) {
+          var fields = adminFeedModalBundle._fieldsEl;
+          if (fields && adminFeedModalBody.contains(fields)) {
+            adminFeedModalBundle.appendChild(fields);
+            fields.classList.add("hidden");
+          }
+          adminFeedModalBundle = null;
+        }
+        if (adminFeedModal) {
+          adminFeedModal.classList.add("hidden");
+          adminFeedModal.setAttribute("aria-hidden", "true");
+        }
+      }
+
+      function openFeedModal(bundle) {
+        if (!adminFeedModal || !bundle) return;
+        closeFeedModal();
+        adminFeedModalBundle = bundle;
+        var fields = bundle._fieldsEl;
+        if (!fields) return;
+        fields.classList.remove("hidden");
+        adminFeedModalBody.appendChild(fields);
+        var t = fields.querySelector(".admin-feed-fields__title");
+        adminFeedModalTitle.textContent = t ? t.textContent : "Editar post";
+        adminFeedModal.classList.remove("hidden");
+        adminFeedModal.setAttribute("aria-hidden", "false");
+        try {
+          adminFeedModalClose.focus();
+        } catch (err) {}
+      }
+
+      if (adminFeedModalBackdrop) adminFeedModalBackdrop.addEventListener("click", closeFeedModal);
+      if (adminFeedModalClose) adminFeedModalClose.addEventListener("click", closeFeedModal);
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && adminFeedModal && !adminFeedModal.classList.contains("hidden")) closeFeedModal();
+      });
 
       function isFeedItemVipLocked(it) {
         var v = it && it.vipLocked;
@@ -862,19 +1156,117 @@
         });
       }
 
+      function syncAdminFeedTile(bundle) {
+        function escapeHtml(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/"/g, "&quot;");
+        }
+        var wrap = bundle._fieldsEl;
+        if (!wrap || !bundle._tileImg) return;
+        var img = bundle._tileImg;
+        var thumb = wrap.querySelector(".f-thumb").value.trim();
+        var fb = wrap.querySelector(".f-tfb").value.trim();
+        var isVideo = wrap.querySelector(".f-type").value === "video";
+        var vipCb = wrap.querySelector(".f-vip-locked");
+        var vipOn = vipCb && vipCb.checked;
+        var handle = wrap.querySelector(".f-handle").value.trim() || "@carolzinha";
+        var v = (wrap.querySelector(".f-views") && wrap.querySelector(".f-views").value.trim()) || "—";
+        var lk = (wrap.querySelector(".f-likes") && wrap.querySelector(".f-likes").value.trim()) || "—";
+        var hrt = (wrap.querySelector(".f-hearts") && wrap.querySelector(".f-hearts").value.trim()) || "—";
+
+        if (bundle._tileVip) bundle._tileVip.hidden = !vipOn;
+        if (bundle._tilePlay) bundle._tilePlay.hidden = !isVideo;
+
+        if (bundle._tileHandle) bundle._tileHandle.textContent = handle + " ✓";
+        if (bundle._tileMetrics) {
+          bundle._tileMetrics.innerHTML =
+            "<span>👁 " +
+            escapeHtml(v) +
+            '</span><span>❤️ ' +
+            escapeHtml(lk) +
+            '</span><span>💕 ' +
+            escapeHtml(hrt) +
+            "</span>";
+        }
+
+        if (!thumb && !fb) {
+          img.removeAttribute("src");
+          img.classList.add("admin-feed-tile__media--blur");
+          return;
+        }
+
+        img.classList.toggle("admin-feed-tile__media--blur", vipOn);
+        img.src = vipAssetUrl(thumb);
+        img.onerror = function () {
+          img.onerror = null;
+          if (fb) {
+            img.src = fb;
+          } else {
+            img.removeAttribute("src");
+            img.classList.add("admin-feed-tile__media--blur");
+          }
+        };
+      }
+
       function feedRowEl(it, index) {
-        var wrap = document.createElement("div");
-        wrap.className = "feed-item";
-        wrap.dataset.index = String(index);
+        var bundle = document.createElement("div");
+        bundle.className = "admin-feed-bundle";
+        bundle.dataset.index = String(index);
+        bundle.setAttribute("role", "listitem");
         var type = it.type === "video" ? "video" : "image";
-        wrap.innerHTML =
-          "<h3>Post #" +
+
+        var tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "admin-feed-tile";
+        tile.setAttribute("aria-label", "Editar post #" + (index + 1));
+
+        var tileHint = document.createElement("span");
+        tileHint.className = "admin-feed-tile__hint";
+        tileHint.textContent = "Editar";
+
+        var img = document.createElement("img");
+        img.className = "admin-feed-tile__media";
+        img.alt = "";
+
+        var grad = document.createElement("div");
+        grad.className = "admin-feed-tile__grad";
+
+        var vipBadge = document.createElement("span");
+        vipBadge.className = "admin-feed-tile__vip";
+        vipBadge.textContent = "VIP";
+
+        var play = document.createElement("div");
+        play.className = "admin-feed-tile__play";
+        play.textContent = "▶";
+
+        var foot = document.createElement("div");
+        foot.className = "admin-feed-tile__footer";
+        var handleEl = document.createElement("div");
+        handleEl.className = "admin-feed-tile__handle";
+        var metricsEl = document.createElement("div");
+        metricsEl.className = "admin-feed-tile__metrics";
+        foot.appendChild(handleEl);
+        foot.appendChild(metricsEl);
+
+        tile.appendChild(img);
+        tile.appendChild(grad);
+        tile.appendChild(vipBadge);
+        tile.appendChild(tileHint);
+        tile.appendChild(play);
+        tile.appendChild(foot);
+
+        var fields = document.createElement("div");
+        fields.className = "admin-feed-fields hidden";
+        fields.innerHTML =
+          '<h3 class="admin-feed-fields__title">Post #' +
           (index + 1) +
           "</h3>" +
           '<label>Tipo</label><select class="f-type"><option value="image">Foto VIP</option><option value="video">Vídeo VIP</option></select>' +
           '<div class="admin-vip-toggle">' +
           '<label><input type="checkbox" class="f-vip-locked" />' +
-          "<span><strong>Bloquear como VIP</strong> — embaçado no feed e selo VIP. Sem pagamento: não abre em tela cheia. Com link de acesso (cookie após <code>/api/vip/grant</code>): mesmo visual VIP, mas o visitante pode ver foto/vídeo em tela cheia.</span></label></div>" +
+          "<span><strong>Bloquear como VIP</strong> — embaçado no feed e selo VIP. Sem pagamento: não abre em tela cheia. Com cookie após PIX: visitante vê nítido.</span></label></div>" +
           '<label>Miniatura (grid)</label><input type="text" class="f-thumb" placeholder="Feed teaser/teaser-1.jpg" />' +
           '<div class="f-img-only"><label>Imagem em tela cheia (URL)</label><input type="text" class="f-full" placeholder="Opcional: vazio = usa a miniatura no lightbox" /></div>' +
           '<div class="f-vid-only hidden"><label>Arquivo vídeo (.mp4)</label><input type="text" class="f-video" /></div>' +
@@ -887,24 +1279,35 @@
           '<label>Handle no card</label><input type="text" class="f-handle" />' +
           '<div class="row2"><div><label>Views</label><input type="text" class="f-views" /></div><div><label>Likes</label><input type="text" class="f-likes" /></div></div>' +
           '<label>Corações (texto)</label><input type="text" class="f-hearts" />' +
-          '<div class="feed-preview-block"><span class="lbl-prev">Prévia (miniatura)</span><img class="f-feed-preview hidden" alt="" loading="lazy" /></div>' +
-          '<button type="button" class="secondary danger" style="margin-top:10px">Remover este post</button>';
-        wrap.querySelector(".f-type").value = type;
-        wrap.querySelector(".f-thumb").value = it.thumb || "";
-        wrap.querySelector(".f-full").value = it.full || "";
-        wrap.querySelector(".f-video").value = it.video || "";
-        wrap.querySelector(".f-poster").value = it.poster || "";
-        wrap.querySelector(".f-tfb").value = it.thumbFallback || "";
-        wrap.querySelector(".f-handle").value = it.handle || "@carolzinha";
-        wrap.querySelector(".f-views").value = (it.metrics && it.metrics.views) || "";
-        wrap.querySelector(".f-likes").value = (it.metrics && it.metrics.likes) || "";
-        wrap.querySelector(".f-hearts").value = (it.metrics && it.metrics.hearts) || "";
-        var vipCb = wrap.querySelector(".f-vip-locked");
+          '<button type="button" class="secondary danger" style="margin-top:16px">Remover este post</button>';
+
+        bundle._fieldsEl = fields;
+        bundle._tileImg = img;
+        bundle._tileVip = vipBadge;
+        bundle._tilePlay = play;
+        bundle._tileHandle = handleEl;
+        bundle._tileMetrics = metricsEl;
+
+        bundle.appendChild(tile);
+        bundle.appendChild(fields);
+
+        fields.querySelector(".f-type").value = type;
+        fields.querySelector(".f-thumb").value = it.thumb || "";
+        fields.querySelector(".f-full").value = it.full || "";
+        fields.querySelector(".f-video").value = it.video || "";
+        fields.querySelector(".f-poster").value = it.poster || "";
+        fields.querySelector(".f-tfb").value = it.thumbFallback || "";
+        fields.querySelector(".f-handle").value = it.handle || "@carolzinha";
+        fields.querySelector(".f-views").value = (it.metrics && it.metrics.views) || "";
+        fields.querySelector(".f-likes").value = (it.metrics && it.metrics.likes) || "";
+        fields.querySelector(".f-hearts").value = (it.metrics && it.metrics.hearts) || "";
+        var vipCb = fields.querySelector(".f-vip-locked");
         if (vipCb) vipCb.checked = isFeedItemVipLocked(it);
+
         function updateFeedTypeHint() {
-          var line = wrap.querySelector(".f-type-stats-line");
+          var line = fields.querySelector(".f-type-stats-line");
           if (!line) return;
-          var isVideo = wrap.querySelector(".f-type").value === "video";
+          var isVideo = fields.querySelector(".f-type").value === "video";
           line.textContent = "";
           line.appendChild(document.createTextNode("Arquivo: "));
           var strong = document.createElement("strong");
@@ -919,48 +1322,50 @@
           );
         }
         function toggleVid() {
-          var v = wrap.querySelector(".f-type").value === "video";
-          wrap.querySelector(".f-img-only").classList.toggle("hidden", v);
-          wrap.querySelectorAll(".f-vid-only").forEach(function (el) {
+          var v = fields.querySelector(".f-type").value === "video";
+          fields.querySelector(".f-img-only").classList.toggle("hidden", v);
+          fields.querySelectorAll(".f-vid-only").forEach(function (el) {
             el.classList.toggle("hidden", !v);
           });
           updateFeedTypeHint();
+          syncAdminFeedTile(bundle);
         }
         toggleVid();
-        wrap.querySelector(".f-type").addEventListener("change", toggleVid);
-        wrap.querySelector(".danger").addEventListener("click", function () {
-          wrap.remove();
+        fields.querySelector(".f-type").addEventListener("change", toggleVid);
+        fields.querySelector(".danger").addEventListener("click", function () {
+          closeFeedModal();
+          bundle.remove();
           renumberFeed();
         });
-        function refreshFeedRowPreview() {
-          var img = wrap.querySelector(".f-feed-preview");
-          var thumb = wrap.querySelector(".f-thumb").value.trim();
-          var fb = wrap.querySelector(".f-tfb").value.trim();
-          if (!img) return;
-          if (!thumb) {
-            img.classList.add("hidden");
-            img.removeAttribute("src");
-            return;
-          }
-          img.classList.remove("hidden");
-          img.src = vipAssetUrl(thumb);
-          img.onerror = function () {
-            img.onerror = function () {
-              img.classList.add("hidden");
-            };
-            if (fb) img.src = fb;
-            else img.classList.add("hidden");
-          };
+
+        function wireSync() {
+          syncAdminFeedTile(bundle);
         }
-        wrap.querySelector(".f-thumb").addEventListener("input", refreshFeedRowPreview);
-        wrap.querySelector(".f-tfb").addEventListener("input", refreshFeedRowPreview);
-        refreshFeedRowPreview();
-        return wrap;
+        ["f-thumb", "f-tfb", "f-handle", "f-views", "f-likes", "f-hearts"].forEach(function (cls) {
+          var el = fields.querySelector("." + cls);
+          if (el) el.addEventListener("input", wireSync);
+        });
+        var vipBox = fields.querySelector(".f-vip-locked");
+        if (vipBox) vipBox.addEventListener("change", wireSync);
+
+        tile.addEventListener("click", function () {
+          openFeedModal(bundle);
+        });
+
+        wireSync();
+        return bundle;
       }
 
       function renumberFeed() {
-        feedEditor.querySelectorAll(".feed-item").forEach(function (el, i) {
-          el.querySelector("h3").textContent = "Post #" + (i + 1);
+        feedEditor.querySelectorAll(".admin-feed-bundle").forEach(function (el, i) {
+          el.dataset.index = String(i);
+          var form = el._fieldsEl;
+          if (form) {
+            var title = form.querySelector(".admin-feed-fields__title");
+            if (title) title.textContent = "Post #" + (i + 1);
+          }
+          var tile = el.querySelector(".admin-feed-tile");
+          if (tile) tile.setAttribute("aria-label", "Editar post #" + (i + 1));
         });
       }
 
@@ -977,11 +1382,13 @@
             if (!isNaN(n) && n > maxN) maxN = n;
           }
         }
-        feedEditor.querySelectorAll(".feed-item").forEach(function (row) {
-          scan(row.querySelector(".f-thumb") && row.querySelector(".f-thumb").value);
-          scan(row.querySelector(".f-full") && row.querySelector(".f-full").value);
-          scan(row.querySelector(".f-video") && row.querySelector(".f-video").value);
-          scan(row.querySelector(".f-poster") && row.querySelector(".f-poster").value);
+        feedEditor.querySelectorAll(".admin-feed-bundle").forEach(function (row) {
+          var f = row._fieldsEl;
+          if (!f) return;
+          scan(f.querySelector(".f-thumb") && f.querySelector(".f-thumb").value);
+          scan(f.querySelector(".f-full") && f.querySelector(".f-full").value);
+          scan(f.querySelector(".f-video") && f.querySelector(".f-video").value);
+          scan(f.querySelector(".f-poster") && f.querySelector(".f-poster").value);
         });
         return maxN;
       }
@@ -1019,7 +1426,9 @@
 
       function collectFeedFromEditor() {
         var out = [];
-        feedEditor.querySelectorAll(".feed-item").forEach(function (wrap) {
+        feedEditor.querySelectorAll(".admin-feed-bundle").forEach(function (bundle) {
+          var wrap = bundle._fieldsEl;
+          if (!wrap) return;
           var t = wrap.querySelector(".f-type").value;
           var o = {
             type: t,
@@ -1146,9 +1555,11 @@
               : "Salvo — atualize o /vip no navegador para ver (cache: Ctrl+F5).";
           st.className = "ok";
           syncMediaPreviews();
-          feedEditor.querySelectorAll(".feed-item").forEach(function (w) {
-            var thumb = w.querySelector(".f-thumb");
-            if (thumb) thumb.dispatchEvent(new Event("input"));
+          feedEditor.querySelectorAll(".admin-feed-bundle").forEach(function (w) {
+            if (w._fieldsEl) {
+              var thumb = w._fieldsEl.querySelector(".f-thumb");
+              if (thumb) thumb.dispatchEvent(new Event("input"));
+            }
           });
         } else {
           st.textContent = j.error || "Erro ao salvar";
