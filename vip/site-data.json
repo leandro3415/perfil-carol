@@ -116,6 +116,19 @@
     },
     {
       "type": "image",
+      "thumb": "Feed teaser/teaser-8.jpg",
+      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-15%20152637.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTUgMTUyNjM3LnBuZyIsImlhdCI6MTc3NDMxMTU3OSwiZXhwIjoxODA1ODQ3NTc5fQ.Nncta5vzLS-eBxMSj0mn4C-3mitwl4cInRgXH8iBRhM",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "13.1k",
+        "likes": "6.3k",
+        "hearts": "5.5k"
+      },
+      "vipLocked": false,
+      "full": "Feed teaser/teaser-8.jpg"
+    },
+    {
+      "type": "image",
       "thumb": "Feed teaser/teaser-9.jpg",
       "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-12%20203954.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTIgMjAzOTU0LnBuZyIsImlhdCI6MTc3NDMxMjQ5OCwiZXhwIjoxODA1ODQ4NDk4fQ.ciPcY5Ow3dei14rhlWPpYEhTObxxO4mLLobE5tdXUq8",
       "handle": "@carolzinha",
@@ -217,6 +230,19 @@
       },
       "vipLocked": true,
       "full": "Feed teaser/teaser-16.jpg"
+    },
+    {
+      "type": "image",
+      "thumb": "Feed teaser/teaser-17.jpg",
+      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-26%20131249.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMjYgMTMxMjQ5LnBuZyIsImlhdCI6MTc3NDU2NjkwMywiZXhwIjoxODA2MTAyOTAzfQ.7oGib6l_dqSZZu4qDFDE0nxfS6oknwFw3bqXx3VtqbU",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "14.6K",
+        "likes": "11.9K",
+        "hearts": "9.2K"
+      },
+      "vipLocked": false,
+      "full": "Feed teaser/teaser-17.jpg"
     }
   ],
   "fab": {
