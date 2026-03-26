@@ -111,7 +111,7 @@
         "likes": "2.8k",
         "hearts": "2.3k"
       },
-      "vipLocked": false,
+      "vipLocked": true,
       "full": "Feed teaser/teaser-7.jpg"
     },
     {
@@ -137,7 +137,7 @@
         "likes": "7.8k",
         "hearts": "5k"
       },
-      "vipLocked": false,
+      "vipLocked": true,
       "full": "Feed teaser/teaser-9.jpg"
     },
     {
@@ -150,7 +150,7 @@
         "likes": "9.4k",
         "hearts": "6.9k"
       },
-      "vipLocked": false,
+      "vipLocked": true,
       "full": "Feed teaser/teaser-10.jpg"
     },
     {
@@ -163,7 +163,7 @@
         "likes": "10.7k",
         "hearts": "7.9k"
       },
-      "vipLocked": false,
+      "vipLocked": true,
       "full": "Feed teaser/teaser-11.jpg"
     },
     {
@@ -176,7 +176,7 @@
         "likes": "6.3k",
         "hearts": "2.8k"
       },
-      "vipLocked": false,
+      "vipLocked": true,
       "full": "Feed teaser/teaser-12.jpg"
     },
     {
@@ -215,25 +215,25 @@
         "likes": "8.8k",
         "hearts": "7k"
       },
-      "vipLocked": false,
+      "vipLocked": true,
       "full": "Feed teaser/teaser-15.jpg"
     },
     {
       "type": "image",
       "thumb": "Feed teaser/teaser-16.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-18%20233315.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTggMjMzMzE1LnBuZyIsImlhdCI6MTc3NDQ1OTc3MywiZXhwIjoxODA1OTk1NzczfQ.tayZgC3pIaZ6kCbtt72YkAucdMisWeDP0urgrDnBMUk",
+      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-12%20212017%20(1).png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTIgMjEyMDE3ICgxKS5wbmciLCJpYXQiOjE3NzQ1NjYwNjMsImV4cCI6MTgwNjEwMjA2M30.Jv6CTcY6apOEGw9RDzOjEHXlypWagvXxlLQnmkan554",
       "handle": "@carolzinha",
       "metrics": {
-        "views": "4k",
-        "likes": "3k",
-        "hearts": "2.9k"
+        "views": "23.2K",
+        "likes": "17.1K",
+        "hearts": "14.4K"
       },
       "vipLocked": true,
       "full": "Feed teaser/teaser-16.jpg"
     }
   ],
   "fab": {
-    "href": "https://perfilcarol.vercel.app/checkout/",
+    "href": "#",
     "label": "Assinar VIP",
     "emoji": "🔥"
   },
