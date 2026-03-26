@@ -176,7 +176,7 @@
         "likes": "6.3k",
         "hearts": "2.8k"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-12.jpg"
     },
     {
@@ -202,7 +202,7 @@
         "likes": "9.9k",
         "hearts": "7.5k"
       },
-      "vipLocked": false,
+      "vipLocked": true,
       "full": "Feed teaser/teaser-14.jpg"
     },
     {
