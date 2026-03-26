@@ -97,7 +97,7 @@
         "likes": "2.8k",
         "hearts": "2.3k"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-7.jpg"
     },
     {
@@ -136,7 +136,7 @@
         "likes": "9.4k",
         "hearts": "6.9k"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-10.jpg"
     },
     {
@@ -188,7 +188,7 @@
         "likes": "9.9k",
         "hearts": "7.5k"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-14.jpg"
     },
     {
@@ -201,7 +201,7 @@
         "likes": "8.8k",
         "hearts": "7k"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-15.jpg"
     },
     {
@@ -255,6 +255,19 @@
       },
       "vipLocked": false,
       "full": "Feed teaser/teaser-19.jpg"
+    },
+    {
+      "type": "image",
+      "thumb": "Feed teaser/teaser-20.jpg",
+      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-18%20234104.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTggMjM0MTA0LnBuZyIsImlhdCI6MTc3NDU2ODU2MSwiZXhwIjoxODA2MTA0NTYxfQ.0WAxBluy5xEK0Upex_gMVcCBuis7eMXfBuv36SV_tyM",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "31K",
+        "likes": "26.2K",
+        "hearts": "19.9K"
+      },
+      "vipLocked": true,
+      "full": "Feed teaser/teaser-20.jpg"
     }
   ],
   "fab": {
