@@ -272,14 +272,14 @@
     {
       "type": "image",
       "thumb": "Feed teaser/teaser-21.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-18%20234104.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTggMjM0MTA0LnBuZyIsImlhdCI6MTc3NDU2ODcwMCwiZXhwIjoxODA2MTA0NzAwfQ.ErDxQL-cWeI9Z1OLcFL5y59YX4y-jZh_WRFy4pV86gs",
+      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-21%20134454.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMjEgMTM0NDU0LnBuZyIsImlhdCI6MTc3NDU2ODgxOSwiZXhwIjoxODA2MTA0ODE5fQ.NsKGJsp3E1fJEKh3SsDxGXiYfhEVuXPQNEMwO2jXYqA",
       "handle": "@carolzinha",
       "metrics": {
         "views": "28.4K",
         "likes": "20.1K",
         "hearts": "16.7K"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-21.jpg"
     }
   ],
