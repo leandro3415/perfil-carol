@@ -88,14 +88,6 @@
       padding-bottom: calc(88px + var(--safe-bottom));
     }
 
-    body.vip-unlocked {
-      padding-bottom: calc(24px + var(--safe-bottom));
-    }
-
-    body.vip-unlocked .fab {
-      display: none !important;
-    }
-
     img {
       max-width: 100%;
       display: block;
@@ -1024,7 +1016,7 @@
   </footer>
 
   <div class="fab">
-    <a id="fabBtn" class="fab__btn" href="https://perfilcarol.vercel.app/checkout/" role="button" aria-label="Assinar VIP"><span id="fabLabel">Assinar VIP</span> <span id="fabEmoji" aria-hidden="true">🔥</span></a>
+    <a id="fabBtn" class="fab__btn" href="/checkout/" role="button" aria-label="Assinar VIP"><span id="fabLabel">Assinar VIP</span> <span id="fabEmoji" aria-hidden="true">🔥</span></a>
   </div>
 
   <div id="vipLightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Visualizar em tela cheia" aria-hidden="true">
@@ -1362,7 +1354,7 @@
           if (d.fab) {
             var fb = document.getElementById("fabBtn");
             if (fb) {
-              fb.href = d.fab.href || "#";
+              fb.href = (d.fab.href && String(d.fab.href).trim() && d.fab.href !== "#") ? d.fab.href.trim() : "/checkout/";
               fb.setAttribute("aria-label", (d.fab.label || "Assinar") + (d.fab.emoji ? " " + d.fab.emoji : ""));
               var fl = document.getElementById("fabLabel");
               if (fl) fl.textContent = d.fab.label || "";
@@ -1667,7 +1659,6 @@
               } catch (e) {}
               if (!applySiteData(data)) fetchStatsFromFiles();
               if (vipUnlockedFlag) {
-                document.body.classList.add("vip-unlocked");
                 var sbl = document.getElementById("subBarBtnLabel");
                 var sh = document.getElementById("subBarHint");
                 if (sbl) sbl.textContent = "VIP ativo ✓";
