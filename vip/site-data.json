@@ -427,19 +427,6 @@
     },
     {
       "type": "image",
-      "thumb": "Feed teaser/teaser-33.jpg",
-      "thumbFallback": "",
-      "handle": "@carolzinha",
-      "metrics": {
-        "views": "",
-        "likes": "",
-        "hearts": ""
-      },
-      "vipLocked": true,
-      "full": "Feed teaser/teaser-33.jpg"
-    },
-    {
-      "type": "image",
       "thumb": "Feed teaser/teaser-34.jpg",
       "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-23%20215632.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMjMgMjE1NjMyLnBuZyIsImlhdCI6MTc3NjIxNDQ0MiwiZXhwIjoxODA3NzUwNDQyfQ.IjnZZFOFwl4Mf2_gjz9Z6d6gBrk7Z614a79D4ORO4wI",
       "handle": "@carolzinha",
@@ -450,6 +437,19 @@
       },
       "vipLocked": true,
       "full": "Feed teaser/teaser-34.jpg"
+    },
+    {
+      "type": "image",
+      "thumb": "Feed teaser/teaser-35.jpg",
+      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-21%20132810.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMjEgMTMyODEwLnBuZyIsImlhdCI6MTc3NjIxNTM3OSwiZXhwIjoxODA3NzUxMzc5fQ.XxTkqbnSQNj9ZLTuVrSGyzOBX9pAtx2W4a_F5en0N4g",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "17.2K",
+        "likes": "13.9K",
+        "hearts": "11K"
+      },
+      "vipLocked": true,
+      "full": "Feed teaser/teaser-35.jpg"
     }
   ],
   "fab": {
