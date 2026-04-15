@@ -346,6 +346,19 @@
       },
       "vipLocked": false,
       "full": "Feed teaser/teaser-26.jpg"
+    },
+    {
+      "type": "image",
+      "thumb": "Feed teaser/teaser-27.jpg",
+      "thumbFallback": "",
+      "handle": "@carolzinha",
+      "metrics": {
+        "views": "",
+        "likes": "",
+        "hearts": ""
+      },
+      "vipLocked": true,
+      "full": "Feed teaser/teaser-27.jpg"
     }
   ],
   "fab": {
