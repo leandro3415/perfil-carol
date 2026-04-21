@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecionando para WhatsApp…</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b1220;
+        --card: rgba(255, 255, 255, 0.06);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.68);
+        --border: rgba(255, 255, 255, 0.14);
+        --accent: #22c55e;
+        --danger: #ef4444;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        background: radial-gradient(1200px 800px at 20% 0%, rgba(34, 197, 94, 0.18), transparent 55%),
+          radial-gradient(1000px 700px at 100% 10%, rgba(59, 130, 246, 0.16), transparent 45%),
+          var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 22px;
+      }
+      .card {
+        width: min(720px, 100%);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0 0 8px;
+        font-weight: 650;
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .row {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .pill {
+        border: 1px solid var(--border);
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pill strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .btn.primary {
+        border-color: rgba(34, 197, 94, 0.4);
+        background: rgba(34, 197, 94, 0.12);
+      }
+      .btn.primary:hover {
+        background: rgba(34, 197, 94, 0.18);
+      }
+      .err {
+        margin-top: 12px;
+        padding: 12px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(239, 68, 68, 0.35);
+        background: rgba(239, 68, 68, 0.1);
+        color: rgba(255, 255, 255, 0.92);
+        display: none;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .ok {
+        margin-top: 12px;
+        padding: 12px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(34, 197, 94, 0.35);
+        background: rgba(34, 197, 94, 0.1);
+        color: rgba(255, 255, 255, 0.92);
+        display: none;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .small {
+        margin-top: 10px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.55);
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+      }
+      a {
+        color: rgba(167, 243, 208, 0.95);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Conectando com um atendente no WhatsApp…</h1>
+      <p>
+        Estou procurando uma instância que esteja <strong>ON</strong> e com <strong>DISPONIVEL ? = SIM</strong>. Assim que achar,
+        redireciono automaticamente.
+      </p>
+
+      <div class="row">
+        <span class="pill"><strong>Status</strong>: <span id="status">iniciando</span></span>
+        <span class="pill"><strong>Tentativas</strong>: <span id="tries">0</span></span>
+        <span class="pill"><strong>Última consulta</strong>: <span id="last">—</span></span>
+      </div>
+
+      <div id="ok" class="ok"></div>
+      <div id="err" class="err"></div>
+
+      <div class="row">
+        <button class="btn primary" id="btnTry">Tentar agora</button>
+        <button class="btn" id="btnCopy">Copiar link do WhatsApp</button>
+      </div>
+
+      <div class="small">
+        Configuração no topo do arquivo: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `TABLE_NAME`.
+        <br />
+        Observação: para funcionar no browser, a tabela precisa permitir leitura com a anon key (RLS/policy ou view pública).
+      </div>
+    </div>
+
+    <script>
+      // ======== CONFIGURE AQUI ========
+      // Ex.: "https://xxxx.supabase.co"
+      const SUPABASE_URL = "https://okooczucxgmmzywnores.supabase.co";
+      // Atenção: essa chave fica visível no frontend. Use policies/view de leitura somente.
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rb29jenVjeGdtbXp5d25vcmVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NzQxNTAsImV4cCI6MjA5MTU1MDE1MH0.uOxb9nz4l0nuGfqDM_W5fvyTmFurGy4J90N2GOnCQXc";
+      // Nome exato da tabela (com espaço). Se você usar outra, mude aqui.
+      const TABLE_NAME = "ZAP DISPONIVEL";
+
+      // Colunas (mantém compatibilidade com o seu SQL)
+      const COL_STATUS = "STATUS";
+      const COL_DISP = "DISPONIVEL ?";
+      const COL_NUM = "NUMERO";
+      const COL_INST = "INSTÂNCIA";
+
+      // Quantas vezes tentar antes de desistir
+      const MAX_TRIES = 10;
+      // Intervalo entre tentativas (ms)
+      const RETRY_MS = 1200;
+      // Timeout por request (ms)
+      const REQ_TIMEOUT_MS = 5000;
+      // =================================
+
+      const elStatus = document.getElementById("status");
+      const elTries = document.getElementById("tries");
+      const elLast = document.getElementById("last");
+      const elErr = document.getElementById("err");
+      const elOk = document.getElementById("ok");
+      const btnTry = document.getElementById("btnTry");
+      const btnCopy = document.getElementById("btnCopy");
+
+      let lastChosenWaUrl = "";
+
+      function nowStr() {
+        try {
+          return new Date().toLocaleTimeString();
+        } catch {
+          return String(Date.now());
+        }
+      }
+
+      function setStatus(s) {
+        elStatus.textContent = String(s || "");
+      }
+      function setTries(n) {
+        elTries.textContent = String(n || 0);
+      }
+      function setLast() {
+        elLast.textContent = nowStr();
+      }
+      function showErr(msg) {
+        elErr.style.display = "block";
+        elOk.style.display = "none";
+        elErr.textContent = String(msg || "");
+      }
+      function showOk(msg) {
+        elOk.style.display = "block";
+        elErr.style.display = "none";
+        elOk.textContent = String(msg || "");
+      }
+
+      function normalizeDigits(v) {
+        const d = String(v ?? "").replace(/\D/g, "");
+        return d;
+      }
+
+      function waUrlForNumberDigits(digits) {
+        const d = normalizeDigits(digits);
+        if (!d) return "";
+        return `https://wa.me/${d}`;
+      }
+
+      function supabaseRestUrl() {
+        const base = String(SUPABASE_URL || "").trim().replace(/\/+$/, "");
+        return `${base}/rest/v1/${encodeURIComponent(TABLE_NAME)}`;
+      }
+
+      async function fetchEligibleRows() {
+        const url = new URL(supabaseRestUrl());
+        // select colunas necessárias
+        url.searchParams.set("select", `"${COL_NUM}","${COL_INST}","${COL_STATUS}","${COL_DISP}"`);
+        // filtros
+        url.searchParams.set(`"${COL_STATUS}"`, "eq.ON");
+        url.searchParams.set(`"${COL_DISP}"`, "eq.SIM");
+        // limite
+        url.searchParams.set("limit", "200");
+
+        const ac = new AbortController();
+        const t = setTimeout(() => ac.abort(), REQ_TIMEOUT_MS);
+        try {
+          const r = await fetch(url.toString(), {
+            method: "GET",
+            signal: ac.signal,
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+              Accept: "application/json",
+            },
+          });
+          const text = await r.text();
+          let json = null;
+          try {
+            json = text ? JSON.parse(text) : null;
+          } catch {
+            // pode ser erro em texto
+          }
+          if (!r.ok) {
+            const detail =
+              (json && (json.message || json.error_description || json.error)) ||
+              (text || `HTTP ${r.status}`);
+            throw new Error(`Supabase REST falhou: ${detail}`);
+          }
+          if (!Array.isArray(json)) return [];
+          return json;
+        } finally {
+          clearTimeout(t);
+        }
+      }
+
+      function chooseRowRoundRobin(rows) {
+        if (!rows.length) return null;
+        const key = "pressel_rr_idx_v1";
+        let idx = 0;
+        try {
+          idx = Number(localStorage.getItem(key) || "0") || 0;
+        } catch {
+          idx = 0;
+        }
+        const picked = rows[idx % rows.length];
+        try {
+          localStorage.setItem(key, String((idx + 1) % 1000000));
+        } catch {
+          // ignore
+        }
+        return picked;
+      }
+
+      function formatRow(row) {
+        const inst = row?.[COL_INST] ?? row?.instancia ?? row?.inst ?? "";
+        const num = row?.[COL_NUM] ?? row?.numero ?? "";
+        const st = row?.[COL_STATUS] ?? "";
+        const disp = row?.[COL_DISP] ?? "";
+        return `Instância: ${String(inst)}\nNúmero: ${String(num)}\nSTATUS: ${String(st)}\nDISPONIVEL ?: ${String(disp)}`;
+      }
+
+      async function tryRedirectFlow() {
+        elErr.style.display = "none";
+        elOk.style.display = "none";
+
+        if (!String(SUPABASE_URL).includes("supabase.co") || String(SUPABASE_ANON_KEY).includes("COLE_AQUI")) {
+          showErr(
+            "Configure SUPABASE_URL e SUPABASE_ANON_KEY no topo do arquivo `pressel.html` antes de usar."
+          );
+          setStatus("config pendente");
+          return;
+        }
+
+        setStatus("consultando supabase…");
+        const rows = await fetchEligibleRows();
+        setLast();
+
+        if (!rows.length) {
+          setStatus("nenhuma instância elegível");
+          return { ok: false, reason: "no_rows" };
+        }
+
+        const picked = chooseRowRoundRobin(rows);
+        const num = picked?.[COL_NUM];
+        const digits = normalizeDigits(num);
+        const waUrl = waUrlForNumberDigits(digits);
+        if (!waUrl) {
+          showErr("Linha elegível sem número válido.\n\n" + formatRow(picked));
+          setStatus("erro: número inválido");
+          return { ok: false, reason: "invalid_number" };
+        }
+
+        lastChosenWaUrl = waUrl;
+        showOk("Instância escolhida:\n\n" + formatRow(picked) + "\n\nRedirecionando…");
+        setStatus("redirecionando…");
+
+        // Pequeno delay pra mostrar UI e evitar bloqueio em alguns navegadores
+        setTimeout(() => {
+          window.location.href = waUrl;
+        }, 250);
+
+        return { ok: true, waUrl };
+      }
+
+      async function start() {
+        let tries = 0;
+        while (tries < MAX_TRIES) {
+          tries += 1;
+          setTries(tries);
+          try {
+            const r = await tryRedirectFlow();
+            if (r?.ok) return;
+          } catch (e) {
+            showErr(String(e?.message || e));
+            setStatus("erro ao consultar");
+          }
+          await new Promise((r) => setTimeout(r, RETRY_MS));
+        }
+        setStatus("sem vagas agora");
+        showErr(
+          "Nenhuma instância elegível no momento (STATUS=ON e DISPONIVEL ?=SIM).\nTente novamente em instantes."
+        );
+      }
+
+      btnTry.addEventListener("click", () => void start());
+      btnCopy.addEventListener("click", async () => {
+        const u = lastChosenWaUrl;
+        if (!u) {
+          showErr("Ainda não há link escolhido. Clique em “Tentar agora”.");
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(u);
+          showOk(`Copiado:\n${u}`);
+        } catch {
+          showOk(`Link:\n${u}`);
+        }
+      });
+
+      // Auto start
+      void start();
+    </script>
+  </body>
+</html>
+
