@@ -50,7 +50,7 @@
     {
       "type": "image",
       "thumb": "Feed teaser/teaser-3.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-15%20220603.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTUgMjIwNjAzLnBuZyIsImlhdCI6MTc3NDIwNDQ5OCwiZXhwIjoxODA1NzQwNDk4fQ.DtyvSvxlpvmAfFY4LKiF_pr_qq0sGgqe6LShHJSCQPA",
+      "thumbFallback": "https://cjppifnnwjnxpmkesybd.supabase.co/storage/v1/object/public/AUDIOS%20REIFLICK/Captura%20de%20tela%202026-03-12%20210017.png",
       "handle": "@carolzinha",
       "metrics": {
         "views": "6k",
@@ -63,20 +63,20 @@
     {
       "type": "image",
       "thumb": "Feed teaser/teaser-6.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-12%20212017.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTIgMjEyMDE3LnBuZyIsImlhdCI6MTc3NDMxMDgyNywiZXhwIjoxODA1ODQ2ODI3fQ.ftf_sA3K_T67exx9qxrkyTNTfTl7B0lw4pZI5Eg-Hc0",
+      "thumbFallback": "https://cjppifnnwjnxpmkesybd.supabase.co/storage/v1/object/public/AUDIOS%20REIFLICK/Captura%20de%20tela%202026-03-21%20133149.png",
       "handle": "@carolzinha",
       "metrics": {
         "views": "8k",
         "likes": "2k",
         "hearts": "3.1k"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-6.jpg"
     },
     {
       "type": "image",
       "thumb": "Feed teaser/teaser-8.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-15%20152637.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTUgMTUyNjM3LnBuZyIsImlhdCI6MTc3NDMxMTU3OSwiZXhwIjoxODA1ODQ3NTc5fQ.Nncta5vzLS-eBxMSj0mn4C-3mitwl4cInRgXH8iBRhM",
+      "thumbFallback": "https://cjppifnnwjnxpmkesybd.supabase.co/storage/v1/object/public/AUDIOS%20REIFLICK/Captura%20de%20tela%202026-03-21%20133221.png",
       "handle": "@carolzinha",
       "metrics": {
         "views": "13.1k",
@@ -89,20 +89,20 @@
     {
       "type": "image",
       "thumb": "Feed teaser/teaser-9.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-12%20203954.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTIgMjAzOTU0LnBuZyIsImlhdCI6MTc3NDMxMjQ5OCwiZXhwIjoxODA1ODQ4NDk4fQ.ciPcY5Ow3dei14rhlWPpYEhTObxxO4mLLobE5tdXUq8",
+      "thumbFallback": "https://cjppifnnwjnxpmkesybd.supabase.co/storage/v1/object/public/AUDIOS%20REIFLICK/Captura%20de%20tela%202026-03-21%20134033.png",
       "handle": "@carolzinha",
       "metrics": {
         "views": "13.1k",
         "likes": "7.8k",
         "hearts": "5k"
       },
-      "vipLocked": true,
+      "vipLocked": false,
       "full": "Feed teaser/teaser-9.jpg"
     },
     {
       "type": "image",
       "thumb": "Feed teaser/teaser-10.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Captura%20de%20tela%202026-03-12%20211606.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvQ2FwdHVyYSBkZSB0ZWxhIDIwMjYtMDMtMTIgMjExNjA2LnBuZyIsImlhdCI6MTc3NDMxMjY1MywiZXhwIjoxODA1ODQ4NjUzfQ.f9CQ8Q2KbWDKbKO7L0YdvP0CXq8_oeNI_fPMhYt01ks",
+      "thumbFallback": "https://cjppifnnwjnxpmkesybd.supabase.co/storage/v1/object/public/AUDIOS%20REIFLICK/Captura%20de%20tela%202026-03-21%20134019.png",
       "handle": "@carolzinha",
       "metrics": {
         "views": "11.7k",
