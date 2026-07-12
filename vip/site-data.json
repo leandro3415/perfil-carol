@@ -439,9 +439,9 @@
       "poster": ""
     },
     {
-      "type": "image",
+      "type": "video",
       "thumb": "Feed teaser/teaser-37.jpg",
-      "thumbFallback": "https://vwjuhgkoptqqhndalhro.supabase.co/storage/v1/object/sign/HOT%20IMAGE/Screenshot_2.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV83ZTVlMTk0OS00ZmQ3LTQ4MmItYmU1Zi0xNThmNGNhYzZiZjAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJIT1QgSU1BR0UvU2NyZWVuc2hvdF8yLnBuZyIsImlhdCI6MTc3NjIxNTk5NiwiZXhwIjoxODA3NzUxOTk2fQ.C1bf3A1WE2r5qzVgdAGMJP-xurSumeEZtBhrPC44KFs",
+      "thumbFallback": "https://cjppifnnwjnxpmkesybd.supabase.co/storage/v1/object/public/AUDIOS%20REIFLICK/NOVAS/4d95dfb5-fdbc-4200-968e-fc633e990b70.mp4",
       "handle": "@carolzinha",
       "metrics": {
         "views": "7.4K",
@@ -449,7 +449,8 @@
         "hearts": "3.3K"
       },
       "vipLocked": false,
-      "full": "Feed teaser/teaser-37.jpg"
+      "video": "https://cjppifnnwjnxpmkesybd.supabase.co/storage/v1/object/public/AUDIOS%20REIFLICK/NOVAS/4d95dfb5-fdbc-4200-968e-fc633e990b70.mp4",
+      "poster": ""
     },
     {
       "type": "video",
